@@ -25,15 +25,20 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
     `,
     props.pysakki
     )
-    let rows = [];
+    let stopRows = [];
+    let alertRows = [];
     for(var i = 0, l = data.stoptimesForPatterns.length; i < l; i++) {
-        rows.push(<StoptimesInPattern stoptimesInPattern={data.stoptimesForPatterns[i]}/>)
+        stopRows.push(<StoptimesInPattern stoptimesInPattern={data.stoptimesForPatterns[i]}/>)
+    }
+
+    for(var i = 0, l = data.alerts.length; i < l; i++) {
+        stopRows.push(<Alerts alert={data.alerts[i]}/>)
     }
     return ( 
         <div>
             <b>{data.name}</b>: <i>{data.gtfsId}</i> <br />
-            {rows} <br />
-            <Alerts alert = {data.alerts[0]} />
+            {alertRows}
+            {stopRows} <br />
 
         </div>    
     )
