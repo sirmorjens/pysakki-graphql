@@ -1,28 +1,27 @@
 import type { AppQuery } from "./__generated__/AppQuery.graphql";
 import { graphql, useLazyLoadQuery } from "react-relay";
-import Agency from "./Agency.tsx";
+// import Agency from "./Agency.tsx";
+import Pysakki from "./pysakki.tsx";
 
 export default function App() {
   const data = useLazyLoadQuery<AppQuery>(
     graphql`
       query AppQuery {
-        agencies {
-          name
-          ...Agency_item
+        stop(id: "Lahti:103653") {
+          ...PysakkiFragment
         }
       }
     `,
     {}
   );
 
-  const agencies = data?.agencies?.filter((agency) => agency != null);
+  const pysakki = data.stop;
+  let timeNow = new Date();
 
   return (
     <div>
-      <h1>Agencies</h1>
-      {agencies?.map((agency) => (
-        <Agency key={agency.name} agency={agency} />
-      ))}
+      {timeNow.toLocaleString('fi-FI')}
+      <Pysakki pysakki={pysakki} />
     </div>
   );
 }
