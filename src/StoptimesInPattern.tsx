@@ -31,7 +31,7 @@ export default function StoptimesInPattern({stoptimesInPattern}: Props)
             // ajat (oikea tai suunniteltu) StoptimeFragment.tsx
             <section>
                 <Pattern pattern={data.pattern} />
-                    <ul>
+                    <ul style={{listStyleType:"none"}}>
                         {rows}
                     </ul>
             </section>

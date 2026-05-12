@@ -17,6 +17,6 @@ export default function Pattern({pattern}: Props)
             `, pattern
         )
         return(
-            <h5 id="pattern"><b>{data.name}, {data.headsign}</b></h5>
+            <b style={{marginBottom:"5px"}} id="pattern">{data.name}, {data.headsign}</b>
         )
     };
