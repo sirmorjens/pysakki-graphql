@@ -15,7 +15,7 @@ const fetchGraphQL: FetchFunction = async (request, variables) => {
     method: "POST",
     headers: { 
                 "Content-Type": "application/json", 
-                "digitransit-subscription-key": "d1eb6171787a438da318f75663cf63fd"
+                "digitransit-subscription-key": import.meta.env.VITE_DIGITRANSIT_SUBSCRIPTION_KEY
               },
     body: JSON.stringify({ query: request.text, variables }),
   });
