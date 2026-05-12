@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0663079efc9b7354b5be886ea9c263bf>>
+ * @generated SignedSource<<7a7880c1e6cc7c941d2786ea0c7c07b3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -26,7 +26,7 @@ var v0 = [
   {
     "kind": "Literal",
     "name": "id",
-    "value": "Lahti:103653"
+    "value": "Lahti:104030"
   }
 ],
 v1 = {
@@ -64,7 +64,7 @@ return {
             "name": "PysakkiFragment"
           }
         ],
-        "storageKey": "stop(id:\"Lahti:103653\")"
+        "storageKey": "stop(id:\"Lahti:104030\")"
       }
     ],
     "type": "QueryType",
@@ -190,21 +190,21 @@ return {
           },
           (v2/*: any*/)
         ],
-        "storageKey": "stop(id:\"Lahti:103653\")"
+        "storageKey": "stop(id:\"Lahti:104030\")"
       }
     ]
   },
   "params": {
-    "cacheID": "59da8e7015f4ff0130a565bb265d35e8",
+    "cacheID": "b8b76850aeff9bcbaec9dd2f8a3c1f28",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery {\n  stop(id: \"Lahti:103653\") {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  realtimeArrival\n  scheduledArrival\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
+    "text": "query AppQuery {\n  stop(id: \"Lahti:104030\") {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  realtimeArrival\n  scheduledArrival\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4b0cbb651556749e8a455c63c66c0676";
+(node as any).hash = "65ba7fe1bbd98f1b6aed4e6afa2a5d07";
 
 export default node;

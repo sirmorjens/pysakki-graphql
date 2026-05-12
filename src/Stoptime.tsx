@@ -16,13 +16,18 @@ export default function Stoptime({stoptime}: Props)
                 }
             `, stoptime
         )
-        //TODO vertaa oikeaa ja suunniteltua saapumista, huomauta myöhästymisistä
         let realSeconds = data.realtimeArrival.valueOf();
         let scheduledSeconds = data.scheduledArrival.valueOf();
-        let realTime = new Date(realSeconds * 1000).toISOString().slice(11, 16);
-        let scheduledTime = new Date(scheduledSeconds * 1000).toISOString().slice(11, 16);
+        let realTime = new Date(realSeconds * 1000).toISOString().slice(11, 16); // hh:mm
+        let scheduledTime = new Date(scheduledSeconds * 1000).toISOString().slice(11, 16); // hh:mm
 
-        return(
-            <p>{realTime}, {scheduledTime}</p>
-        )
+        if(realSeconds != scheduledSeconds) {
+            let tilanne:String = "";
+            if(realSeconds>scheduledSeconds) {tilanne = "myöhässä"}else {tilanne = "etuajassa"}
+
+            return(
+                <p>{tilanne}: {realTime}</p> // palauttaa päivitetyn ajan jos sellainen löytyy
+            )
+        }else return(<p>{scheduledTime}</p>) 
+
     };

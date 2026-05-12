@@ -14,22 +14,26 @@ export default function StoptimesInPattern({stoptimesInPattern}: Props)
                 fragment StoptimesInPatternFragment on StoptimesInPattern
                 {
                     pattern {
-                        ...PatternFragment
+                        ...PatternFragment #Pattern.tsx
                     }
                     stoptimes {
-                        ...StoptimeFragment
+                        ...StoptimeFragment #StoptimeFragment.tsx
                     }
                 }
             `, stoptimesInPattern
         )
         let rows = [];
-        for(var i = 0, l = data.stoptimes.length; i < l; i++) {
-            rows.push(<Stoptime stoptime={data.stoptimes[i]}/>)
+        for(var i = data.stoptimes.length-1; i >= 0; i--) {
+            rows.push(<li><Stoptime stoptime={data.stoptimes[i]}/></li>) // tulostaa ajat uusimmasta alkaen
         }
         return(
-            <div>
+            // reitti (reittikoodi, määränpää) Pattern.tsx
+            // ajat (oikea tai suunniteltu) StoptimeFragment.tsx
+            <section>
                 <Pattern pattern={data.pattern} />
-                {rows}
-            </div>
+                    <ul>
+                        {rows}
+                    </ul>
+            </section>
         )
     };

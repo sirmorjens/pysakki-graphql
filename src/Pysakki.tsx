@@ -2,7 +2,7 @@ import { graphql, useFragment } from "react-relay";
 
 import type { PysakkiFragment$key } from "./__generated__/PysakkiFragment.graphql";
 
-import Alerts from "./alerts";
+import Alerts from "./Alerts";
 import StoptimesInPattern from "./StoptimesInPattern";
 
 export default function Pysakki(props: { pysakki: PysakkiFragment$key; }) 
@@ -15,11 +15,11 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
         gtfsId
         stoptimesForPatterns
         {
-            ...StoptimesInPatternFragment
+            ...StoptimesInPatternFragment #StoptimeInsPattern.tsx
         }
         alerts
         {
-            ...AlertsFragment
+            ...AlertsFragment #Alerts.tsx
         }
     }
     `,
@@ -32,11 +32,14 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
     }
 
     for(var i = 0, l = data.alerts.length; i < l; i++) {
-        stopRows.push(<Alerts alert={data.alerts[i]}/>)
+        alertRows.push(<Alerts alert={data.alerts[i]}/>)
     }
     return ( 
+        // Pysäkin nimi, pysäkin gtfsID-tunniste
+        // häiriöt, jos niitä on Alerts.tsx
+        // reitit ja niiden saapumisajat
         <div>
-            <b>{data.name}</b>: <i>{data.gtfsId}</i> <br />
+            <b>{data.name}</b> - <i>{data.gtfsId}</i> <br />
             {alertRows}
             {stopRows} <br />
 

@@ -11,12 +11,12 @@ export default function Pattern({pattern}: Props)
             graphql`
                 fragment PatternFragment on Pattern
                 {
-                    name
-                    headsign
+                    name # reitti
+                    headsign # määränpää
                 }
             `, pattern
         )
         return(
-            <p>{data.name}, {data.headsign}</p>
+            <h5 id="pattern"><b>{data.name}, {data.headsign}</b></h5>
         )
     };
