@@ -4,6 +4,7 @@ import type { PysakkiFragment$key } from "./__generated__/PysakkiFragment.graphq
 
 import Alerts from "./Alerts";
 import StoptimesInPattern from "./StoptimesInPattern";
+import Stoptime from "./Stoptime";
 
 export default function Pysakki(props: { pysakki: PysakkiFragment$key; }) 
 {
@@ -17,6 +18,10 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
         {
             ...StoptimesInPatternFragment #StoptimeInsPattern.tsx
         }
+        stoptimesWithoutPatterns(numberOfDepartures: 15) # tähän haluttu määrä saapuvien bussien aikoja - muutoksen jälkeen npx relay-compiler 
+        {
+            ...StoptimeFragment #Stoptime.tsx
+        }
         alerts
         {
             ...AlertsFragment #Alerts.tsx
@@ -27,8 +32,8 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
     )
     let stopRows = [];
     let alertRows = [];
-    for(var i = 0, l = data.stoptimesForPatterns.length; i < l; i++) {
-        stopRows.push(<StoptimesInPattern stoptimesInPattern={data.stoptimesForPatterns[i]}/>)
+    for(var i = 0; i < data.stoptimesWithoutPatterns.length; i++) {
+        stopRows.push(<Stoptime stoptime={data.stoptimesWithoutPatterns[i]}/>)
     }
 
     for(var i = 0, l = data.alerts.length; i < l; i++) {
@@ -42,7 +47,6 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
             <b>{data.name}</b> - <i>{data.gtfsId}</i> <br />
             {alertRows}
             {stopRows} <br />
-
         </div>    
     )
 };

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7a7880c1e6cc7c941d2786ea0c7c07b3>>
+ * @generated SignedSource<<84df2cb7271213a5fe8f30264c9b940f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -40,9 +40,52 @@ v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "headsign",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "id",
   "storageKey": null
-};
+},
+v4 = [
+  (v2/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "realtimeArrival",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "scheduledArrival",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "Trip",
+    "kind": "LinkedField",
+    "name": "trip",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "routeShortName",
+        "storageKey": null
+      },
+      (v3/*: any*/)
+    ],
+    "storageKey": null
+  }
+];
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -109,14 +152,8 @@ return {
                 "plural": false,
                 "selections": [
                   (v1/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "headsign",
-                    "storageKey": null
-                  },
-                  (v2/*: any*/)
+                  (v2/*: any*/),
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -127,26 +164,27 @@ return {
                 "kind": "LinkedField",
                 "name": "stoptimes",
                 "plural": true,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "realtimeArrival",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "scheduledArrival",
-                    "storageKey": null
-                  }
-                ],
+                "selections": (v4/*: any*/),
                 "storageKey": null
               }
             ],
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": [
+              {
+                "kind": "Literal",
+                "name": "numberOfDepartures",
+                "value": 15
+              }
+            ],
+            "concreteType": "Stoptime",
+            "kind": "LinkedField",
+            "name": "stoptimesWithoutPatterns",
+            "plural": true,
+            "selections": (v4/*: any*/),
+            "storageKey": "stoptimesWithoutPatterns(numberOfDepartures:15)"
           },
           {
             "alias": null,
@@ -184,23 +222,23 @@ return {
                 "name": "alertSeverityLevel",
                 "storageKey": null
               },
-              (v2/*: any*/)
+              (v3/*: any*/)
             ],
             "storageKey": null
           },
-          (v2/*: any*/)
+          (v3/*: any*/)
         ],
         "storageKey": "stop(id:\"Lahti:104030\")"
       }
     ]
   },
   "params": {
-    "cacheID": "b8b76850aeff9bcbaec9dd2f8a3c1f28",
+    "cacheID": "1ac053460c91a25f02adb697ee5aa453",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery {\n  stop(id: \"Lahti:104030\") {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  realtimeArrival\n  scheduledArrival\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
+    "text": "query AppQuery {\n  stop(id: \"Lahti:104030\") {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 15) {\n    ...StoptimeFragment\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  trip {\n    routeShortName\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
   }
 };
 })();

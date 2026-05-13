@@ -7,7 +7,7 @@ export default function App() {
   const data = useLazyLoadQuery<AppQuery>(
     graphql`
       query AppQuery {
-        stop(id: "Lahti:104030") # tähän pysäkin gtfsID eg. Lahti:103653, Lahti:104030
+        stop(id: "Lahti:104030") # tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030"
         # täytyy compilaa uudestaan id:n vaihdon jälkeen - npx relay-compiler
         {
           ...PysakkiFragment #Pysakki.tsx

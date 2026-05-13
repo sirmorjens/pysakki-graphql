@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<304c4b5b4e3ab91b4904037cc2c5526e>>
+ * @generated SignedSource<<dec515aa87d989fbdca3c31ecab22ea5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,8 +11,12 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type StoptimeFragment$data = {
+  readonly headsign: string | null | undefined;
   readonly realtimeArrival: number | null | undefined;
   readonly scheduledArrival: number | null | undefined;
+  readonly trip: {
+    readonly routeShortName: string | null | undefined;
+  } | null | undefined;
   readonly " $fragmentType": "StoptimeFragment";
 };
 export type StoptimeFragment$key = {
@@ -30,6 +34,13 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "headsign",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "realtimeArrival",
       "storageKey": null
     },
@@ -39,12 +50,30 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "scheduledArrival",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "Trip",
+      "kind": "LinkedField",
+      "name": "trip",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "routeShortName",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
     }
   ],
   "type": "Stoptime",
   "abstractKey": null
 };
 
-(node as any).hash = "00413a317d7f4876d5e3d33068735726";
+(node as any).hash = "b9026694be5c00e0653e08fe55455c1e";
 
 export default node;

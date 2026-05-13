@@ -11,8 +11,12 @@ export default function Stoptime({stoptime}: Props)
             graphql`
                 fragment StoptimeFragment on Stoptime
                 {
+                    headsign
                     realtimeArrival
                     scheduledArrival
+                    trip {
+                        routeShortName
+                    }
                 }
             `, stoptime
         )
@@ -26,8 +30,8 @@ export default function Stoptime({stoptime}: Props)
             if(realSeconds>scheduledSeconds) {tilanne = "myöhässä"}else {tilanne = "etuajassa"}
 
             return(
-                <p>{tilanne}: {realTime}</p> // palauttaa päivitetyn ajan jos sellainen löytyy
+                <p style={{float:"left", marginLeft:"10px", marginRight:"500px"}}><b>{data.trip.routeShortName} // {data.headsign}</b> --- {tilanne}: <b>{realTime}</b><br /></p> // palauttaa päivitetyn ajan jos sellainen löytyy
             )
-        }else return(<p>{scheduledTime}</p>) 
+        }else return(<p style={{float:"left", marginLeft:"10px", marginRight:"500px"}}><b>{data.trip.routeShortName} // {data.headsign}</b> --- <b>{scheduledTime}</b><br /></p>) 
 
     };
