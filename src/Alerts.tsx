@@ -11,14 +11,14 @@ export default function Alerts({alert}: Props)
             graphql`
                 fragment AlertsFragment on Alert
                 {
-                    alertCause
-                    alertDescriptionText
-                    alertEffect
-                    alertSeverityLevel
+                    alertCause # syy häiriölle
+                    alertDescriptionText(language:"fi") # häiriön selitys, argumenttina kieli ("fi", "sv", "en")
+                    alertEffect # häirion vaikutus
+                    alertSeverityLevel # häiriön vakavuus
                 }
             `, alert
         )
-        return(
+        return( // palauttaa kaiken plaintekstinä, todnäk tarvitsee vain data.alertDescriptionText, loput voi muuntaa iconeiksi tai jotain
             <p>{data.alertCause}, {data.alertDescriptionText}, {data.alertEffect}, {data.alertSeverityLevel},</p>
         )
     };

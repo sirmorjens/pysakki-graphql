@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<84df2cb7271213a5fe8f30264c9b940f>>
+ * @generated SignedSource<<9a60dbb503088caa39dfaaf111b3b7cf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -51,6 +51,11 @@ v3 = {
   "storageKey": null
 },
 v4 = [
+  (v1/*: any*/),
+  (v2/*: any*/),
+  (v3/*: any*/)
+],
+v5 = [
   (v2/*: any*/),
   {
     "alias": null,
@@ -150,11 +155,7 @@ return {
                 "kind": "LinkedField",
                 "name": "pattern",
                 "plural": false,
-                "selections": [
-                  (v1/*: any*/),
-                  (v2/*: any*/),
-                  (v3/*: any*/)
-                ],
+                "selections": (v4/*: any*/),
                 "storageKey": null
               },
               {
@@ -164,7 +165,7 @@ return {
                 "kind": "LinkedField",
                 "name": "stoptimes",
                 "plural": true,
-                "selections": (v4/*: any*/),
+                "selections": (v5/*: any*/),
                 "storageKey": null
               }
             ],
@@ -183,8 +184,18 @@ return {
             "kind": "LinkedField",
             "name": "stoptimesWithoutPatterns",
             "plural": true,
-            "selections": (v4/*: any*/),
+            "selections": (v5/*: any*/),
             "storageKey": "stoptimesWithoutPatterns(numberOfDepartures:15)"
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Pattern",
+            "kind": "LinkedField",
+            "name": "patterns",
+            "plural": true,
+            "selections": (v4/*: any*/),
+            "storageKey": null
           },
           {
             "alias": null,
@@ -203,10 +214,16 @@ return {
               },
               {
                 "alias": null,
-                "args": null,
+                "args": [
+                  {
+                    "kind": "Literal",
+                    "name": "language",
+                    "value": "fi"
+                  }
+                ],
                 "kind": "ScalarField",
                 "name": "alertDescriptionText",
-                "storageKey": null
+                "storageKey": "alertDescriptionText(language:\"fi\")"
               },
               {
                 "alias": null,
@@ -233,12 +250,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1ac053460c91a25f02adb697ee5aa453",
+    "cacheID": "2197813e7297381a15d29d4c6f8446bd",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery {\n  stop(id: \"Lahti:104030\") {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 15) {\n    ...StoptimeFragment\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  trip {\n    routeShortName\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
+    "text": "query AppQuery {\n  stop(id: \"Lahti:104030\") {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: \"fi\")\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 15) {\n    ...StoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  trip {\n    routeShortName\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
   }
 };
 })();

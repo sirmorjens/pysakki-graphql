@@ -3,8 +3,9 @@ import { graphql, useFragment } from "react-relay";
 import type { PysakkiFragment$key } from "./__generated__/PysakkiFragment.graphql";
 
 import Alerts from "./Alerts";
-import StoptimesInPattern from "./StoptimesInPattern";
+// import StoptimesInPattern from "./StoptimesInPattern"; ei käytössä
 import Stoptime from "./Stoptime";
+// import Pattern from "./Pattern"; ei käytössä, tarvitaan mahdollisesti bussien sijaintien hakemiseen
 
 export default function Pysakki(props: { pysakki: PysakkiFragment$key; }) 
 {
@@ -12,8 +13,8 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
     graphql`
       fragment PysakkiFragment on Stop
       {
-        name
-        gtfsId
+        name # pysäkin nimi
+        gtfsId # pysäkin id
         stoptimesForPatterns
         {
             ...StoptimesInPatternFragment #StoptimeInsPattern.tsx
@@ -21,6 +22,10 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
         stoptimesWithoutPatterns(numberOfDepartures: 15) # tähän haluttu määrä saapuvien bussien aikoja - muutoksen jälkeen npx relay-compiler 
         {
             ...StoptimeFragment #Stoptime.tsx
+        }
+        patterns
+        {
+            ...PatternFragment #Pattern.tsx
         }
         alerts
         {
@@ -41,8 +46,8 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
     }
     return ( 
         // Pysäkin nimi, pysäkin gtfsID-tunniste
-        // häiriöt, jos niitä on Alerts.tsx
-        // reitit ja niiden saapumisajat
+        // häiriöt, jos niitä on
+        // reitit ja niiden koodit ja saapumisajat
         <div>
             <b>{data.name}</b> - <i>{data.gtfsId}</i> <br />
             {alertRows}

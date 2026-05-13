@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cdfbd0f03c87a9f9ad60e3d29a5e37a7>>
+ * @generated SignedSource<<bf686768b59b3d855e57e54a5b785e59>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,9 @@ export type PysakkiFragment$data = {
   } | null | undefined> | null | undefined;
   readonly gtfsId: string;
   readonly name: string;
+  readonly patterns: ReadonlyArray<{
+    readonly " $fragmentSpreads": FragmentRefs<"PatternFragment">;
+  } | null | undefined> | null | undefined;
   readonly stoptimesForPatterns: ReadonlyArray<{
     readonly " $fragmentSpreads": FragmentRefs<"StoptimesInPatternFragment">;
   } | null | undefined> | null | undefined;
@@ -90,6 +93,22 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "concreteType": "Pattern",
+      "kind": "LinkedField",
+      "name": "patterns",
+      "plural": true,
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "PatternFragment"
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "Alert",
       "kind": "LinkedField",
       "name": "alerts",
@@ -108,6 +127,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "5292619085a4cbecc4065f755eb2ea13";
+(node as any).hash = "49307ce12a57f3e73de6aaebb8c29637";
 
 export default node;

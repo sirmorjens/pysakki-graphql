@@ -16,7 +16,7 @@ export default function Pattern({pattern}: Props)
                 }
             `, pattern
         )
-        return(
-            <b style={{marginBottom:"5px"}} id="pattern">{data.name}, {data.headsign}</b>
+        return( // reitti, määränpää
+            <b style={{marginBottom:"5px"}}>{data.name}, {data.headsign}</b>
         )
     };
