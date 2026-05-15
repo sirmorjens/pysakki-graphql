@@ -1,5 +1,6 @@
 import { graphql, useFragment } from "react-relay";
 import type { StoptimeFragment$key } from "./__generated__/StoptimeFragment.graphql";
+import Alerts from "./Alerts";
 
 type Props = {
   stoptime: StoptimeFragment$key;
@@ -16,28 +17,41 @@ export default function Stoptime({stoptime}: Props)
                     scheduledArrival # suunniteltu saapumisaika sekunneissa
                     trip {
                         routeShortName # reittikoodi
+                        alerts {
+                            ...AlertsFragment
+                        }
                     }
                 }
             `, stoptime
         )
-        let realSeconds = data.realtimeArrival.valueOf();
-        let scheduledSeconds = data.scheduledArrival.valueOf();
-        let realTime = new Date(realSeconds * 1000).toISOString().slice(11, 16); // hh:mm
+        let realSeconds = data.realtimeArrival!.valueOf();
+        let scheduledSeconds = data.scheduledArrival!.valueOf();
+        let realTime = "";
         let scheduledTime = new Date(scheduledSeconds * 1000).toISOString().slice(11, 16); // hh:mm
+
+        let alertRows = [];
+    
+        for(var i = 0; i < data.trip!.alerts!.length; i++) {
+            alertRows.push(<Alerts alert={data.trip!.alerts![i]!}/>)
+        }
 
         if(realSeconds != scheduledSeconds) {
             let tilanne:String = "";
             if(realSeconds>scheduledSeconds) {tilanne = "myöhässä"}else {tilanne = "etuajassa"}
+        
+        if(realSeconds%60>30) {realTime = new Date((realSeconds + 60-realSeconds%60) * 1000).toISOString().slice(11, 16);} // pyöristää ylös lähimpään minuuttiin
+        else {realTime = new Date(realSeconds * 1000).toISOString().slice(11, 16);}
 
             return( // palauttaa päivitetyn ajan jos sellainen löytyy
                     // reittikoodi // määränpää --- tilanne: hh:mm
                 <p style={{float:"left", marginLeft:"10px", marginRight:"500px"}}>
-                    <b>{data.trip.routeShortName} // {data.headsign}</b> --- {tilanne}: <b>{realTime}</b><br />
+                    <b>{data.trip!.routeShortName} // {data.headsign}</b> --- {tilanne}: <b>{realTime}</b><br />
+                    {alertRows}
                 </p> 
             )
         }else return( // reittikoodi // määränpää --- hh:mm
             <p style={{float:"left", marginLeft:"10px", marginRight:"500px"}}>
-                <b>{data.trip.routeShortName} // {data.headsign}</b> --- <b>{scheduledTime}</b><br />
+                <b>{data.trip!.routeShortName} // {data.headsign}</b> --- <b>{scheduledTime}</b><br />
             </p>) 
 
     };

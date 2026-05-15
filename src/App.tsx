@@ -24,7 +24,7 @@ export default function App() {
            // haetut tiedot
     <div>
       {timeNow.toLocaleString('fi-FI')}
-      <Pysakki pysakki={pysakki} />
+      <Pysakki pysakki={pysakki!} />
     </div>
   );
 }

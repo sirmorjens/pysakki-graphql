@@ -11,14 +11,32 @@ export default function Alerts({alert}: Props)
             graphql`
                 fragment AlertsFragment on Alert
                 {
-                    alertCause # syy häiriölle
+                    alertCause # syy häiriölle | ACCIDENT, CONSTRUCTION, DEMONSTRATION, HOLIDAY, MAINTENANCE, MEDICAL_EMERGENCY, OTHER_CAUSE, POLICE_ACTIVITY, STRIKE, TECHNICAL_PROBLEM, UNKNOWN_CAUSE, WEATHER
                     alertDescriptionText(language:"fi") # häiriön selitys, argumenttina kieli ("fi", "sv", "en")
-                    alertEffect # häirion vaikutus
-                    alertSeverityLevel # häiriön vakavuus
+                    alertEffect # häirion vaikutus | ACCESSIBILITY_ISSUE, ADDITIONAL_SERVICE, DETOUR, MODIFIED_SERVICE, NO_EFFECT, NO_SERVICE, OTHER_EFFECT, REDUCED_SERVICE, SIGNIFICANT_DELAYS, STOP_MOVED, UNKNOWN_EFFECT
+                    alertSeverityLevel # häiriön vakavuus | INFO, SEVERE, UNKNOWN_SEVERITY, WARNING
                 }
             `, alert
         )
+
+        let severity = <i>no icon</i>
+        switch(data.alertSeverityLevel){
+            case "INFO":
+                console.log("info")
+                break;
+            case "SEVERE":
+                console.log("severe")
+                break;
+            case "UNKNOWN_SEVERITY":
+                console.log("unknown")
+                break;
+            case "WARNING":
+                console.log("warning")
+                severity = <svg width="30" height="30"><polygon points="30,30 15,5 0,30" style={{fill:"yellow", stroke:"purple", strokeWidth:"2"}} /></svg>
+                break;
+        }
+
         return( // palauttaa kaiken plaintekstinä, todnäk tarvitsee vain data.alertDescriptionText, loput voi muuntaa iconeiksi tai jotain
-            <p>{data.alertCause}, {data.alertDescriptionText}, {data.alertEffect}, {data.alertSeverityLevel},</p>
+            <p>{data.alertCause}, {data.alertDescriptionText}, {data.alertEffect}, {severity}</p>
         )
     };

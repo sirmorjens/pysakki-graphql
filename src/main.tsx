@@ -1,4 +1,4 @@
-import { StrictMode, Suspense } from 'react'
+import { StrictMode, /*Suspense*/ } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
@@ -32,9 +32,7 @@ const environment = new Environment({
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RelayEnvironmentProvider environment={environment}>
-      <Suspense fallback="Loading...">
-        <App />
-      </Suspense>
+      <App />
     </RelayEnvironmentProvider>
   </StrictMode>
 );

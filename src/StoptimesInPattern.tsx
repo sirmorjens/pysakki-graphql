@@ -32,8 +32,8 @@ export default function StoptimesInPattern({stoptimesInPattern}: Props)
             // reitti (reittikoodi, määränpää)
             // ajat (oikea tai suunniteltu)
             <section>
-                {<Pattern pattern={data.pattern} />} <br />
-                {data.stoptimes?.toReversed().map((stoptime) => <Stoptime stoptime={stoptime}/>)}
+                {<Pattern pattern={data.pattern!} />} <br />
+                {data.stoptimes!.toReversed().map((stoptime) => <Stoptime stoptime={stoptime!}/>)}
                 {/* {rows} */}
             </section>
         )

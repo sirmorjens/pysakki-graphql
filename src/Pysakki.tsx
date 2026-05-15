@@ -37,12 +37,12 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
     )
     let stopRows = [];
     let alertRows = [];
-    for(var i = 0; i < data.stoptimesWithoutPatterns.length; i++) {
-        stopRows.push(<Stoptime stoptime={data.stoptimesWithoutPatterns[i]}/>)
+    for(var i = 0; i < data.stoptimesWithoutPatterns!.length; i++) {
+        stopRows.push(<Stoptime stoptime={data.stoptimesWithoutPatterns![i]!}/>)
     }
 
-    for(var i = 0, l = data.alerts.length; i < l; i++) {
-        alertRows.push(<Alerts alert={data.alerts[i]}/>)
+    for(var i = 0, l = data.alerts!.length; i < l; i++) {
+        alertRows.push(<Alerts alert={data.alerts![i]!}/>)
     }
     return ( 
         // Pysäkin nimi, pysäkin gtfsID-tunniste

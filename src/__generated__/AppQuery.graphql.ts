@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9a60dbb503088caa39dfaaf111b3b7cf>>
+ * @generated SignedSource<<efc721cdcc14d4794ab841e5604f6af9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -55,7 +55,53 @@ v4 = [
   (v2/*: any*/),
   (v3/*: any*/)
 ],
-v5 = [
+v5 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Alert",
+  "kind": "LinkedField",
+  "name": "alerts",
+  "plural": true,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "alertCause",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "language",
+          "value": "fi"
+        }
+      ],
+      "kind": "ScalarField",
+      "name": "alertDescriptionText",
+      "storageKey": "alertDescriptionText(language:\"fi\")"
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "alertEffect",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "alertSeverityLevel",
+      "storageKey": null
+    },
+    (v3/*: any*/)
+  ],
+  "storageKey": null
+},
+v6 = [
   (v2/*: any*/),
   {
     "alias": null,
@@ -86,6 +132,7 @@ v5 = [
         "name": "routeShortName",
         "storageKey": null
       },
+      (v5/*: any*/),
       (v3/*: any*/)
     ],
     "storageKey": null
@@ -165,7 +212,7 @@ return {
                 "kind": "LinkedField",
                 "name": "stoptimes",
                 "plural": true,
-                "selections": (v5/*: any*/),
+                "selections": (v6/*: any*/),
                 "storageKey": null
               }
             ],
@@ -184,7 +231,7 @@ return {
             "kind": "LinkedField",
             "name": "stoptimesWithoutPatterns",
             "plural": true,
-            "selections": (v5/*: any*/),
+            "selections": (v6/*: any*/),
             "storageKey": "stoptimesWithoutPatterns(numberOfDepartures:15)"
           },
           {
@@ -197,52 +244,7 @@ return {
             "selections": (v4/*: any*/),
             "storageKey": null
           },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Alert",
-            "kind": "LinkedField",
-            "name": "alerts",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "alertCause",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": [
-                  {
-                    "kind": "Literal",
-                    "name": "language",
-                    "value": "fi"
-                  }
-                ],
-                "kind": "ScalarField",
-                "name": "alertDescriptionText",
-                "storageKey": "alertDescriptionText(language:\"fi\")"
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "alertEffect",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "alertSeverityLevel",
-                "storageKey": null
-              },
-              (v3/*: any*/)
-            ],
-            "storageKey": null
-          },
+          (v5/*: any*/),
           (v3/*: any*/)
         ],
         "storageKey": "stop(id:\"Lahti:104030\")"
@@ -250,12 +252,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2197813e7297381a15d29d4c6f8446bd",
+    "cacheID": "a6b9f9be933de7ed194639a938aa22a9",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery {\n  stop(id: \"Lahti:104030\") {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: \"fi\")\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 15) {\n    ...StoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  trip {\n    routeShortName\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
+    "text": "query AppQuery {\n  stop(id: \"Lahti:104030\") {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: \"fi\")\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 15) {\n    ...StoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
   }
 };
 })();
