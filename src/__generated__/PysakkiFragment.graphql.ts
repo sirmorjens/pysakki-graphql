@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bf686768b59b3d855e57e54a5b785e59>>
+ * @generated SignedSource<<2871c733a190082c7b7374c6de05d965>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -74,7 +74,7 @@ const node: ReaderFragment = {
         {
           "kind": "Literal",
           "name": "numberOfDepartures",
-          "value": 15
+          "value": 32
         }
       ],
       "concreteType": "Stoptime",
@@ -88,7 +88,7 @@ const node: ReaderFragment = {
           "name": "StoptimeFragment"
         }
       ],
-      "storageKey": "stoptimesWithoutPatterns(numberOfDepartures:15)"
+      "storageKey": "stoptimesWithoutPatterns(numberOfDepartures:32)"
     },
     {
       "alias": null,
@@ -127,6 +127,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "49307ce12a57f3e73de6aaebb8c29637";
+(node as any).hash = "53058acb88c41dc8c52dd5af1ccdf374";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<efc721cdcc14d4794ab841e5604f6af9>>
+ * @generated SignedSource<<d05c6ce6a5f4ef5545ea55eefbc03545>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -224,7 +224,7 @@ return {
               {
                 "kind": "Literal",
                 "name": "numberOfDepartures",
-                "value": 15
+                "value": 32
               }
             ],
             "concreteType": "Stoptime",
@@ -232,7 +232,7 @@ return {
             "name": "stoptimesWithoutPatterns",
             "plural": true,
             "selections": (v6/*: any*/),
-            "storageKey": "stoptimesWithoutPatterns(numberOfDepartures:15)"
+            "storageKey": "stoptimesWithoutPatterns(numberOfDepartures:32)"
           },
           {
             "alias": null,
@@ -252,12 +252,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a6b9f9be933de7ed194639a938aa22a9",
+    "cacheID": "19862b8e6b61403197fe6e17d97f8f79",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery {\n  stop(id: \"Lahti:104030\") {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: \"fi\")\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 15) {\n    ...StoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
+    "text": "query AppQuery {\n  stop(id: \"Lahti:104030\") {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: \"fi\")\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 32) {\n    ...StoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
   }
 };
 })();

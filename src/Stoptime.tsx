@@ -44,14 +44,15 @@ export default function Stoptime({stoptime}: Props)
 
             return( // palauttaa päivitetyn ajan jos sellainen löytyy
                     // reittikoodi // määränpää --- tilanne: hh:mm
-                <p style={{float:"left", marginLeft:"10px", marginRight:"500px"}}>
-                    <b>{data.trip!.routeShortName} // {data.headsign}</b> --- {tilanne}: <b>{realTime}</b><br />
+                <p className="trip">
+                    <b className="reittikoodi">{data.trip!.routeShortName} </b><br /> <b className="paikka">{data.headsign}</b><br />
+                    <b className="aika">{realTime}</b> <br />
                     {alertRows}
                 </p> 
             )
         }else return( // reittikoodi // määränpää --- hh:mm
-            <p style={{float:"left", marginLeft:"10px", marginRight:"500px"}}>
-                <b>{data.trip!.routeShortName} // {data.headsign}</b> --- <b>{scheduledTime}</b><br />
+            <p className="trip">
+                <b className="reittikoodi">{data.trip!.routeShortName} </b><br /> <b className="paikka">{data.headsign}</b><br /> <b className="aika">{scheduledTime}</b><br />
             </p>) 
 
     };

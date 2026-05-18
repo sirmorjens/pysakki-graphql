@@ -18,13 +18,9 @@ export default function App() {
   );
 
   const pysakki = data.stop;
-  let timeNow = new Date();
 
   return ( // päivämäärä
            // haetut tiedot
-    <div>
-      {timeNow.toLocaleString('fi-FI')}
       <Pysakki pysakki={pysakki!} />
-    </div>
   );
 }

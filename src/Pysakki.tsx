@@ -19,7 +19,7 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
         {
             ...StoptimesInPatternFragment #StoptimeInsPattern.tsx
         }
-        stoptimesWithoutPatterns(numberOfDepartures: 15) # tähän haluttu määrä saapuvien bussien aikoja - muutoksen jälkeen npx relay-compiler 
+        stoptimesWithoutPatterns(numberOfDepartures: 32) # tähän haluttu määrä saapuvien bussien aikoja - muutoksen jälkeen npx relay-compiler 
         {
             ...StoptimeFragment #Stoptime.tsx
         }
@@ -44,14 +44,19 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
     for(var i = 0, l = data.alerts!.length; i < l; i++) {
         alertRows.push(<Alerts alert={data.alerts![i]!}/>)
     }
+
+    let timeNow = new Date();
     return ( 
         // Pysäkin nimi, pysäkin gtfsID-tunniste
         // häiriöt, jos niitä on
         // reitit ja niiden koodit ja saapumisajat
-        <div>
-            <b>{data.name}</b> - <i>{data.gtfsId}</i> <br />
-            {alertRows}
-            {stopRows} <br />
+        <div className="grid-container">
+            <div className="header">
+                {timeNow.toLocaleString('fi-FI')} <br /> <br />
+                <b>{data.name}</b> - <i>{data.gtfsId}</i> <br />
+                {alertRows}
+            </div>
+            {stopRows}
         </div>    
     )
 };

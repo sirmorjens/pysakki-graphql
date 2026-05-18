@@ -92,7 +92,9 @@ h2 {
   }
 }
 p {
-  margin: 0;
+  float:left;
+  margin-left: 10px;
+  margin-right: 500px;
 }
 
 code,
