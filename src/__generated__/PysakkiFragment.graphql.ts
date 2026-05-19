@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2871c733a190082c7b7374c6de05d965>>
+ * @generated SignedSource<<7e895b42dc8fc4ac63f32c7de9864e1f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -33,7 +33,12 @@ export type PysakkiFragment$key = {
 };
 
 const node: ReaderFragment = {
-  "argumentDefinitions": [],
+  "argumentDefinitions": [
+    {
+      "kind": "RootArgument",
+      "name": "departures"
+    }
+  ],
   "kind": "Fragment",
   "metadata": null,
   "name": "PysakkiFragment",
@@ -72,9 +77,9 @@ const node: ReaderFragment = {
       "alias": null,
       "args": [
         {
-          "kind": "Literal",
+          "kind": "Variable",
           "name": "numberOfDepartures",
-          "value": 32
+          "variableName": "departures"
         }
       ],
       "concreteType": "Stoptime",
@@ -88,7 +93,7 @@ const node: ReaderFragment = {
           "name": "StoptimeFragment"
         }
       ],
-      "storageKey": "stoptimesWithoutPatterns(numberOfDepartures:32)"
+      "storageKey": null
     },
     {
       "alias": null,
@@ -127,6 +132,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "53058acb88c41dc8c52dd5af1ccdf374";
+(node as any).hash = "3b7fba46a5d5ecf12768bcbafe87a561";
 
 export default node;

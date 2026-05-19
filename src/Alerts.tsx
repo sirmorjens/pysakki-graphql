@@ -12,7 +12,7 @@ export default function Alerts({alert}: Props)
                 fragment AlertsFragment on Alert
                 {
                     alertCause # syy häiriölle | ACCIDENT, CONSTRUCTION, DEMONSTRATION, HOLIDAY, MAINTENANCE, MEDICAL_EMERGENCY, OTHER_CAUSE, POLICE_ACTIVITY, STRIKE, TECHNICAL_PROBLEM, UNKNOWN_CAUSE, WEATHER
-                    alertDescriptionText(language:"fi") # häiriön selitys, argumenttina kieli ("fi", "sv", "en")
+                    alertDescriptionText(language: $kieli) # häiriön selitys, argumenttina kieli ("fi", "sv", "en")
                     alertEffect # häirion vaikutus | ACCESSIBILITY_ISSUE, ADDITIONAL_SERVICE, DETOUR, MODIFIED_SERVICE, NO_EFFECT, NO_SERVICE, OTHER_EFFECT, REDUCED_SERVICE, SIGNIFICANT_DELAYS, STOP_MOVED, UNKNOWN_EFFECT
                     alertSeverityLevel # häiriön vakavuus | INFO, SEVERE, UNKNOWN_SEVERITY, WARNING
                 }
@@ -37,6 +37,6 @@ export default function Alerts({alert}: Props)
         }
 
         return( // palauttaa kaiken plaintekstinä, todnäk tarvitsee vain data.alertDescriptionText, loput voi muuntaa iconeiksi tai jotain
-            <p>{data.alertCause}, {data.alertDescriptionText}, {data.alertEffect}, {severity}</p>
+            <p className="alert">{data.alertDescriptionText} </p>
         )
     };

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d05c6ce6a5f4ef5545ea55eefbc03545>>
+ * @generated SignedSource<<e104037f47b58a1ed58c71d61f8071d2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,11 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type AppQuery$variables = Record<PropertyKey, never>;
+export type AppQuery$variables = {
+  departures: number;
+  id: string;
+  kieli: string;
+};
 export type AppQuery$data = {
   readonly stop: {
     readonly " $fragmentSpreads": FragmentRefs<"PysakkiFragment">;
@@ -22,40 +26,55 @@ export type AppQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "departures"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "id"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "kieli"
+},
+v3 = [
   {
-    "kind": "Literal",
+    "kind": "Variable",
     "name": "id",
-    "value": "Lahti:104030"
+    "variableName": "id"
   }
 ],
-v1 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v2 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "headsign",
   "storageKey": null
 },
-v3 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v4 = [
-  (v1/*: any*/),
-  (v2/*: any*/),
-  (v3/*: any*/)
+v7 = [
+  (v4/*: any*/),
+  (v5/*: any*/),
+  (v6/*: any*/)
 ],
-v5 = {
+v8 = {
   "alias": null,
   "args": null,
   "concreteType": "Alert",
@@ -74,14 +93,14 @@ v5 = {
       "alias": null,
       "args": [
         {
-          "kind": "Literal",
+          "kind": "Variable",
           "name": "language",
-          "value": "fi"
+          "variableName": "kieli"
         }
       ],
       "kind": "ScalarField",
       "name": "alertDescriptionText",
-      "storageKey": "alertDescriptionText(language:\"fi\")"
+      "storageKey": null
     },
     {
       "alias": null,
@@ -97,12 +116,12 @@ v5 = {
       "name": "alertSeverityLevel",
       "storageKey": null
     },
-    (v3/*: any*/)
+    (v6/*: any*/)
   ],
   "storageKey": null
 },
-v6 = [
-  (v2/*: any*/),
+v9 = [
+  (v5/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -132,22 +151,26 @@ v6 = [
         "name": "routeShortName",
         "storageKey": null
       },
-      (v5/*: any*/),
-      (v3/*: any*/)
+      (v8/*: any*/),
+      (v6/*: any*/)
     ],
     "storageKey": null
   }
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "AppQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "Stop",
         "kind": "LinkedField",
         "name": "stop",
@@ -159,7 +182,7 @@ return {
             "name": "PysakkiFragment"
           }
         ],
-        "storageKey": "stop(id:\"Lahti:104030\")"
+        "storageKey": null
       }
     ],
     "type": "QueryType",
@@ -167,19 +190,23 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Operation",
     "name": "AppQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "Stop",
         "kind": "LinkedField",
         "name": "stop",
         "plural": false,
         "selections": [
-          (v1/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -202,7 +229,7 @@ return {
                 "kind": "LinkedField",
                 "name": "pattern",
                 "plural": false,
-                "selections": (v4/*: any*/),
+                "selections": (v7/*: any*/),
                 "storageKey": null
               },
               {
@@ -212,7 +239,7 @@ return {
                 "kind": "LinkedField",
                 "name": "stoptimes",
                 "plural": true,
-                "selections": (v6/*: any*/),
+                "selections": (v9/*: any*/),
                 "storageKey": null
               }
             ],
@@ -222,17 +249,17 @@ return {
             "alias": null,
             "args": [
               {
-                "kind": "Literal",
+                "kind": "Variable",
                 "name": "numberOfDepartures",
-                "value": 32
+                "variableName": "departures"
               }
             ],
             "concreteType": "Stoptime",
             "kind": "LinkedField",
             "name": "stoptimesWithoutPatterns",
             "plural": true,
-            "selections": (v6/*: any*/),
-            "storageKey": "stoptimesWithoutPatterns(numberOfDepartures:32)"
+            "selections": (v9/*: any*/),
+            "storageKey": null
           },
           {
             "alias": null,
@@ -241,27 +268,27 @@ return {
             "kind": "LinkedField",
             "name": "patterns",
             "plural": true,
-            "selections": (v4/*: any*/),
+            "selections": (v7/*: any*/),
             "storageKey": null
           },
-          (v5/*: any*/),
-          (v3/*: any*/)
+          (v8/*: any*/),
+          (v6/*: any*/)
         ],
-        "storageKey": "stop(id:\"Lahti:104030\")"
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "19862b8e6b61403197fe6e17d97f8f79",
+    "cacheID": "745c533c1fd04abb26809bf8e07b77a9",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery {\n  stop(id: \"Lahti:104030\") {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: \"fi\")\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 32) {\n    ...StoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
+    "text": "query AppQuery(\n  $id: String!\n  $departures: Int!\n  $kieli: String!\n) {\n  stop(id: $id) {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: $kieli)\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: $departures) {\n    ...StoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "65ba7fe1bbd98f1b6aed4e6afa2a5d07";
+(node as any).hash = "fdb8b1920be3ca55ed777c5a74bbf4ab";
 
 export default node;

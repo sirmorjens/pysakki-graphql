@@ -6,15 +6,15 @@ import Pysakki from "./Pysakki.tsx";
 export default function App() {
   const data = useLazyLoadQuery<AppQuery>(
     graphql`
-      query AppQuery {
-        stop(id: "Lahti:104030") # tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030"
-        # täytyy compilaa uudestaan id:n vaihdon jälkeen - npx relay-compiler
+      query AppQuery($id: String!, $departures: Int!, $kieli: String!) {
+        stop(id: $id) 
         {
           ...PysakkiFragment #Pysakki.tsx
         }
       }
     `,
-    {}
+    // tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030", lähtöjen määrä ja häiriöiden kieli
+    {"id": "Lahti:104030", "departures": 21, "kieli": "fi"}
   );
 
   const pysakki = data.stop;

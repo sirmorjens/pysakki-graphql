@@ -31,12 +31,11 @@
 }
 
 #root {
-  width: 1126px;
+  width: 720px;
   max-width: 100%;
   margin: 0 auto;
   text-align: left;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
+  min-height: 95svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -48,8 +47,9 @@ body {
 .trip {
     background: #e5e4e7;
     border: solid 1px #08060d;
-    width:200px;
-    height:120px;
+    height: 120px;
+    padding: 5px;
+    margin: 3px 0;
 }
 .reittikoodi, .aika {
     font-size: 32px;
@@ -59,13 +59,16 @@ body {
     height:50px;
     margin-bottom: 5px;
 }
+.alert {
+  font-size: 24px;
+}
 
 /* Style the header */
 .header {
   grid-area: header;
   background-color: #f1f1f1;
   padding: 30px;
-  text-align: center;
+  text-align: left;
   font-size: 35px;
 }
 
@@ -73,48 +76,18 @@ body {
 .grid-container {
   display: grid;
   grid-template-areas: 
-    'header header header header' 
-    'p p p p';
-  grid-column-gap: 10px;
+    'header header header' 
+    'p p p'
+    'footer footer footer';
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 6px;
 } 
 
-.left,
-.middle,
-.right {
-  padding: 10px;
-}
-
-/* Style the left column */
-.left {
-  grid-area: left;
-}
-
-/* Style the middle column */
-.middle {
-  grid-area: middle;
-}
-
-/* Style the right column */
-.right {
-  grid-area: right;
-}
-
 /* Style the footer */
-.footer {
-  grid-area: footer;
-  background-color: #f1f1f1;
-  padding: 10px;
-  text-align: center;
-}
-
-/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
-@media (max-width: 300px) {
-  .grid-container  {
-    grid-template-areas: 
-      'header header header header header header' 
-      'left left left left left left' 
-      'middle middle middle middle middle middle' 
-      'right right right right right right' 
-      'footer footer footer footer footer footer';
-  }
+.alert {
+  margin: 0 3px;
+  padding: 2px;
+  background-color: rgba(240, 128, 128, 0.5);
+  text-align: left;
+  font-size: 22px;
 }
