@@ -45,19 +45,31 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 .trip {
-    background: #e5e4e7;
-    border: solid 1px #08060d;
+    background: #f1f1f1;
+    border: 2px #08060d;
+    border-style: solid none;
     height: 120px;
     padding: 5px;
     margin: 3px 0;
 }
-.reittikoodi, .aika {
+.reittikoodi {
+  color: #0091c2;
+}
+.oikeaaika {
+  color: #009e00;
+}
+.aika {
+  color: #000f;
+}
+.reittikoodi, .aika, .oikeaaika {
     font-size: 32px;
 }
 .paikka {
-    display:inline-block;
-    height:50px;
-    margin-bottom: 5px;
+  color: #6b6375;
+  display:inline-block;
+  height:50px;
+  margin-bottom: 5px;
+  margin-right: 20px;
 }
 .alert {
   font-size: 24px;
@@ -67,6 +79,7 @@ body {
 .header {
   grid-area: header;
   background-color: #f1f1f1;
+  color: black;
   padding: 30px;
   text-align: left;
   font-size: 35px;
@@ -80,14 +93,14 @@ body {
     'p p p'
     'footer footer footer';
   grid-template-columns: 1fr 1fr 1fr;
-  column-gap: 6px;
 } 
 
 /* Style the footer */
 .alert {
   margin: 0 3px;
   padding: 2px;
-  background-color: rgba(240, 128, 128, 0.5);
+  background-color: rgba(255, 124, 124);
+  color: #000f;
   text-align: left;
   font-size: 22px;
 }

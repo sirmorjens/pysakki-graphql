@@ -13,7 +13,7 @@ export default function App() {
         }
       }
     `,
-    // tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030", lähtöjen määrä ja häiriöiden kieli
+    // tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030", lähtöjen määrä ja häiriöiden kieli (fi, en, sv)
     {"id": "Lahti:104030", "departures": 21, "kieli": "fi"}
   );
 

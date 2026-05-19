@@ -46,7 +46,7 @@ export default function Stoptime({stoptime}: Props)
                     // reittikoodi // määränpää --- tilanne: hh:mm
                 <p className="trip">
                     <b className="reittikoodi">{data.trip!.routeShortName} </b><br /> <b className="paikka">{data.headsign}</b><br />
-                    <b className="aika" style={{color:"limegreen"}}>{realTime}</b>
+                    <b className="oikeaaika">{realTime}</b>
                     {alertRows}
                 </p> 
             )

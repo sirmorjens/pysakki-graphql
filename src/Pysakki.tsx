@@ -54,7 +54,7 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
             <div className="grid-container">
                 <div className="header">
                     {timeNow.toLocaleString('fi-FI').slice(0,19)} <br /> <br />
-                    <b>{data.name}</b> - <i>{data.gtfsId}</i> <br />
+                    <b>{data.name}</b> <br />
                 </div>
                 {stopRows}
             </div>  
