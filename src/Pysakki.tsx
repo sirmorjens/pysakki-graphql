@@ -47,9 +47,9 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
 
     let timeNow = new Date();
     return ( 
-        // Pysäkin nimi, pysäkin gtfsID-tunniste
-        // häiriöt, jos niitä on
+        // Pysäkin nimi
         // reitit ja niiden koodit ja saapumisajat
+        // häiriöt, jos niitä on
         <div>
             <div className="grid-container">
                 <div className="header">
@@ -58,7 +58,7 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
                 </div>
                 {stopRows}
             </div>  
-            <footer>{alertRows}</footer>
+            <footer className="alert">{alertRows}</footer>
         </div>
     )
 };

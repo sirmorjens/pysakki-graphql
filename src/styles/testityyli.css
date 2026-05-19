@@ -45,15 +45,21 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 .trip {
-    background: #f1f1f1;
-    border: 2px #08060d;
-    border-style: solid none;
-    height: 120px;
-    padding: 5px;
-    margin: 3px 0;
+  background: #f1f1f1;
+  border: solid 2px #08060d;
+  height: 120px;
+  padding: 10px 0 10px 5px;
+  margin: 0;
+  overflow: hidden;
+}
+.reittihäiriö {
+  font-size: 22px;
+  color:white;
+  background: red;
+  margin: 2px;
 }
 .reittikoodi {
-  color: #0091c2;
+  color: #0f00c0;
 }
 .oikeaaika {
   color: #009e00;
@@ -62,17 +68,22 @@ body {
   color: #000f;
 }
 .reittikoodi, .aika, .oikeaaika {
-    font-size: 32px;
+    font-size: 44px;
 }
 .paikka {
+  font-size: 24px;
   color: #6b6375;
   display:inline-block;
-  height:50px;
-  margin-bottom: 5px;
-  margin-right: 20px;
+  height:60px;
 }
-.alert {
-  font-size: 24px;
+
+@keyframes my-animation {
+  0% {
+    transform: translate(0,0);
+  }
+  100% {
+    transform: translate(-100%, 0);
+  }
 }
 
 /* Style the header */
@@ -89,18 +100,25 @@ body {
 .grid-container {
   display: grid;
   grid-template-areas: 
-    'header header header' 
-    'p p p'
-    'footer footer footer';
-  grid-template-columns: 1fr 1fr 1fr;
+    'header header' 
+    'p p';
+  grid-template-columns: 50% 50%;
+  gap: 3px;
 } 
 
-/* Style the footer */
 .alert {
-  margin: 0 3px;
-  padding: 2px;
+  margin: 5px 0;
   background-color: rgba(255, 124, 124);
   color: #000f;
   text-align: left;
-  font-size: 22px;
+  font-size: 30px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.alert span {
+  height: fit-content;
+  padding: 20px 0;
+  display: inline-block;
+  padding-left: 100%;
+  animation: my-animation 30s linear infinite;
 }

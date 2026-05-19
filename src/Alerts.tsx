@@ -37,6 +37,6 @@ export default function Alerts({alert}: Props)
         }
 
         return( // palauttaa kaiken plaintekstinä, todnäk tarvitsee vain data.alertDescriptionText, loput voi muuntaa iconeiksi tai jotain
-            <p className="alert">{data.alertDescriptionText} </p>
+            <span>{data.alertDescriptionText} </span>
         )
     };
