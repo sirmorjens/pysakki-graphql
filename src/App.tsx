@@ -14,7 +14,7 @@ export default function App() {
       }
     `,
     // tähän pysäkin gtfsID (eg. "Lahti:103653", "Lahti:104030", "Lahti:103619") lähtöjen määrä, häiriöiden kieli (fi, en, sv), näytetäänkö perutut vuorot (false = näytetään) ja mistä asti vuorot haetaan (testaamiseen, pitäisi aina olla 0 eli nykyinen)
-    {"id": "Lahti:104030", "departures": 14, "kieli": "en", "cancel": false, "alkuaika": 0} // 1779248492, "Lahti:103619" peruttu vuoro testi
+    {"id": "Lahti:104030", "departures": 14, "kieli": "fi", "cancel": false, "alkuaika": 0} // 1779248492, "Lahti:103619" peruttu vuoro testi
   );
 
   const pysakki = data.stop;

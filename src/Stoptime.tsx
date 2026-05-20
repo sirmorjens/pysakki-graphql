@@ -13,12 +13,30 @@ export default function Stoptime({stoptime}: Props)
                 fragment StoptimeFragment on Stoptime
                 {
                     headsign # määränpää
-                    realtimeArrival # reaaliaikainen saapumisaika sekunneissa
-                    scheduledArrival # suunniteltu saapumisaika sekunneissa
+                    realtimeArrival # reaaliaikainen saapumisaika sekunteina
+                    scheduledArrival # suunniteltu saapumisaika sekunteina
                     realtimeState # ADDED, CANCELED, MODIFIED, SCHEDULED, UPDATED
+                    stop 
+                    {
+                        gtfsId
+                    }
                     trip 
                     {
                         routeShortName # reittikoodi
+                        pattern 
+                        {
+                            vehiclePositions 
+                            {
+                                stopRelationship 
+                                {
+                                    status
+                                    stop 
+                                    {
+                                        gtfsId
+                                    }
+                                }
+                            }
+                        }
                         # alerts 
                         # {
                         #     ...alertsFragment
@@ -32,6 +50,8 @@ export default function Stoptime({stoptime}: Props)
         let realTime = "";
         let scheduledTime = new Date(scheduledSeconds * 1000).toISOString().slice(11, 16); // hh:mm
         let cancelState:String = "";
+        let arrivalState:String = "";
+        let vehpos = data.trip?.pattern?.vehiclePositions;
 
         // let alertRows = [];
     
@@ -40,6 +60,15 @@ export default function Stoptime({stoptime}: Props)
         // }
 
         if(data.realtimeState == "CANCELED") { cancelState = "Peruttu" }
+        for(let i = 0; i<vehpos?.length!; i++)
+        {
+            if(vehpos![i]!.stopRelationship!.stop.gtfsId == data!.stop!.gtfsId && cancelState != "Peruttu")
+            {
+                // merkitsee vuoron saapuvaksi jos pysäkin id ja vuoron status täsmää
+                // ei tee tällä hetkellä mitään koska lsl ei käytä tätä infoa vaikka hsl käyttää
+                if(vehpos![i]!.stopRelationship!.status == "INCOMING_AT") { arrivalState = "Saapuu" }
+            }
+        }
 
         if(realSeconds != scheduledSeconds) {
             // let tilanne:String = "";
@@ -57,6 +86,7 @@ export default function Stoptime({stoptime}: Props)
                     <b className="paikka">{data.headsign}</b> <br />
                     <b className="oikeaaika">{realTime}</b>
                     <b className="reittihäiriö"><span>{cancelState}</span></b>
+                    <b className="saapumistila">{arrivalState}</b>
                 </p> 
             )
         }else return( // reittikoodi, määränpää, aika (suunniteltu), onko vuoro peruttu
@@ -65,6 +95,7 @@ export default function Stoptime({stoptime}: Props)
                 <b className="paikka">{data.headsign}</b> <br />
                 <b className="aika">{scheduledTime}</b>
                 <b className="reittihäiriö"><span>{cancelState}</span></b>
+                <b className="saapumistila">{arrivalState}</b>
             </p>) 
 
     };

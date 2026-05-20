@@ -52,7 +52,7 @@ body {
   margin: 0;
 }
 .reittihäiriö {
-  font-size: 22px;
+  font-size: 35px;
   color:white;
   background: red;
   margin: 5px;
@@ -98,7 +98,8 @@ body {
 
 .alert {
   margin: 5px 0;
-  background-color: rgba(255, 124, 124);
+  padding: 2px 0 0 2px;
+  background-color: #cd9497;
   color: #000f;
   text-align: left;
   font-size: 22px;
