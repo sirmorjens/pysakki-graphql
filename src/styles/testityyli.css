@@ -50,7 +50,6 @@ body {
   height: 120px;
   padding: 10px 0 10px 5px;
   margin: 0;
-  overflow: hidden;
 }
 .reittihäiriö {
   font-size: 22px;
@@ -77,15 +76,6 @@ body {
   height:60px;
 }
 
-@keyframes my-animation {
-  0% {
-    transform: translate(0,0);
-  }
-  100% {
-    transform: translate(-100%, 0);
-  }
-}
-
 /* Style the header */
 .header {
   grid-area: header;
@@ -102,7 +92,7 @@ body {
   grid-template-areas: 
     'header header' 
     'p p';
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 1fr 1fr;
   gap: 3px;
 } 
 
