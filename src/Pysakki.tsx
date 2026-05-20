@@ -19,7 +19,7 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
         {
             ...StoptimesInPatternFragment #StoptimeInsPattern.tsx
         }
-        stoptimesWithoutPatterns(numberOfDepartures:  $departures) # tähän haluttu määrä saapuvien bussien aikoja - muutoksen jälkeen npx relay-compiler 
+        stoptimesWithoutPatterns(numberOfDepartures:  $departures, omitCanceled: $cancel, startTime: $alkuaika) # muuta muuttujia App.tsx 
         {
             ...StoptimeFragment #Stoptime.tsx
         }
@@ -37,16 +37,13 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
     )
     let stopRows = [];
     let alertRows = [];
-    for(var i = 0; i < data.stoptimesWithoutPatterns!.length; i++) {
-        stopRows.push(<Stoptime stoptime={data.stoptimesWithoutPatterns![i]!}/>)
-    }
+    for ( var i = 0; i < data.stoptimesWithoutPatterns!.length; i++ ) { stopRows.push(<Stoptime stoptime={data.stoptimesWithoutPatterns![i]!}/>) }
 
-    for(var i = 0, l = data.alerts!.length; i < l; i++) {
-        alertRows.push(<Alerts alert={data.alerts![i]!}/>)
-    }
+    for ( var i = 0, l = data.alerts!.length; i < l; i++ ) { alertRows.push(<Alerts alert={data.alerts![i]!}/>) }
 
     let timeNow = new Date();
     return ( 
+        // Päivämäärä
         // Pysäkin nimi
         // reitit ja niiden koodit ja saapumisajat
         // häiriöt, jos niitä on
