@@ -75,6 +75,10 @@ body {
   display:inline-block;
   height:60px;
 }
+.saapumistilanne {
+  font-size: 30px;
+  color: #009e00;
+}
 
 /* Style the header */
 .header {
@@ -98,7 +102,7 @@ body {
 
 .alert {
   margin: 5px 0;
-  padding: 2px 0 0 2px;
+  padding: 0 0 0 2px;
   background-color: #cd9497;
   color: #000f;
   text-align: left;

@@ -1,6 +1,5 @@
 import type { AppQuery } from "./__generated__/AppQuery.graphql";
 import { graphql, useLazyLoadQuery } from "react-relay";
-// import Agency from "./Agency.tsx";
 import Pysakki from "./Pysakki.tsx";
 
 export default function App() {
@@ -13,14 +12,18 @@ export default function App() {
         }
       }
     `,
-    // tähän pysäkin gtfsID (eg. "Lahti:103653", "Lahti:104030", "Lahti:103619") lähtöjen määrä, häiriöiden kieli (fi, en, sv), näytetäänkö perutut vuorot (false = näytetään) ja mistä asti vuorot haetaan (testaamiseen, pitäisi aina olla 0 eli nykyinen)
-    {"id": "Lahti:104030", "departures": 14, "kieli": "fi", "cancel": false, "alkuaika": 0} // 1779248492, "Lahti:103619" peruttu vuoro testi
+    // tähän pysäkin gtfsID (eg. "Lahti:103653", "Lahti:104030") lähtöjen määrä, häiriöiden kieli (fi, en, sv), näytetäänkö perutut vuorot (false = näytetään) ja mistä asti vuorot haetaan (testaamiseen, pitäisi aina olla 0 eli nykyinen)
+    {"id": "Lahti:104030", "departures": 14, "kieli": "en", "cancel": false, "alkuaika": 0}
   );
 
   const pysakki = data.stop;
+  if(data.stop != null) {
+    return (
+        // haetut tiedot
+        <Pysakki pysakki={pysakki!} />
+    );
+  } else return (
+    <h1>Virhe haettaessa dataa</h1>
+  )
 
-  return (
-      // haetut tiedot
-      <Pysakki pysakki={pysakki!} />
-  );
 }

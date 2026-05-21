@@ -1,6 +1,6 @@
-import { StrictMode, /*Suspense*/ } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './styles/testityyli.css'
+import './styles/grid.css'
 import App from './App.tsx'
 import { RelayEnvironmentProvider } from "react-relay";
 import { Environment, Network } from "relay-runtime";

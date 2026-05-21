@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1e54a4f7df47950320ad78c5a6cd9910>>
+ * @generated SignedSource<<722883e5d024b0753ead65705daba1b2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -71,43 +71,23 @@ v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "gtfsId",
+  "name": "headsign",
   "storageKey": null
 },
 v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "headsign",
-  "storageKey": null
-},
-v9 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v10 = [
+v9 = [
   (v6/*: any*/),
-  (v8/*: any*/),
-  (v9/*: any*/)
+  (v7/*: any*/),
+  (v8/*: any*/)
 ],
-v11 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Stop",
-  "kind": "LinkedField",
-  "name": "stop",
-  "plural": false,
-  "selections": [
-    (v7/*: any*/),
-    (v9/*: any*/)
-  ],
-  "storageKey": null
-},
-v12 = [
-  (v8/*: any*/),
+v10 = [
+  (v7/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -129,7 +109,6 @@ v12 = [
     "name": "realtimeState",
     "storageKey": null
   },
-  (v11/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -145,49 +124,7 @@ v12 = [
         "name": "routeShortName",
         "storageKey": null
       },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "Pattern",
-        "kind": "LinkedField",
-        "name": "pattern",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "VehiclePosition",
-            "kind": "LinkedField",
-            "name": "vehiclePositions",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "StopRelationship",
-                "kind": "LinkedField",
-                "name": "stopRelationship",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "status",
-                    "storageKey": null
-                  },
-                  (v11/*: any*/)
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          },
-          (v9/*: any*/)
-        ],
-        "storageKey": null
-      },
-      (v9/*: any*/)
+      (v8/*: any*/)
     ],
     "storageKey": null
   }
@@ -246,7 +183,13 @@ return {
         "plural": false,
         "selections": [
           (v6/*: any*/),
-          (v7/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "gtfsId",
+            "storageKey": null
+          },
           {
             "alias": null,
             "args": null,
@@ -262,7 +205,7 @@ return {
                 "kind": "LinkedField",
                 "name": "pattern",
                 "plural": false,
-                "selections": (v10/*: any*/),
+                "selections": (v9/*: any*/),
                 "storageKey": null
               },
               {
@@ -272,7 +215,7 @@ return {
                 "kind": "LinkedField",
                 "name": "stoptimes",
                 "plural": true,
-                "selections": (v12/*: any*/),
+                "selections": (v10/*: any*/),
                 "storageKey": null
               }
             ],
@@ -301,7 +244,7 @@ return {
             "kind": "LinkedField",
             "name": "stoptimesWithoutPatterns",
             "plural": true,
-            "selections": (v12/*: any*/),
+            "selections": (v10/*: any*/),
             "storageKey": null
           },
           {
@@ -311,7 +254,7 @@ return {
             "kind": "LinkedField",
             "name": "patterns",
             "plural": true,
-            "selections": (v10/*: any*/),
+            "selections": (v9/*: any*/),
             "storageKey": null
           },
           {
@@ -356,23 +299,23 @@ return {
                 "name": "alertSeverityLevel",
                 "storageKey": null
               },
-              (v9/*: any*/)
+              (v8/*: any*/)
             ],
             "storageKey": null
           },
-          (v9/*: any*/)
+          (v8/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "269f0fc28d03b79b46d0d309b2fe1d29",
+    "cacheID": "203a1be399ab6d13dfc9947b77564279",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery(\n  $id: String!\n  $departures: Int!\n  $kieli: String!\n  $cancel: Boolean!\n  $alkuaika: Long!\n) {\n  stop(id: $id) {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: $kieli)\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: $departures, omitCanceled: $cancel, startTime: $alkuaika) {\n    ...StoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  realtimeState\n  stop {\n    gtfsId\n    id\n  }\n  trip {\n    routeShortName\n    pattern {\n      vehiclePositions {\n        stopRelationship {\n          status\n          stop {\n            gtfsId\n            id\n          }\n        }\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
+    "text": "query AppQuery(\n  $id: String!\n  $departures: Int!\n  $kieli: String!\n  $cancel: Boolean!\n  $alkuaika: Long!\n) {\n  stop(id: $id) {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: $kieli)\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: $departures, omitCanceled: $cancel, startTime: $alkuaika) {\n    ...StoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  realtimeState\n  trip {\n    routeShortName\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
   }
 };
 })();

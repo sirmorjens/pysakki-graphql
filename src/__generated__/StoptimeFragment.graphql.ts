@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<258b1f63d6ae145a397ba0be068bf585>>
+ * @generated SignedSource<<7b3f02afd06d63d4e8328328bf1087dd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,27 +10,13 @@
 
 import { ReaderFragment } from 'relay-runtime';
 export type RealtimeState = "ADDED" | "CANCELED" | "MODIFIED" | "SCHEDULED" | "UPDATED" | "%future added value";
-export type VehicleStopStatus = "INCOMING_AT" | "IN_TRANSIT_TO" | "STOPPED_AT" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type StoptimeFragment$data = {
   readonly headsign: string | null | undefined;
   readonly realtimeArrival: number | null | undefined;
   readonly realtimeState: RealtimeState | null | undefined;
   readonly scheduledArrival: number | null | undefined;
-  readonly stop: {
-    readonly gtfsId: string;
-  } | null | undefined;
   readonly trip: {
-    readonly pattern: {
-      readonly vehiclePositions: ReadonlyArray<{
-        readonly stopRelationship: {
-          readonly status: VehicleStopStatus;
-          readonly stop: {
-            readonly gtfsId: string;
-          };
-        } | null | undefined;
-      }> | null | undefined;
-    } | null | undefined;
     readonly routeShortName: string | null | undefined;
   } | null | undefined;
   readonly " $fragmentType": "StoptimeFragment";
@@ -40,26 +26,7 @@ export type StoptimeFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"StoptimeFragment">;
 };
 
-const node: ReaderFragment = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Stop",
-  "kind": "LinkedField",
-  "name": "stop",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "gtfsId",
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-};
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -93,7 +60,6 @@ return {
       "name": "realtimeState",
       "storageKey": null
     },
-    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -108,47 +74,6 @@ return {
           "kind": "ScalarField",
           "name": "routeShortName",
           "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "Pattern",
-          "kind": "LinkedField",
-          "name": "pattern",
-          "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "VehiclePosition",
-              "kind": "LinkedField",
-              "name": "vehiclePositions",
-              "plural": true,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "StopRelationship",
-                  "kind": "LinkedField",
-                  "name": "stopRelationship",
-                  "plural": false,
-                  "selections": [
-                    {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "status",
-                      "storageKey": null
-                    },
-                    (v0/*: any*/)
-                  ],
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
         }
       ],
       "storageKey": null
@@ -157,8 +82,7 @@ return {
   "type": "Stoptime",
   "abstractKey": null
 };
-})();
 
-(node as any).hash = "9746a10ac55bfde5ad945486f1a80b0e";
+(node as any).hash = "37edf4322b289f8d1ce49eb6084ec98f";
 
 export default node;

@@ -15,6 +15,7 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
       {
         name # pysäkin nimi
         gtfsId # pysäkin id
+
         stoptimesForPatterns
         {
             ...StoptimesInPatternFragment #StoptimeInsPattern.tsx
@@ -34,14 +35,18 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
     }
     `,
     props.pysakki
-    )
+    );
+
     let stopRows = [];
     let alertRows = [];
+
     for ( var i = 0; i < data.stoptimesWithoutPatterns!.length; i++ ) { stopRows.push(<Stoptime stoptime={data.stoptimesWithoutPatterns![i]!}/>) }
 
     for ( var i = 0, l = data.alerts!.length; i < l; i++ ) { alertRows.push(<Alerts alert={data.alerts![i]!}/>) }
 
     let timeNow = new Date();
+    let options:any = { year: "numeric", month: "numeric", day: "2-digit", hour: "2-digit", minute: "2-digit" };
+
     return ( 
         // Päivämäärä
         // Pysäkin nimi
@@ -50,7 +55,7 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
         <div>
             <div className="grid-container">
                 <div className="header">
-                    {timeNow.toLocaleString('fi-FI').slice(0,19)} <br /> <br />
+                    {timeNow.toLocaleDateString('fi-FI', options)} <br /> <br />
                     <b>{data.name}</b> <br />
                 </div>
                 {stopRows}

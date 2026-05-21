@@ -26,6 +26,7 @@ export default function Alerts({alert}: Props)
                 break;
             case "SEVERE":
                 console.log("severe")
+                severity = <svg width="30" height="30"><polygon points="30,30 15,5 0,30" style={{fill:"red", stroke:"purple", strokeWidth:"2"}} /></svg>
                 break;
             case "UNKNOWN_SEVERITY":
                 console.log("unknown")
@@ -37,6 +38,6 @@ export default function Alerts({alert}: Props)
         }
 
         return(
-            <span>{data.alertDescriptionText} </span>
+            <span>{data.alertDescriptionText}</span>
         )
     };

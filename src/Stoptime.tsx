@@ -1,6 +1,5 @@
 import { graphql, useFragment } from "react-relay";
 import type { StoptimeFragment$key } from "./__generated__/StoptimeFragment.graphql";
-// import Alerts from "./Alerts";
 
 type Props = {
   stoptime: StoptimeFragment$key;
@@ -16,64 +15,33 @@ export default function Stoptime({stoptime}: Props)
                     realtimeArrival # reaaliaikainen saapumisaika sekunteina
                     scheduledArrival # suunniteltu saapumisaika sekunteina
                     realtimeState # ADDED, CANCELED, MODIFIED, SCHEDULED, UPDATED
-                    stop 
-                    {
-                        gtfsId
-                    }
+
                     trip 
                     {
                         routeShortName # reittikoodi
-                        pattern 
-                        {
-                            vehiclePositions 
-                            {
-                                stopRelationship 
-                                {
-                                    status
-                                    stop 
-                                    {
-                                        gtfsId
-                                    }
-                                }
-                            }
-                        }
-                        # alerts 
-                        # {
-                        #     ...alertsFragment
-                        # }
                     }
                 }
             `, stoptime
         )
-        let realSeconds = data.realtimeArrival!.valueOf();
-        let scheduledSeconds = data.scheduledArrival!.valueOf();
+        
+        const realSeconds = data.realtimeArrival!.valueOf();
+        const scheduledSeconds = data.scheduledArrival!.valueOf();
+
         let realTime = "";
         let scheduledTime = new Date(scheduledSeconds * 1000).toISOString().slice(11, 16); // hh:mm
-        let cancelState:String = "";
-        let arrivalState:String = "";
-        let vehpos = data.trip?.pattern?.vehiclePositions;
 
-        // let alertRows = [];
-    
-        // for(var i = 0; i < data.trip!.alerts!.length; i++) {
-        //     alertRows.push(<Alerts alert={data.trip!.alerts![i]!}/>)
-        // }
+        let cancelState= "";
+        let arrivalState= "";
+
+        let d = new Date();
+        let secondsNow = Math.round(d.getTime() / 1000)%86400;
+
+        // merkitään bussi saapuvaksi jos saapumisaika lähestyy
+        if((realSeconds-3600*3)-secondsNow <= 30) { arrivalState = "Saapuu" }
 
         if(data.realtimeState == "CANCELED") { cancelState = "Peruttu" }
-        for(let i = 0; i<vehpos?.length!; i++)
-        {
-            if(vehpos![i]!.stopRelationship!.stop.gtfsId == data!.stop!.gtfsId && cancelState != "Peruttu")
-            {
-                // merkitsee vuoron saapuvaksi jos pysäkin id ja vuoron status täsmää
-                // ei tee tällä hetkellä mitään koska lsl ei käytä tätä infoa vaikka hsl käyttää
-                if(vehpos![i]!.stopRelationship!.status == "INCOMING_AT") { arrivalState = "Saapuu" }
-            }
-        }
 
         if(realSeconds != scheduledSeconds) {
-            // let tilanne:String = "";
-            // if(realSeconds>scheduledSeconds) {tilanne = "myöhässä"}else {tilanne = "etuajassa"}
-
             // pyöristää ylös lähimpään minuuttiin
             if(realSeconds%60>30) { realTime = new Date((realSeconds + 60-realSeconds%60) * 1000).toISOString().slice(11, 16); }
 
@@ -86,7 +54,7 @@ export default function Stoptime({stoptime}: Props)
                     <b className="paikka">{data.headsign}</b> <br />
                     <b className="oikeaaika">{realTime}</b>
                     <b className="reittihäiriö"><span>{cancelState}</span></b>
-                    <b className="saapumistila">{arrivalState}</b>
+                    <b className="saapumistilanne">{arrivalState}</b>
                 </p> 
             )
         }else return( // reittikoodi, määränpää, aika (suunniteltu), onko vuoro peruttu
@@ -95,7 +63,7 @@ export default function Stoptime({stoptime}: Props)
                 <b className="paikka">{data.headsign}</b> <br />
                 <b className="aika">{scheduledTime}</b>
                 <b className="reittihäiriö"><span>{cancelState}</span></b>
-                <b className="saapumistila">{arrivalState}</b>
+                <b className="saapumistilanne">{arrivalState}</b>
             </p>) 
 
     };
