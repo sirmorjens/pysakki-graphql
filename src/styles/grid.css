@@ -63,10 +63,14 @@ body {
 .oikeaaika {
   color: #009e00;
 }
+.peruttuaika {
+  color: #009e00;
+  text-decoration: line-through red 3px;
+}
 .aika {
   color: #000f;
 }
-.reittikoodi, .aika, .oikeaaika {
+.reittikoodi, .aika, .oikeaaika, .peruttuaika {
     font-size: 44px;
 }
 .paikka {
