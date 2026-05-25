@@ -35,7 +35,6 @@ export default function Stoptime({stoptime}: Props)
 
         let d = new Date();
         let secondsNow = Math.round(d.getTime() / 1000)%86400;
-        console.log(data.realtimeState)
 
         // merkitään bussi saapuvaksi jos saapumisaika lähestyy
         if((realSeconds-3600*3)-secondsNow <= 30) { arrivalState = "Saapuu" }
@@ -47,7 +46,7 @@ export default function Stoptime({stoptime}: Props)
 
             else { shownTime = new Date(realSeconds * 1000).toISOString().slice(11, 16); }
 
-            if(data.realtimeState == "CANCELED") { cancelState = "Peruttu"; aikaClass = "peruttuaika" }
+            if(data.realtimeState == "CANCELED") { cancelState = "Peruttu"; aikaClass = "peruttuaika"; arrivalState = "" }
 
         } 
 

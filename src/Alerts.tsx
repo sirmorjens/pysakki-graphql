@@ -19,21 +19,21 @@ export default function Alerts({alert}: Props)
             `, alert
         )
 
-        let severity = <i>no icon</i>
+        // let severity = <i>no icon</i>
         switch(data.alertSeverityLevel){
             case "INFO":
                 console.log("info")
                 break;
             case "SEVERE":
                 console.log("severe")
-                severity = <svg width="30" height="30"><polygon points="30,30 15,5 0,30" style={{fill:"red", stroke:"purple", strokeWidth:"2"}} /></svg>
+                // severity = <svg width="30" height="30"><polygon points="30,30 15,5 0,30" style={{fill:"red", stroke:"purple", strokeWidth:"2"}} /></svg>
                 break;
             case "UNKNOWN_SEVERITY":
                 console.log("unknown")
                 break;
             case "WARNING":
                 console.log("warning")
-                severity = <svg width="30" height="30"><polygon points="30,30 15,5 0,30" style={{fill:"yellow", stroke:"purple", strokeWidth:"2"}} /></svg>
+                // severity = <svg width="30" height="30"><polygon points="30,30 15,5 0,30" style={{fill:"yellow", stroke:"purple", strokeWidth:"2"}} /></svg>
                 break;
         }
 
