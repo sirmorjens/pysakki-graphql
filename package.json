@@ -6,10 +6,19 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "quickbuild:-}": "tsc --noCheck && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.2.8",
+    "@fontsource/barlow-semi-condensed": "^5.2.7",
+    "@mapbox/polyline": "^1.2.1",
+    "@vis.gl/react-maplibre": "^8.1.1",
+    "geojson-polyline": "^1.0.3",
+    "gtfs-realtime-bindings": "^2.0.0",
+    "maplibre-gl": "^5.24.0",
+    "mqtt": "^5.15.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-relay": "^20.1.1",

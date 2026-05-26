@@ -1,0 +1,84 @@
+{
+  "version": 8,
+  "name": "Pysakki Map",
+  "metadata": {},
+  "glyphs": "./Map/Glyphs/{fontstack}/{range}.pbf",
+  "sources": {
+    "openmaptiles": {
+      "type": "vector",
+      "_URL_for_openfreemapTiles": "https://tiles.openfreemap.org/planet",
+      "url": "/Map/LahtiMapTiles.json"
+    }
+  },
+  "sprite": "",
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": {"background-color": "#005DA9"}
+    },
+    {
+      "id": "roads",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+      "minzoom": 0,
+      "maxzoom": 24,
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "line-color": "#00559A",
+        "line-width": 2,
+        "line-gap-width": 0
+      }
+    },
+    {
+      "id": "vesi",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "water",
+      "paint": {
+        "fill-color": "#00457D"
+      }
+    },
+    {
+      "id": "3dbuilding",
+      "type": "fill-extrusion",
+      "source": "openmaptiles",
+      "source-layer": "building",
+      "paint": {
+        "fill-extrusion-height": 10,
+        "fill-extrusion-color": "#00457D"
+      }
+    },
+    {
+      "id": "syb",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "place",
+      "minzoom": 1,
+      "maxzoom": 24,
+      "filter": ["all"],
+      "layout": {
+        "visibility": "visible",
+        "text-field": ["get", "name"],
+        "text-font": ["Barlow Semi Condensed Regular"],
+        "text-letter-spacing": 0,
+        "text-rotation-alignment": "viewport",
+        "text-size": ["case", ["==", ["get", "class"], "suburb"], 12, 0],
+        "text-justify": "left",
+        "text-pitch-alignment": "viewport",
+        "symbol-z-order": "viewport-y",
+        "symbol-placement": "point"
+      },
+      "paint": {
+        "text-color": [
+          "case",
+          ["==", ["get", "class"], "suburb"],
+          "#ffffffff",
+          "#aaaabe"
+        ]
+      }
+    }
+  ],
+  "id": "l5kp286"
+}
