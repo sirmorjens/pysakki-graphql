@@ -32,7 +32,6 @@ const environment = new Environment({
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RelayEnvironmentProvider environment={environment}>
-      <meta httpEquiv="Refresh" content="60" />
       <App />
     </RelayEnvironmentProvider>
   </StrictMode>
