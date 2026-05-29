@@ -1,9 +1,5 @@
 /**
-<<<<<<< Updated upstream
  * @generated SignedSource<<b7f1f9e19e4cf366bd891e7b975f7537>>
-=======
- * @generated SignedSource<<ee7679a51e3ba54d56c984d5ad0e9839>>
->>>>>>> Stashed changes
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,7 +13,7 @@ import { FragmentRefs } from "relay-runtime";
 export type AppQuery$variables = Record<PropertyKey, never>;
 export type AppQuery$data = {
   readonly stop: {
-    readonly " $fragmentSpreads": FragmentRefs<"Map10NextEndpointsFragment" | "PysakkiFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"PysakkiFragment" | "PysakkiMapFragment">;
   } | null | undefined;
   readonly vehicleRentalsByBbox: ReadonlyArray<{
     readonly " $fragmentSpreads": FragmentRefs<"PysakkiMapRentalsFragment">;
@@ -222,7 +218,7 @@ return {
           {
             "args": null,
             "kind": "FragmentSpread",
-            "name": "Map10NextEndpointsFragment"
+            "name": "PysakkiMapFragment"
           }
         ],
         "storageKey": "stop(id:\"Lahti:104030\")"
@@ -448,16 +444,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8a6e7dc7ded7c1f0cb2a7a83ee7cd635",
+    "cacheID": "79202b18e8324c8a367e6b3d1fd05ff9",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery {\n  stop(id: \"Lahti:104030\") {\n    ...PysakkiFragment\n    ...Map10NextEndpointsFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: \"fi\")\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment Map10NextEndpointsFragment on Stop {\n  geometries {\n    geoJson\n  }\n  routes {\n    shortName\n    gtfsId\n    patterns {\n      patternGeometry {\n        points\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 15) {\n    ...StoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
+    "text": "query AppQuery {\n  stop(id: \"Lahti:104030\") {\n    ...PysakkiFragment\n    ...PysakkiMapFragment\n    id\n  }\n  vehicleRentalsByBbox(maximumLongitude: 25.7972, minimumLongitude: 25.5428, maximumLatitude: 61.0374, minimumLatitude: 60.9208) {\n    __typename\n    ... on VehicleRentalStation {\n      ...PysakkiMapRentalsFragment\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: \"fi\")\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFirstStoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  serviceDay\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 15) {\n    ...StoptimeFragment\n    ...PysakkiFirstStoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment PysakkiMapFragment on Stop {\n  geometries {\n    geoJson\n  }\n  routes {\n    stops {\n      name\n      geometries {\n        geoJson\n      }\n      id\n    }\n    shortName\n    gtfsId\n    patterns {\n      patternGeometry {\n        points\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment PysakkiMapRentalsFragment on VehicleRentalStation {\n  name\n  lat\n  lon\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  serviceDay\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f598510df0ef66eeeb622eb589218509";
+(node as any).hash = "18ba75dce212b60c9dfb8b0192fe0cac";
 
 export default node;

@@ -17,7 +17,6 @@ import type { PysakkiMapRentalsFragment$key } from './__generated__/PysakkiMapRe
 
 import { type ReactElement, useEffect, useState } from 'react';
 import type { MqttClient } from 'mqtt';
-import mqtt from 'mqtt';
 
 const VehiclePositionsEndpoint = "wss://mqtt.digitransit.fi"
 let lastRealtimeRender = 0
@@ -60,8 +59,6 @@ let VehiclePositionsData = {} as {[vId: number]: VehiclePositionItem}
 const routeIdToShortName: {
   [routeId: string]: string
 } = {} 
-
-let mqttClient: MqttClient;
 
 export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rentalsData: PysakkiMapRentalsFragment$key; routeShortName: string}) {
 
@@ -133,9 +130,8 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
 
   useEffect(() => {
     VehiclePositionsWS(
-      VehiclePositionsEndpoint,
       PositionMessageCallback
-    ).then(mqttClientResult => mqttClient = mqttClientResult)
+    )
   }, [])
 
   useEffect(() => {
@@ -427,7 +423,7 @@ const updateMap = () => {
           )}
           {rentalsData.map(rentalStation => 
             <Marker latitude={rentalStation.lat!} longitude={rentalStation.lon!}>
-              <div class={PysakkiMapStyle.fillari}>
+              <div className={PysakkiMapStyle.fillari}>
                 <img src={fillari} alt="Fillari" />
               </div>
             </Marker>

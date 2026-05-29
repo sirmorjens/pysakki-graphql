@@ -13,19 +13,19 @@ const mqttTopics: {
     pendingTopics: [],
     subcsribedTopics: [],
 }
-export const VehiclePositionsWS = async (
+export const VehiclePositionsWS = (
     callback: (
         message: GtfsRealtimeBindings.transit_realtime.FeedMessage,
-    ) => void): Promise<MqttClient> => {
+    ) => void): MqttClient => {
 
     mqttCallback = callback;
 
     mqttClient.on('connect', () => {
         SubscribeToRoutePositions("")
-
-        // @ts-ignore
+        
     })
 
+    // @ts-ignore
     mqttClient.on('message', (topic, message) => {
         const decodedMsg = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(message)
         
@@ -53,10 +53,8 @@ export const VehiclePositionsWS = async (
 }
 
 export const SubscribeToRoutePositions = (routeShortName: string) => {
-    console.log("call: " + routeShortName)
     if(!mqttClient.connected && routeShortName != "")
     {
-        console.log("set to pending")
         mqttTopics.pendingTopics.push( routeShortName )
         return;
     }
@@ -67,7 +65,6 @@ export const SubscribeToRoutePositions = (routeShortName: string) => {
             mqttClient.subscribe(topic, (err, granted) => {
                 if(err)
                 {
-                    console.log("err")
                 }
 
                 if (granted && granted.length)
@@ -97,9 +94,7 @@ export const SubscribeToRoutePositions = (routeShortName: string) => {
 
 export const UnSubscribeAll = () => {
     mqttTopics.subcsribedTopics.forEach((topic) => 
-        mqttClient.unsubscribe(topic, {}, (arm) => {
-
-
+        mqttClient.unsubscribe(topic, {}, () => {
         })
     )
     // hopefully we managed to unsubscribe
