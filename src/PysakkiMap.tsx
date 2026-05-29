@@ -1,100 +1,92 @@
-import { Map as MapLibreMap, Marker, Source, Layer, type LayerProps, type StyleSpecification, type ViewStateChangeEvent } from '@vis.gl/react-maplibre';
+import { Map as MapLibreMap, Marker, Source, Layer, type MapRef, type LayerProps, type StyleSpecification, type ViewStateChangeEvent, type LngLatBoundsLike } from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css'; // See notes below
 import mapstyle from "./Map/pysakki_mapstyle.json"
 import { useFragment } from 'react-relay';
 import { graphql } from 'react-relay';
-import { VehiclePositionsWS } from './VehiclePositions'
+import { SubscribeToRoutePositions, UnSubscribeAll, VehiclePositionsWS } from './VehiclePositions'
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
 import PysakkiMapStyle from './PysakkiMap.module.css'
 import pieniBussi from "./assets/bussi.svg"
-
+import fillari from "./assets/fillari.svg"
 // @ts-expect-error - no types
 import polyline from '@mapbox/polyline'
 
 import type { Feature, FeatureCollection, LineString, Position } from 'geojson';
 import type { PysakkiMapFragment$key } from './__generated__/PysakkiMapFragment.graphql';
-import { type ReactElement, useCallback, useEffect, useState } from 'react';
+import type { PysakkiMapRentalsFragment$key } from './__generated__/PysakkiMapRentalsFragment.graphql';
 
-import '@fontsource/barlow-semi-condensed/100.css';
-import '@fontsource/barlow-semi-condensed/200.css';
-import '@fontsource/barlow-semi-condensed/300.css';
-import '@fontsource/barlow-semi-condensed/400.css';
-import '@fontsource/barlow-semi-condensed/500.css';
-import '@fontsource/barlow-semi-condensed/600.css';
-import '@fontsource/barlow-semi-condensed/700.css';
-import '@fontsource/barlow-semi-condensed/800.css';
-import '@fontsource/barlow-semi-condensed/900.css';
-import '@fontsource-variable/dm-sans/wght.css';
+import { type ReactElement, useEffect, useState } from 'react';
+import type { MqttClient } from 'mqtt';
+import mqtt from 'mqtt';
 
+const VehiclePositionsEndpoint = "wss://mqtt.digitransit.fi"
+let lastRealtimeRender = 0
 
+// how often render fresh realtime position
+let realtimeRenderCooldown = 30 * 1000 // 30 seconds
 
-export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key}) {
-  
-  const [VehiclePositionsState, setVehiclePositionsState] = useState<VehiclePositionItem[]>([]);
-  const VehiclePositionsData = {} as {[vId: number]: VehiclePositionItem}
-
-  // no "shortName" (eg. '1K', '23' etc) available in position data
-  // only routeId, so let's map them together into a lookup table
-  const routeIdToShortName: {
-    [routeId: string]: string
-  } = {} 
-
-  useEffect(() => {
-    const VehiclePositionsEndpoint: {
-      url: string,
-      topics: string[]
-    } = {
-      url: "wss://mqtt.digitransit.fi",
-      topics: [],
-    }
-
-    // push routes associated to this stop to topics to listen position
-    Object.keys(routeIdToShortName)
-    .forEach(routeId => 
-      VehiclePositionsEndpoint.topics
-      .push( `/gtfsrt/vp/Lahti/+/+/BUS/${routeId}/#` 
-    ))
-    
-    const mqttClient = VehiclePositionsWS(
-      VehiclePositionsEndpoint.url,
-      VehiclePositionsEndpoint.topics,
-      PositionMessageCallback
-    );
-
-    return () => {
-      mqttClient.end();
-    }
-  }, [])
-
-  type VehiclePositionItem = {
+type VehiclePositionItem = {
     position: [number, number];
     bearing: number;
     routeId: string;
+}
+
+const layerStyle: LayerProps = {
+    id: 'route',
+    type: 'line',
+    source: 'route',
+    layout: {
+        'line-join': 'round',
+        'line-cap': 'round'
+    },
+    paint: {
+        'line-color': ["get", "routeColor"],
+        'line-width': 3,
+        "line-offset": ["*", ["get", "routeIndex"], 0.2]
+    }
+
+};
+
+let routeEndStopMarkers: ReactElement[] = []
+
+// rounded coords as a key to group overlapping/nearby coords
+let endPointCoordinates = new Map<string, {labels: string[], coords: Position}>()
+
+
+let VehiclePositionsData = {} as {[vId: number]: VehiclePositionItem}
+
+// no "shortName" (eg. '1K', '23' etc) available in position data
+// only routeId, so let's map them together into a lookup table
+const routeIdToShortName: {
+  [routeId: string]: string
+} = {} 
+
+let mqttClient: MqttClient;
+
+export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rentalsData: PysakkiMapRentalsFragment$key; routeShortName: string}) {
+
+
+  // state definitions 
+  const [VehiclePositionsState, setVehiclePositionsState] = useState<VehiclePositionItem[]>([]);
+  const [zoomLevelState, changeZoomLevelState] = useState(11)
+  const [mapBearingState, changeMapBearingState] = useState(0)
+  const [mapRefState, setMapRef] = useState<MapRef | null>();
+  const [mapGeoJsonDataState, setMapGeoJsonDataState] = useState<FeatureCollection>({  
+    type: 'FeatureCollection',
+    features: []
+  })
+
+
+
+  const routeGeometries: Array<{
+    shortName: string, 
+    geojson: Feature
+  }> = []
+
+  const mapGeoJsonData: FeatureCollection = {
+    type: 'FeatureCollection',
+    features: []
   }
-
-
-
-  const PositionMessageCallback = useCallback( 
-    ( message: GtfsRealtimeBindings.transit_realtime.FeedMessage ) =>
-    {
-      // vehicle id as object key to avoid duplicates
-      const vId:string = (message.entity[0].vehicle?.vehicle?.id) ?? ""
-      
-      const routeId: string = message.entity[0].vehicle?.trip?.routeId ?? ""
-      const pos: number[] = [message.entity[0].vehicle?.position?.latitude ?? 0, message.entity[0].vehicle?.position?.longitude ?? 0]
-      const bearing: number = message.entity[0].vehicle?.position?.bearing ?? 0
-      
-      Object.assign(VehiclePositionsData, {
-        [vId]: {
-          position: pos,
-          bearing: bearing,
-          routeId: routeId,
-        }
-      })
-  
-      // break object into renderable array and update state
-      setVehiclePositionsState( [...Object.values(VehiclePositionsData)] )
-  }, []);
 
   const data = useFragment<PysakkiMapFragment$key>(
     graphql`
@@ -104,9 +96,16 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key}) {
           geoJson
         }
         routes {
+          stops {
+            name
+            geometries {
+              geoJson
+            }
+          }
           shortName
           gtfsId
           patterns {
+
             patternGeometry {
               points
             }
@@ -116,6 +115,199 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key}) {
     `,
     props.pysakki
   )
+
+  const rentalsData = useFragment<PysakkiMapRentalsFragment$key>(
+    graphql`
+      fragment PysakkiMapRentalsFragment on VehicleRentalStation @relay(plural: true)
+      {
+        name
+        lat
+        lon
+      }
+    `,
+    props.rentalsData
+  )
+
+  console.log("rentalsdata")
+  console.log(rentalsData)
+
+  useEffect(() => {
+    VehiclePositionsWS(
+      VehiclePositionsEndpoint,
+      PositionMessageCallback
+    ).then(mqttClientResult => mqttClient = mqttClientResult)
+  }, [])
+
+  useEffect(() => {
+    if (data.routes) data.routes.forEach(route => {
+
+      if(route.shortName != props.routeShortName) return  
+
+      const routeId: number = parseInt( route.gtfsId.split(":")[1] )
+
+      // lookup for position data to get shortname (eg. "1K", not available in pos. data) via route id
+      Object.assign(routeIdToShortName, {
+        [routeId]: route.shortName,
+      })
+
+      // push routes associated to this stop to topics to listen position
+      VehiclePositionsData = {};
+      // un-listen other routes (if present)
+      UnSubscribeAll();
+      SubscribeToRoutePositions(`/gtfsrt/vp/Lahti/+/+/BUS/${routeId}/#`)
+          
+
+      routeGeometries.push( {
+        shortName: (route.shortName as string),
+        geojson: GeoJSONfromPolylines( route.patterns![0]?.patternGeometry?.points )
+      })
+    })
+
+    // clear old endpoints
+    endPointCoordinates.clear()
+
+
+    routeGeometries.forEach((routeGeometry) => {
+      mapGeoJsonData.features.push(routeGeometry.geojson)
+
+      const [startLng, startLat] = (routeGeometry.geojson.geometry as LineString).coordinates[0]
+        // rounded coords as key to group overlapping/very closely positioned endpoints
+      const startHash = roundedCoordsAsKey([startLng, startLat])
+
+      const [destLng, destLat] = (routeGeometry.geojson.geometry as LineString).coordinates.slice(-1)[0]
+      
+      const destHash = roundedCoordsAsKey([destLng, destLat])
+        
+      if( endPointCoordinates.has(startHash) )
+      {
+        const endPoint = endPointCoordinates.get(startHash)!
+        endPoint.labels.push( routeGeometry.shortName )
+        endPointCoordinates.set(startHash, endPoint)  
+      } 
+      else
+      {
+        const endPoint = {
+          labels: [routeGeometry.shortName],
+          coords: [startLat, startLng],
+        }
+        endPointCoordinates.set(startHash, endPoint)
+      }
+
+      if( endPointCoordinates.has(destHash) )
+      {
+        const endPoint = endPointCoordinates.get(destHash)!
+        endPoint.labels.push( routeGeometry.shortName )
+        endPointCoordinates.set(destHash, endPoint)  
+      }
+      else
+      {
+        const endPoint = {
+          labels: [routeGeometry.shortName],
+          coords: [destLat, destLng],
+        }
+        endPointCoordinates.set(destHash, endPoint)    
+      }
+    })
+
+    // clear markers and endpoints
+    // somehow the way react either doesn't reinitialize
+    // stuff when it should and does when is should not 
+    // drives me up the wall
+    routeEndStopMarkers = []
+
+
+    // push endpoints into markers
+    endPointCoordinates.forEach((endPoint) => 
+      routeEndStopMarkers.push(
+        <Marker
+        latitude={endPoint.coords[0]}
+        longitude={endPoint.coords[1]}
+        anchor='bottom'
+        offset={[0,0]}>
+          <div className={[PysakkiMapStyle.routeEndPoint, false  /* kesken */  ? "" : PysakkiMapStyle.destination].join(" ")}>
+            <div className={PysakkiMapStyle.label}>
+              {endPoint.labels.map((label) => 
+                <div>{label}</div>
+              )}
+            </div>
+            <div className={PysakkiMapStyle.stem}></div>
+          </div>
+        </Marker>
+    ))
+
+    setMapGeoJsonDataState(mapGeoJsonData);
+    setVehiclePositionsState( [...Object.values(VehiclePositionsData)] )
+    updateMap()
+
+    return () => {
+
+    }
+  }, [mapRefState, props.routeShortName])
+
+// update map view to show current stop and end stop
+const updateMap = () => {
+
+    if(!routeGeometries.length) return;
+
+    // display bounds either from displayed stop to destination
+    // or closeby vehicle to destination
+    let lat1, lat2, lng1, lng2, minLat, maxLat, minLng, maxLng;
+
+
+    [lng1, lat1] = (routeGeometries[0].geojson.geometry as LineString).coordinates.slice(-1)[0];
+
+    // no vehicle pos data available, display stop position
+    if(VehiclePositionsState.length)
+    { 
+      // implement way to display only the arriving vehicle,
+      // not some other vehicle on same route
+      lat2 = VehiclePositionsState[0].position[0]
+      lng2 = VehiclePositionsState[0].position[1]
+    }
+    else
+    {
+      lat2 = data.geometries?.geoJson.coordinates[1]
+      lng2 = data.geometries?.geoJson.coordinates[0]
+    }
+
+    minLng = lng1 > lng2 ? lng2 : lng1
+    maxLng = lng1 > lng2 ? lng1 : lng2
+    minLat = lat1 > lat2 ? lat2 : lat1;
+    maxLat = lat1 > lat1 ? lat1 : lat2;
+    
+    const bounds: LngLatBoundsLike = [minLng, minLat, maxLng, maxLat, ] as [number,number,number,number]
+
+    mapRefState?.fitBounds(bounds, {padding: {left: 80, top: 80, right: 80, bottom: 80}, linear: true, /* animate: false */})
+
+  }
+
+  const PositionMessageCallback =
+    ( message: GtfsRealtimeBindings.transit_realtime.FeedMessage ) =>
+    {
+      // vehicle id as object key to avoid duplicates
+      const vId:string = (message.entity[0].vehicle?.vehicle?.id) ?? ""
+      
+      const routeId: string = message.entity[0].vehicle?.trip?.routeId ?? ""
+      const pos: number[] = [message.entity[0].vehicle?.position?.latitude ?? 0, message.entity[0].vehicle?.position?.longitude ?? 0]
+      const bearing: number = message.entity[0].vehicle?.position?.bearing ?? 0
+      
+      // update vehiclepositions internally
+      Object.assign(VehiclePositionsData, {
+        [vId]: {
+          position: pos,
+          bearing: bearing,
+          routeId: routeId,
+        }
+      })
+      
+      // update screen positions 
+      // implement cooldown for epaper display
+      if(( Date.now() - lastRealtimeRender ) > realtimeRenderCooldown )
+      { 
+        setVehiclePositionsState( [...Object.values(VehiclePositionsData)] ) 
+        lastRealtimeRender = Date.now()
+      }
+  };
 
   // create an object/map key from rounded coords
   // so overlapping/nearby coords are grouped under same key
@@ -143,8 +335,6 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key}) {
     return FeatureObj;
   } 
 
-  const routeEndStopMarkers: ReactElement[] = []
-  const endPointCoordinates = new Map<string, {labels: string[], coords: Position}>()
 
   const routeNominalColorPalette: string[] = [
     '#fff7ec',
@@ -182,161 +372,72 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key}) {
     nominalColorIndex = nominalColorIndex == routeNominalColorPalette.length ? 0 : nominalColorIndex + 1;
 
     return {
-      color: color,
+      color: "#000000",
       index: nominalColorIndex
     };
   }
 
-  const routeGeometries: Array<{
-    shortName: string, 
-    geojson: Feature
-  }> = []
+  
 
-  const mapGeoJsonData: FeatureCollection = {
-    type: 'FeatureCollection',
-    features: []
+  const zoomStateChange = (e: ViewStateChangeEvent) => {
+    changeZoomLevelState( e.viewState.zoom )
+  }
+  const bearingStateChange = (e: ViewStateChangeEvent) => {
+    changeMapBearingState( e.viewState.bearing )
   }
 
-  /*
-    Given the routes for this stop, store route geometries for drawing them on map
-    and routeIds to subscribe to position updates from mqtt feed
-  */
-  if (data.routes) data.routes.forEach(route => {
-
-    const routeId: number = parseInt( route.gtfsId.split(":")[1] )
-    // lookup for position data to get shortname (eg. "1K", not available in pos. data) via route id
-    Object.assign(routeIdToShortName, {
-      [routeId]: route.shortName,
-    })
-
-    routeGeometries.push( {
-      shortName: (route.shortName as string),
-      geojson: GeoJSONfromPolylines( route.patterns![0]?.patternGeometry?.points )
-    })
-  })
-
-  // push route data into polylines and store end point coords
-  // this is done to manage overlap and group routes starting/ending at same coordinate
-  routeGeometries.forEach((routeGeometry) => {
-
-    mapGeoJsonData.features.push(routeGeometry.geojson)
-
-    const [startLng, startLat] = (routeGeometry.geojson.geometry as LineString).coordinates[0]
-    // rounded coords as key to group overlapping/very closely positioned endpoints
-    const startHash = roundedCoordsAsKey([startLng, startLat])
-
-    const [destLng, destLat] = (routeGeometry.geojson.geometry as LineString).coordinates.slice(-1)[0]
-    const destHash = roundedCoordsAsKey([destLng, destLat])
-    
-    if( endPointCoordinates.has(startHash) )
-    {
-      const endPoint = endPointCoordinates.get(startHash)!
-      endPoint.labels.push( routeGeometry.shortName )
-      endPointCoordinates.set(startHash, endPoint)  
-    } 
-    else
-    {
-      const endPoint = {
-        labels: [routeGeometry.shortName],
-        coords: [startLat, startLng],
-      }
-      endPointCoordinates.set(startHash, endPoint)
-    }
-
-    if( endPointCoordinates.has(destHash) )
-    {
-      const endPoint = endPointCoordinates.get(destHash)!
-      endPoint.labels.push( routeGeometry.shortName )
-      endPointCoordinates.set(destHash, endPoint)  
-    }
-    else
-    {
-      const endPoint = {
-        labels: [routeGeometry.shortName],
-        coords: [destLat, destLng],
-      }
-      endPointCoordinates.set(destHash, endPoint)    
-    }
-  })
-
-  // push endpoints into markers
-  endPointCoordinates.forEach((endPoint) => 
-    routeEndStopMarkers.push(
-        <Marker
-          latitude={endPoint.coords[0]}
-          longitude={endPoint.coords[1]}
-          anchor='bottom'
-          offset={[0,0]}>
-            <div className={[PysakkiMapStyle.routeEndPoint, false  /* kesken */  ? "" : PysakkiMapStyle.destination].join(" ")}>
-              <div className={PysakkiMapStyle.label}>
-                {endPoint.labels.map((label) => 
-                  <div>{label}</div>
-                )}
-              </div>
-              <div className={PysakkiMapStyle.stem}></div>
-            </div>
-        </Marker>
-  ))
-
-  const layerStyle: LayerProps = {
-      id: 'route',
-      type: 'line',
-      source: 'route',
-      layout: {
-          'line-join': 'round',
-          'line-cap': 'round'
-      },
-      paint: {
-          'line-color': ["get", "routeColor"],
-          'line-width': 1,
-          "line-offset": ["*", ["get", "routeIndex"], 0.2]
-      }
-};
-
-const [zoomLevelState, changeZoomLevelState] = useState(11)
-const [mapBearingState, changeMapBearingState] = useState(0)
-
-const zoomStateChange = (e: ViewStateChangeEvent) => {
-  changeZoomLevelState( e.viewState.zoom )
-}
-const bearingStateChange = (e: ViewStateChangeEvent) => {
-  changeMapBearingState( e.viewState.bearing )
-}
 
   return (
-    <MapLibreMap
-      initialViewState={{
-        latitude: 60.9827, /* jossain Lahden yllä */
-        longitude: 25.6612,
-        zoom: 11,
-        /* bounds: [26, 50, 26, 90], define bounds from displayed routes */
-        pitch: 30,
-      }}
-      attributionControl={false}
-      style={{width: "100%", height: 800}}
-      onZoom={zoomStateChange}
-      onRotate={bearingStateChange}
-      mapStyle={mapstyle as StyleSpecification}>
-        {routeEndStopMarkers}
 
-        {VehiclePositionsState.map<ReactElement>(
-            (vehicleposition: {
-              position: number[],
-              bearing: number,
-              routeId: string
-            }) => 
-            <Marker latitude={vehicleposition.position[0]} longitude={vehicleposition.position[1]}>
-              <div className={PysakkiMapStyle.vehicle}>
-                <div className={PysakkiMapStyle.bussi} style={{width: `${(zoomLevelState*zoomLevelState*2)*0.05}mm`}}><img src={pieniBussi} alt="Bussi" className={vehicleposition.bearing - 180 < mapBearingState ? "" : PysakkiMapStyle.flipped}/></div>
-                <div className={PysakkiMapStyle.vehicleLabel} style={{fontSize: `${(zoomLevelState*zoomLevelState*2)*0.01}mm`, marginTop: `${(zoomLevelState*zoomLevelState*2)*0.05}%`}}>{routeIdToShortName.hasOwnProperty( vehicleposition.routeId ) ? routeIdToShortName[vehicleposition.routeId] : "?"}</div>
+      <MapLibreMap
+        ref={setMapRef}
+        reuseMaps={true}
+        initialViewState={{
+          latitude: 60.9827, /* jossain Lahden yllä */
+          longitude: 25.6612,
+          zoom: 11,
+          pitch: 0,
+        }}
+        attributionControl={false}
+        style={{width: "100%", height: "30%"}}
+        onZoom={zoomStateChange}
+        onRotate={bearingStateChange}
+        mapStyle={mapstyle as StyleSpecification}>
+          {routeEndStopMarkers}
+
+          {VehiclePositionsState.map<ReactElement>(
+              (vehicleposition: {
+                position: number[],
+                bearing: number,
+                routeId: string
+              }) => 
+              <Marker latitude={vehicleposition.position[0]} longitude={vehicleposition.position[1]}>
+                <div className={PysakkiMapStyle.vehicle}>
+                  <div className={PysakkiMapStyle.bussi} style={{width: `${(zoomLevelState*zoomLevelState*2)*0.05}mm`}}><img src={pieniBussi} alt="Bussi" className={vehicleposition.bearing - 180 < mapBearingState ? "" : PysakkiMapStyle.flipped}/></div>
+                  <div className={PysakkiMapStyle.vehicleLabel} style={{fontSize: `${(zoomLevelState*zoomLevelState*2)*0.01}mm`, marginTop: `${(zoomLevelState*zoomLevelState*2)*0.05}%`}}>{routeIdToShortName.hasOwnProperty( vehicleposition.routeId ) ? routeIdToShortName[vehicleposition.routeId] : "?"}</div>
+                </div>
+              </Marker>
+          )}       
+          {data.routes?.filter(route => route.shortName == props.routeShortName).map(route => 
+            route.stops?.map(stop => 
+              <Marker latitude={stop?.geometries?.geoJson.coordinates[1]} longitude={stop?.geometries?.geoJson.coordinates[0]} anchor='center'>
+                <div className={PysakkiMapStyle.singleStop}></div>
+              </Marker>
+            )
+          )}
+          {rentalsData.map(rentalStation => 
+            <Marker latitude={rentalStation.lat!} longitude={rentalStation.lon!}>
+              <div class={PysakkiMapStyle.fillari}>
+                <img src={fillari} alt="Fillari" />
               </div>
             </Marker>
-        )}       
+          )}
+          <Marker latitude={data.geometries?.geoJson.coordinates[1]} longitude={data.geometries?.geoJson.coordinates[0]} color={"black"} />
+          <Source id="route" type="geojson" data={mapGeoJsonDataState}>
+            <Layer {...layerStyle} />
+          </Source>
 
-        <Source id="route" type="geojson" data={mapGeoJsonData}>
-          <Layer {...layerStyle} />
-        </Source>
+      </MapLibreMap>
 
-    </MapLibreMap>
   );
 }

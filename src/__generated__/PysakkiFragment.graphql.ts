@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bf686768b59b3d855e57e54a5b785e59>>
+ * @generated SignedSource<<a6f089b29707e2b7b4c97fdcce269c02>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,7 +23,7 @@ export type PysakkiFragment$data = {
     readonly " $fragmentSpreads": FragmentRefs<"StoptimesInPatternFragment">;
   } | null | undefined> | null | undefined;
   readonly stoptimesWithoutPatterns: ReadonlyArray<{
-    readonly " $fragmentSpreads": FragmentRefs<"StoptimeFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"PysakkiFirstStoptimeFragment" | "StoptimeFragment">;
   } | null | undefined> | null | undefined;
   readonly " $fragmentType": "PysakkiFragment";
 };
@@ -86,6 +86,11 @@ const node: ReaderFragment = {
           "args": null,
           "kind": "FragmentSpread",
           "name": "StoptimeFragment"
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "PysakkiFirstStoptimeFragment"
         }
       ],
       "storageKey": "stoptimesWithoutPatterns(numberOfDepartures:15)"
@@ -127,6 +132,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "49307ce12a57f3e73de6aaebb8c29637";
+(node as any).hash = "3b4414f6aaff17e12eab6bdf364c7f7f";
 
 export default node;

@@ -15,7 +15,7 @@
     {
       "id": "background",
       "type": "background",
-      "paint": {"background-color": "#005DA9"}
+      "paint": {"background-color": "#ffffff"}
     },
     {
       "id": "roads",
@@ -26,7 +26,7 @@
       "maxzoom": 24,
       "layout": {"visibility": "visible"},
       "paint": {
-        "line-color": "#00559A",
+        "line-color": "#cecece",
         "line-width": 2,
         "line-gap-width": 0
       }
@@ -37,17 +37,16 @@
       "source": "openmaptiles",
       "source-layer": "water",
       "paint": {
-        "fill-color": "#00457D"
+        "fill-color": "#eaeaea"
       }
     },
     {
       "id": "3dbuilding",
-      "type": "fill-extrusion",
+      "type": "fill",
       "source": "openmaptiles",
       "source-layer": "building",
       "paint": {
-        "fill-extrusion-height": 10,
-        "fill-extrusion-color": "#00457D"
+        "fill-color": "#eaeaea"
       }
     },
     {
@@ -64,7 +63,7 @@
         "text-font": ["Barlow Semi Condensed Regular"],
         "text-letter-spacing": 0,
         "text-rotation-alignment": "viewport",
-        "text-size": ["case", ["==", ["get", "class"], "suburb"], 12, 0],
+        "text-size": ["case", ["==", ["get", "class"], "suburb"], 25, 0],
         "text-justify": "left",
         "text-pitch-alignment": "viewport",
         "symbol-z-order": "viewport-y",
@@ -74,8 +73,8 @@
         "text-color": [
           "case",
           ["==", ["get", "class"], "suburb"],
-          "#ffffffff",
-          "#aaaabe"
+          "#000000",
+          "#232323"
         ]
       }
     }

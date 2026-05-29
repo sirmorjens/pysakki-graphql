@@ -51,8 +51,6 @@
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
   margin: 0 auto;
   text-align: center;
   border-inline: 1px solid var(--border);
@@ -60,56 +58,73 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  background: #fff;
+  color: #fff;
+  height: 2560px;
+  width: 1440px;
+  border: 1px solid #f00;
+  aspect-ratio: 9 / 16;
+  font-size: 2cqh;
+  overflow: hidden;
 }
 
 body {
   margin: 0;
 }
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
+div.stopRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
   margin: 0;
+  padding: 0mm 5mm 0mm 5mm;
+  height: 25mm;
+  border-bottom: 1px solid #00000090;
+  color: black;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+div.stopRow:nth-child(even) {
+  background: #fcfcfc;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+div.stopRow:nth-child(4), div.stopRow:nth-child(5)  {
+  height: calc(90mm / 3);
+  background: white;
+  height: 40mm;
+  display: flex;
+  align-items: center;
+}
+div.stopRow:nth-child(4) p, div.stopRow:nth-child(5) p {
+  font-size: 25mm;
 }
 
-ul {
-  list-style-type: none;
+p {
+  padding: 0;
+  font-family: 'Barlow', sans-serif;
+  font-size: 15mm;
+  line-height: 0mm;
+  text-align: left;
+}
+div.destination_time {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+p.destination {
+
+  font-weight: 600;
+  text-align: left;
+}
+p.route {
+  flex: 0 0 50mm;
+  font-family: 'Inter Variable', sans-serif;
+  font-weight: 800;
+  text-align: left;
+}
+p.time {
+  font-family: 'Inter Variable', sans-serif;
+  font-weight: 700;
+  text-align: right;
 }

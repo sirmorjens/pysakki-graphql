@@ -6,52 +6,53 @@ type Props = {
   stoptime: StoptimeFragment$key;
 };
 
-export default function Stoptime({stoptime}: Props) 
-    {
-        const data = useFragment<StoptimeFragment$key>(
-            graphql`
-                fragment StoptimeFragment on Stoptime
-                {
-                    headsign # määränpää
-                    realtimeArrival # reaaliaikainen saapumisaika sekunneissa
-                    scheduledArrival # suunniteltu saapumisaika sekunneissa
-                    trip {
-                        routeShortName # reittikoodi
-                        alerts {
-                            ...AlertsFragment
-                        }
+export default function Stoptime({stoptime}: Props) {
+    const data = useFragment<StoptimeFragment$key>(
+        graphql`
+            fragment StoptimeFragment on Stoptime
+            {
+                headsign # määränpää
+                realtimeArrival # reaaliaikainen saapumisaika sekunneissa
+                scheduledArrival # suunniteltu saapumisaika sekunneissa
+                serviceDay # helpompi mätsätä timestamppeja kun on päivä
+                trip {
+                    routeShortName # reittikoodi
+                    alerts {
+                        ...AlertsFragment
                     }
                 }
-            `, stoptime
-        )
-        let realSeconds = data.realtimeArrival!.valueOf();
-        let scheduledSeconds = data.scheduledArrival!.valueOf();
-        let realTime = "";
-        let scheduledTime = new Date(scheduledSeconds * 1000).toISOString().slice(11, 16); // hh:mm
+            }
+        `, stoptime
+    )
+    let realSeconds = data.realtimeArrival!.valueOf();
+    let scheduledSeconds = data.scheduledArrival!.valueOf();
+    let realTime = "";
 
-        let alertRows = [];
-    
-        for(var i = 0; i < data.trip!.alerts!.length; i++) {
-            alertRows.push(<Alerts alert={data.trip!.alerts![i]!}/>)
-        }
+    const currentTime = new Date();
+    const scheduledTime = new Date( (data.scheduledArrival ?? 0) * 1000 )
+    const arrivalTime = new Date( ( (data.serviceDay ?? 0) + (data.realtimeArrival ?? 0)) * 1000 )
+    const [hours, minutes] = [arrivalTime.getHours(), arrivalTime.getMinutes()]
+    const minutesVsHHMMThreshold = 1000*60*10 // arrivals inside ten minutes displayed as minutes
 
-        if(realSeconds != scheduledSeconds) {
-            let tilanne:String = "";
-            if(realSeconds>scheduledSeconds) {tilanne = "myöhässä"}else {tilanne = "etuajassa"}
-        
-        if(realSeconds%60>30) {realTime = new Date((realSeconds + 60-realSeconds%60) * 1000).toISOString().slice(11, 16);} // pyöristää ylös lähimpään minuuttiin
-        else {realTime = new Date(realSeconds * 1000).toISOString().slice(11, 16);}
+    const time: {
+        minutes?: number | null,
+        time?: string,
+    } = (arrivalTime.getTime() - currentTime.getTime()) < minutesVsHHMMThreshold ? 
+                {minutes: Math.floor( ( (arrivalTime.getTime() - currentTime.getTime()) / 1000 / 60) - 1)} : 
+                {minutes: null, time: `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}`}
 
-            return( // palauttaa päivitetyn ajan jos sellainen löytyy
-                    // reittikoodi // määränpää --- tilanne: hh:mm
-                <p style={{float:"left", marginLeft:"10px", marginRight:"500px"}}>
-                    <b>{data.trip!.routeShortName} // {data.headsign}</b> --- {tilanne}: <b>{realTime}</b><br />
-                    {alertRows}
-                </p> 
-            )
-        }else return( // reittikoodi // määränpää --- hh:mm
-            <p style={{float:"left", marginLeft:"10px", marginRight:"500px"}}>
-                <b>{data.trip!.routeShortName} // {data.headsign}</b> --- <b>{scheduledTime}</b><br />
-            </p>) 
+    // 
+    if( time.minutes && time.minutes < -1 ) return (false)
 
-    };
+    return (
+        <div className="stopRow">
+        <p>{data.serviceDay}</p>
+            <p className="route">{data.trip?.routeShortName}</p>
+            <div className="destination_time">
+                <p className="destination">{data.headsign?.split(" - ").slice(-1)}</p>
+                <p className="time">{Math.random() > 0.6 ? <span>~</span> : ""}{time.minutes != null ? Math.max( time.minutes, 0 ).toString() + " min" : time.time}</p>
+            </div>
+        </div>
+    )
+
+};

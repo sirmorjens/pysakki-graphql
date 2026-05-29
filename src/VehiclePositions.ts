@@ -1,37 +1,111 @@
-import mqtt, { type MqttClient } from 'mqtt'
+import mqtt, { type ClientSubscribeCallback, type ISubscriptionMap, type MqttClient } from 'mqtt'
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
 
-export const VehiclePositionsWS = (
+const url = "wss://mqtt.digitransit.fi"
+let mqttClient = mqtt.connect(url)
+
+let mqttCallback: (message: GtfsRealtimeBindings.transit_realtime.FeedMessage) => void
+
+const mqttTopics: {
+    pendingTopics: string[],
+    subcsribedTopics: string[],
+} = {
+    pendingTopics: [],
+    subcsribedTopics: [],
+}
+export const VehiclePositionsWS = async (
     url: string,
-    topics: string[],
     callback: (
         message: GtfsRealtimeBindings.transit_realtime.FeedMessage,
-        client: MqttClient
-    ) => void): MqttClient => {
+    ) => void): Promise<MqttClient> => {
 
-        const client = mqtt.connect(url)
+    mqttCallback = callback;
 
-    client.on('connect', () => {
-        // connected, iterate and subscript to topics
-        topics.forEach((topic: string) => {
-            client.subscribe(topic, (err) => {
-                if(err) console.log(err)
-            })
-        })
+    mqttClient.on('connect', () => {
+        SubscribeToRoutePositions("")
+        console.log("connect callback")
+        // @ts-ignore
     })
 
-    // @ts-ignore
-    client.on('message', (topic, message, packet) => {
+    mqttClient.on('message', (topic, message) => {
+        console.log("msg")
         const decodedMsg = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(message)
         
-        if(!callback)
+        if(!mqttCallback)
         {
-            client.end()
+            mqttClient.end()
             throw "No callback for vehicleposition :-("
         }
 
-        callback(decodedMsg, client);
+        mqttCallback(decodedMsg);
     })
+
+    mqttClient.on("close", () => {
+        console.log("close")
+    })
+    mqttClient.on("disconnect", () => {
+        
+    })
+    mqttClient.on("error", () => {
+        console.log("ERROR")
+    })
+
     
-    return client
+    return mqttClient
+}
+
+export const SubscribeToRoutePositions = (routeShortName: string) => {
+    console.log("call: " + routeShortName)
+    if(!mqttClient.connected && routeShortName != "")
+    {
+        console.log("set to pending")
+        mqttTopics.pendingTopics.push( routeShortName )
+        return;
+    }
+
+    if(mqttTopics.pendingTopics.length)
+    {
+        mqttTopics.pendingTopics.forEach(( topic ) => 
+            mqttClient.subscribe(topic, (err, granted) => {
+                if(err)
+                {
+                    console.log("err")
+                }
+
+                if (granted && granted.length)
+                {
+                    mqttTopics.subcsribedTopics.push( granted[0].topic )
+                }
+        }))
+
+        // we'll just assume everything went good
+        mqttTopics.pendingTopics = []
+    }
+
+    if(routeShortName == "") return;
+
+    mqttClient.subscribe(routeShortName, (err, granted) => {
+        if(err)
+        {
+            console.log("err")
+        }
+
+        if (granted && granted.length)
+        {
+            console.log("grant")
+            mqttTopics.subcsribedTopics.push( granted[0].topic )
+        }
+    });
+}
+
+export const UnSubscribeAll = () => {
+    mqttTopics.subcsribedTopics.forEach((topic) => 
+        mqttClient.unsubscribe(topic, {}, (arm) => {
+
+          console.log("unsub")
+
+        })
+    )
+    // hopefully we managed to unsubscribe
+    mqttTopics.subcsribedTopics = [];
 }

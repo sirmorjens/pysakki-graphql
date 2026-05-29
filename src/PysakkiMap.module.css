@@ -6,7 +6,7 @@ div.routeEndPoint {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    margin: 2mm;
+    margin: 0mm;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -30,6 +30,20 @@ div.routeEndPoint {
     */
 }
 
+.fillari {
+    height: 8mm;
+    width: 8mm;
+    background: white;
+    border: 1px solid grey;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.fillari img {
+    width: 90%;
+}
 div.routeEndPoint:after {
     font-family: 'Barlow Semi Condensed';
     display: block;
@@ -38,18 +52,25 @@ div.routeEndPoint:after {
     bottom: 0mm;
     left: 50%;
     left: calc(50% - 1mm);
-    background: #ffffff;
+    background: #000000;
     width: 2mm;
     height: 2mm;
     border: none;
     border-radius: 50%;
 }
 .stem {
-    height: 5mm;
+    height: 7mm;
     width: 0;
     border: none;
-    border-left: 1px solid #fff;
+    border-left: 1px solid #585858;
     margin: 0mm;
+}
+.singleStop {
+    width: 3mm;
+    height: 3mm;
+    background: black;
+    border: 1px solid black;
+    border-radius: 50%;
 }
 
 .label {
@@ -58,11 +79,11 @@ div.routeEndPoint:after {
     left: 50%;
     top: 0%;
     */
-    margin: 1mm;
+    margin: 0mm;
     display: flex;
     flex-direction: row;
-    background: #fff;
-    color: #000;
+    background: #000000;
+    color: #ffffff;
     padding: 0.5mm 1.2mm 0.5mm 1.2mm;
     border-radius: 10mm;
     box-sizing: border-box;
@@ -78,7 +99,7 @@ div.routeEndPoint:after {
 }
 .vehicleLabel {
     position: absolute;
-    color: #000;
+    color: #fff;
     font-size: 100%;
     font-weight: 900;
     margin-top: 30%;

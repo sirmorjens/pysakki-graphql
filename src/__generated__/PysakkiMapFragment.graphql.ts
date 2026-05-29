@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9a8aea41a5fcc9e9314ac58d90f32f52>>
+ * @generated SignedSource<<3436a172a584e536c7ddf1b96c76270a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,6 @@ export type PysakkiMapFragment$data = {
   readonly geometries: {
     readonly geoJson: any | null | undefined;
   } | null | undefined;
-
   readonly routes: ReadonlyArray<{
     readonly gtfsId: string;
     readonly patterns: ReadonlyArray<{
@@ -23,8 +22,13 @@ export type PysakkiMapFragment$data = {
       } | null | undefined;
     } | null | undefined> | null | undefined;
     readonly shortName: string | null | undefined;
+    readonly stops: ReadonlyArray<{
+      readonly geometries: {
+        readonly geoJson: any | null | undefined;
+      } | null | undefined;
+      readonly name: string;
+    } | null | undefined> | null | undefined;
   }> | null | undefined;
-
   readonly " $fragmentType": "PysakkiMapFragment";
 };
 export type PysakkiMapFragment$key = {
@@ -32,30 +36,32 @@ export type PysakkiMapFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"PysakkiMapFragment">;
 };
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "StopGeometries",
+  "kind": "LinkedField",
+  "name": "geometries",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "geoJson",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
   "name": "PysakkiMapFragment",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "StopGeometries",
-      "kind": "LinkedField",
-      "name": "geometries",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "geoJson",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    },
+    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -64,6 +70,25 @@ const node: ReaderFragment = {
       "name": "routes",
       "plural": true,
       "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "Stop",
+          "kind": "LinkedField",
+          "name": "stops",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "name",
+              "storageKey": null
+            },
+            (v0/*: any*/)
+          ],
+          "storageKey": null
+        },
         {
           "alias": null,
           "args": null,
@@ -109,13 +134,13 @@ const node: ReaderFragment = {
         }
       ],
       "storageKey": null
-
     }
   ],
   "type": "Stop",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "8fe7efa77dbc37872f2baec108cabd3a";
+(node as any).hash = "b7279591caccad3ff031f2439ac13b98";
 
 export default node;

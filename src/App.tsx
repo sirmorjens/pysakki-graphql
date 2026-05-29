@@ -15,9 +15,16 @@ import '@fontsource/barlow-semi-condensed/700.css';
 import '@fontsource/barlow-semi-condensed/800.css';
 import '@fontsource/barlow-semi-condensed/900.css';
 
-import '@fontsource-variable/dm-sans/wght.css';
-
-
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource/barlow/100.css';
+import '@fontsource/barlow/200.css';
+import '@fontsource/barlow/300.css';
+import '@fontsource/barlow/400.css';
+import '@fontsource/barlow/500.css';
+import '@fontsource/barlow/600.css';
+import '@fontsource/barlow/700.css';
+import '@fontsource/barlow/800.css';
+import '@fontsource/barlow/900.css';
 
 export default function App() {
 
@@ -56,25 +63,53 @@ export default function App() {
           ...PysakkiFragment #Pysakki.tsx
           ...PysakkiMapFragment
         }
+        vehicleRentalsByBbox (
+          maximumLongitude: 25.7972,
+          minimumLongitude: 25.5428,
+          maximumLatitude: 61.0374,
+          minimumLatitude: 60.9208
+        )
+        {
+          ... on VehicleRentalStation{
+            ...PysakkiMapRentalsFragment
+          }
+          
+        }
       }
     `,
     variables,
     refreshedQueryOptions ?? {},
   );
 
+  useEffect(() => {
+    const onError = (event: Event) => console.log("Error", event);
+      
+    window.addEventListener('error', onError);
+    
+    return () => {
+      window.removeEventListener('scroll', onError);
+    }
+  }, []);
+
   const pysakki = data.stop;
+  const rentalsData = data.vehicleRentalsByBbox
+
+  const [routeShortName, setRouteShortName] = useState("");
+
   let timeNow = new Date();
 
   return ( // päivämäärä
            // haetut tiedot
-    <div>
-      <PysakkiMap pysakki={pysakki!} />
+    <div style={{height: "100%"}}>
+      <PysakkiMap pysakki={pysakki!} rentalsData={rentalsData!} key={routeShortName} routeShortName={routeShortName} />
+      {/* 
       <div>
         <p>Auto refresh active</p>
         <button onClick={refresh}>Update data now</button>
       </div>
+      */}
       {timeNow.toLocaleString('fi-FI')}
-      <Pysakki pysakki={pysakki!} />
+      <Pysakki pysakki={pysakki!} setRouteShortName={setRouteShortName} />
     </div>
   );
 }

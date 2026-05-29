@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ba48224d50d00911a72df3aa57ced801>>
+ * @generated SignedSource<<b831e6877e748d574ac0046f9efee6e5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type StoptimeFragment$data = {
   readonly headsign: string | null | undefined;
   readonly realtimeArrival: number | null | undefined;
   readonly scheduledArrival: number | null | undefined;
+  readonly serviceDay: any | null | undefined;
   readonly trip: {
     readonly alerts: ReadonlyArray<{
       readonly " $fragmentSpreads": FragmentRefs<"AlertsFragment">;
@@ -57,6 +58,13 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "serviceDay",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "Trip",
       "kind": "LinkedField",
       "name": "trip",
@@ -93,6 +101,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "132094c406dd9de455d64451bb75a58d";
+(node as any).hash = "34f1ab50e417e7966fc4ba070ac3e6b7";
 
 export default node;
