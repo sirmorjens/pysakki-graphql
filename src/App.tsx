@@ -2,7 +2,7 @@ import type { AppQuery } from "./__generated__/AppQuery.graphql";
 import { graphql, useLazyLoadQuery } from "react-relay";
 import Pysakki from "./Pysakki.tsx";
 
-import PysakkiMap from "./PysakkiMap.tsx"
+import Map_10NextEndpoints from "./LR_components/Map_10NextEndpoints.tsx"
 import { useEffect, useState } from 'react';
 
 import '@fontsource/barlow-semi-condensed/100.css';
@@ -61,7 +61,7 @@ export default function App() {
         # täytyy compilaa uudestaan id:n vaihdon jälkeen - npx relay-compiler
         {
           ...PysakkiFragment #Pysakki.tsx
-          ...PysakkiMapFragment
+          ...Map10NextEndpointsFragment
         }
         vehicleRentalsByBbox (
           maximumLongitude: 25.7972,
@@ -100,14 +100,16 @@ export default function App() {
 
   return ( // päivämäärä
            // haetut tiedot
-    <div style={{height: "100%"}}>
-      <PysakkiMap pysakki={pysakki!} rentalsData={rentalsData!} key={routeShortName} routeShortName={routeShortName} />
-      {/* 
+
+
+    <div>
+      <Map_10NextEndpoints pysakki={pysakki!} />
+
       <div>
         <p>Auto refresh active</p>
         <button onClick={refresh}>Update data now</button>
       </div>
-      */}
+
       {timeNow.toLocaleString('fi-FI')}
       <Pysakki pysakki={pysakki!} setRouteShortName={setRouteShortName} />
     </div>
