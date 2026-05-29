@@ -1,9 +1,8 @@
 import { graphql, useFragment } from "react-relay";
 
 import type { PysakkiFragment$key } from "./__generated__/PysakkiFragment.graphql";
-
+import type { PysakkiTimesInPatternFragment$key } from "./__generated__/PysakkiTimesInPatternFragment.graphql"
 import Alerts from "./Alerts";
-// import StoptimesInPattern from "./StoptimesInPattern"; ei käytössä
 import Stoptime from "./Stoptime";
 // import Pattern from "./Pattern"; ei käytössä, tarvitaan mahdollisesti bussien sijaintien hakemiseen
 
@@ -16,9 +15,9 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
         name # pysäkin nimi
         gtfsId # pysäkin id
 
-        stoptimesForPatterns
+        stoptimesForPatterns (numberOfDepartures: $inPatternDepartures)
         {
-            ...StoptimesInPatternFragment #StoptimeInsPattern.tsx
+            ...PysakkiTimesInPatternFragment
         }
         stoptimesWithoutPatterns(numberOfDepartures:  $departures, omitCanceled: $cancel, startTime: $alkuaika) # muuta muuttujia App.tsx 
         {
@@ -37,10 +36,55 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
     props.pysakki
     );
 
-    let stopRows = [];
     let alertRows = [];
 
-    for ( var i = 0; i < data.stoptimesWithoutPatterns!.length; i++ ) { stopRows.push(<Stoptime stoptime={data.stoptimesWithoutPatterns![i]!}/>) }
+
+
+    type PatternStopTime = {
+        serviceDay: number,
+        realtimeArrival: number,
+        headsign: string;
+        trip: {
+            routeShortName: string;
+        }
+    }
+    const nextDeparturesInPattern: {
+        [routename: string]: PatternStopTime[]
+    } = {}
+
+    data.stoptimesForPatterns?.forEach(stoptimeForPattern => {
+
+        const stoptimesInPattern = useFragment<PysakkiTimesInPatternFragment$key>(
+            graphql`
+                fragment PysakkiTimesInPatternFragment on StoptimesInPattern
+                {
+                    stoptimes {
+                        serviceDay
+                        realtimeArrival
+                        headsign
+                        trip {
+                            routeShortName
+                        }
+                    }
+        
+                }
+                `, stoptimeForPattern!
+                )
+        
+        stoptimesInPattern?.stoptimes?.toReversed().forEach((stoptime) => 
+        {
+            // routen nimi avaimeksi objektille
+            const routeName = stoptime?.trip!.routeShortName!
+            
+            // jos route ei jo listalla, alustetaan uusi taulukko
+            if( !nextDeparturesInPattern.hasOwnProperty( routeName ) )
+            {
+                nextDeparturesInPattern[routeName] = []
+            }
+            // routen taulukkoon uusi stoptime
+            nextDeparturesInPattern[routeName].push( stoptime as PatternStopTime)
+        })
+    })
 
     for ( var i = 0, l = data.alerts!.length; i < l; i++ ) { alertRows.push(<Alerts alert={data.alerts![i]!}/>) }
 
@@ -53,12 +97,21 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
         // reitit ja niiden koodit ja saapumisajat
         // häiriöt, jos niitä on
         <div>
+
             <div className="grid-container">
                 <div className="header">
                     {timeNow.toLocaleDateString('fi-FI', options)} <br /> <br />
                     <b>{data.name}</b> <br />
                 </div>
-                {stopRows}
+
+                {
+                    data!.stoptimesWithoutPatterns!.map(stoptime => 
+                    <Stoptime 
+                        stoptime={stoptime!} 
+                        patternsLookUp={nextDeparturesInPattern}
+                    />)
+                }
+
             </div>  
             <footer className="alert">{alertRows}</footer>
         </div>

@@ -28,7 +28,7 @@ export default function App() {
 
   const data = useLazyLoadQuery<AppQuery>(
     graphql`
-      query AppQuery($id: String!, $departures: Int!, $kieli: String!, $cancel: Boolean!, $alkuaika: Long!) {
+      query AppQuery($id: String!, $inPatternDepartures: Int!, $departures: Int!, $kieli: String!, $cancel: Boolean!, $alkuaika: Long!) {
         stop(id: $id) 
         {
           ...PysakkiFragment #Pysakki.tsx
@@ -36,7 +36,7 @@ export default function App() {
       }
     `,
     // tähän pysäkin gtfsID (eg. "Lahti:103653", "Lahti:104030") lähtöjen määrä, häiriöiden kieli (fi, en, sv), näytetäänkö perutut vuorot (false = näytetään) ja mistä asti vuorot haetaan (testaamiseen, pitäisi aina olla 0 eli nykyinen)
-    {"id": "Lahti:104030", "departures": 14, "kieli": "en", "cancel": false, "alkuaika": 0},
+    {"id": "Lahti:104030", "departures": 14, "kieli": "en", "cancel": false, "alkuaika": 0, "inPatternDepartures": 3,},
     refreshedQueryOptions ?? {}
   );
 

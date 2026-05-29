@@ -1,11 +1,29 @@
 import { graphql, useFragment } from "react-relay";
 import type { StoptimeFragment$key } from "./__generated__/StoptimeFragment.graphql";
 
+type PatternStopTime = {
+    serviceDay: number,
+    realtimeArrival: number,
+    headsign: string;
+    trip: {
+        routeShortName: string;
+    }
+}
+
 type Props = {
   stoptime: StoptimeFragment$key;
+  patternsLookUp: {
+    [route: string]: PatternStopTime[]
+  }
 };
 
-export default function Stoptime({stoptime}: Props) 
+const arrivalTimeToString = (pattern: PatternStopTime): string => {
+    const time = new Date( (pattern.serviceDay + pattern.realtimeArrival) * 1000 )
+
+    return `${time.getHours().toString().padStart(2,"0")}:${time.getMinutes().toString().padStart(2,"0")}`
+}
+
+export default function Stoptime({stoptime, patternsLookUp}: Props) 
     {
         const data = useFragment<StoptimeFragment$key>(
             graphql`
@@ -23,7 +41,8 @@ export default function Stoptime({stoptime}: Props)
                 }
             `, stoptime
         )
-        
+  
+
         const realSeconds = data.realtimeArrival!.valueOf();
         const scheduledSeconds = data.scheduledArrival!.valueOf();
 
@@ -47,17 +66,22 @@ export default function Stoptime({stoptime}: Props)
             else { shownTime = new Date(realSeconds * 1000).toISOString().slice(11, 16); }
 
             if(data.realtimeState == "CANCELED") { cancelState = "Peruttu"; aikaClass = "peruttuaika"; arrivalState = "" }
-
         } 
 
         return( // reittikoodi, määränpää, aika (suunniteltu), onko vuoro peruttu
-            <p className="trip">
+            <div>
+            <div className="trip">
                 <b className="reittikoodi">{data.trip!.routeShortName}</b> <br />
                 <b className="paikka">{data.headsign}</b> <br />
                 <b className={aikaClass}>{shownTime}</b>
+
+                
                 <b className="reittihäiriö">{cancelState}</b>
-                <b className="saapumistilanne">{arrivalState}</b>
-            </p>
+                <b className="saapumistilanne">{arrivalState}</b> 
+                
+            </div>
+                {patternsLookUp[data.trip!.routeShortName!].slice(1).map(ptr => <p>{ptr.trip.routeShortName} seuraavat: {arrivalTimeToString(ptr)}</p>)}
+            </div>
         ) 
 
     };
