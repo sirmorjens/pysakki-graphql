@@ -1,7 +1,7 @@
 import { graphql, useFragment } from "react-relay";
 import { useEffect, useState } from 'react'
 import type { PysakkiFragment$key } from "./__generated__/PysakkiFragment.graphql";
-import type { StoptimeFragment$key } from "./__generated__/StoptimeFragment.graphql";
+import type { PysakkiFirstStoptimeFragment$key } from "./__generated__/PysakkiFirstStoptimeFragment.graphql";
 import Alerts from "./Alerts";
 // import StoptimesInPattern from "./StoptimesInPattern"; ei käytössä
 import Stoptime from "./Stoptime";
