@@ -1,9 +1,27 @@
-import { Map as MapLibreMap, Marker, Source, Layer, type MapRef, type LayerProps, type StyleSpecification, type ViewStateChangeEvent, type LngLatBoundsLike } from '@vis.gl/react-maplibre';
+import { 
+  Map as MapLibreMap,
+  Marker,
+  Source,
+  Layer,
+  useMap,
+  type MapRef,
+  type LayerProps,
+  type StyleSpecification,
+  type ViewStateChangeEvent,
+  type LngLatBoundsLike
+} from '@vis.gl/react-maplibre';
+
 import 'maplibre-gl/dist/maplibre-gl.css'; // See notes below
 import mapstyle from "./Map/pysakki_mapstyle.json"
 import { useFragment } from 'react-relay';
 import { graphql } from 'react-relay';
-import { SubscribeToRoutePositions, UnSubscribeAll, VehiclePositionsWS } from './VehiclePositions'
+
+import {
+  SubscribeToRoutePositions,
+  UnSubscribeAll,
+  VehiclePositionsWS 
+} from './VehiclePositions'
+
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
 import PysakkiMapStyle from './PysakkiMap.module.css'
 import pieniBussi from "./assets/bussi.svg"
@@ -11,18 +29,68 @@ import fillari from "./assets/fillari.svg"
 // @ts-expect-error - no types
 import polyline from '@mapbox/polyline'
 
-import type { Feature, FeatureCollection, LineString, Position } from 'geojson';
+import type {
+  Feature,
+  FeatureCollection,
+  LineString,
+  Position 
+} from 'geojson';
+
 import type { PysakkiMapFragment$key } from './__generated__/PysakkiMapFragment.graphql';
 import type { PysakkiMapRentalsFragment$key } from './__generated__/PysakkiMapRentalsFragment.graphql';
-
 import { type ReactElement, useEffect, useState } from 'react';
-import type { MqttClient } from 'mqtt';
 
-const VehiclePositionsEndpoint = "wss://mqtt.digitransit.fi"
-let lastRealtimeRender = 0
+const VehicleMarkersLayer = ({ vehiclePositions }: { vehiclePositions: VehiclePositionItem[] }) => {
+  const { current: map } = useMap();
+  const [zoomLevel, setZoomLevel] = useState(11);
+  const [mapBearing, setMapBearing] = useState(0);
+
+  useEffect(() => {
+    if (!map) return;
+    
+    const updateViewState = () => {
+      setZoomLevel(map.getZoom());
+      setMapBearing(map.getBearing());
+    };
+
+    // Initialize
+    updateViewState();
+
+    // Only this tiny component updates on map movement
+    map.on('zoom', updateViewState);
+    map.on('rotate', updateViewState);
+
+    return () => {
+      map.off('zoom', updateViewState);
+      map.off('rotate', updateViewState);
+    };
+  }, [map]);
+
+  return (
+    <>
+      {vehiclePositions.map((vehicleposition, idx) => (
+        <Marker key={`vehicle-${idx}`} latitude={vehicleposition.position[0]} longitude={vehicleposition.position[1]}>
+          <div className={PysakkiMapStyle.vehicle}>
+            <div className={PysakkiMapStyle.bussi} style={{width: `${(zoomLevel*zoomLevel*2)*0.05}mm`}}>
+              <img 
+                src={pieniBussi} 
+                alt="Bussi" 
+                className={vehicleposition.bearing - 180 < mapBearing ? "" : PysakkiMapStyle.flipped}
+              />
+            </div>
+            <div className={PysakkiMapStyle.vehicleLabel} style={{fontSize: `${(zoomLevel*zoomLevel*2)*0.01}mm`, marginTop: `${(zoomLevel*zoomLevel*2)*0.05}%`}}>
+              {routeIdToShortName.hasOwnProperty( vehicleposition.routeId ) ? routeIdToShortName[vehicleposition.routeId] : "?"}
+            </div>
+          </div>
+        </Marker>
+      ))}
+    </>
+  );
+};
 
 // how often render fresh realtime position
 let realtimeRenderCooldown = 30 * 1000 // 30 seconds
+let lastRealtimeRender = 0
 
 type VehiclePositionItem = {
     position: [number, number];
@@ -50,8 +118,6 @@ let routeEndStopMarkers: ReactElement[] = []
 
 // rounded coords as a key to group overlapping/nearby coords
 let endPointCoordinates = new Map<string, {labels: string[], coords: Position}>()
-
-
 let VehiclePositionsData = {} as {[vId: number]: VehiclePositionItem}
 
 // no "shortName" (eg. '1K', '23' etc) available in position data
@@ -61,7 +127,6 @@ const routeIdToShortName: {
 } = {} 
 
 export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rentalsData: PysakkiMapRentalsFragment$key; routeShortName: string}) {
-
 
   // state definitions 
   const [VehiclePositionsState, setVehiclePositionsState] = useState<VehiclePositionItem[]>([]);
@@ -125,8 +190,6 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
     props.rentalsData
   )
 
-  console.log("rentalsdata")
-  console.log(rentalsData)
 
   useEffect(() => {
     VehiclePositionsWS(
@@ -273,7 +336,7 @@ const updateMap = () => {
     
     const bounds: LngLatBoundsLike = [minLng, minLat, maxLng, maxLat, ] as [number,number,number,number]
 
-    mapRefState?.fitBounds(bounds, {padding: {left: 80, top: 80, right: 80, bottom: 80}, linear: true, /* animate: false */})
+    //mapRefState?.fitBounds(bounds, {padding: {left: 80, top: 80, right: 80, bottom: 80}, linear: true, /* animate: false */})
 
   }
 
@@ -373,16 +436,6 @@ const updateMap = () => {
     };
   }
 
-  
-
-  const zoomStateChange = (e: ViewStateChangeEvent) => {
-    changeZoomLevelState( e.viewState.zoom )
-  }
-  const bearingStateChange = (e: ViewStateChangeEvent) => {
-    changeMapBearingState( e.viewState.bearing )
-  }
-
-
   return (
 
       <MapLibreMap
@@ -391,29 +444,16 @@ const updateMap = () => {
         initialViewState={{
           latitude: 60.9827, /* jossain Lahden yllä */
           longitude: 25.6612,
-          zoom: 11,
+          zoom: 12,
           pitch: 0,
         }}
         attributionControl={false}
         style={{width: "100%", height: "30%"}}
-        onZoom={zoomStateChange}
-        onRotate={bearingStateChange}
         mapStyle={mapstyle as StyleSpecification}>
           {routeEndStopMarkers}
+   
+          <VehicleMarkersLayer vehiclePositions={VehiclePositionsState} />
 
-          {VehiclePositionsState.map<ReactElement>(
-              (vehicleposition: {
-                position: number[],
-                bearing: number,
-                routeId: string
-              }) => 
-              <Marker latitude={vehicleposition.position[0]} longitude={vehicleposition.position[1]}>
-                <div className={PysakkiMapStyle.vehicle}>
-                  <div className={PysakkiMapStyle.bussi} style={{width: `${(zoomLevelState*zoomLevelState*2)*0.05}mm`}}><img src={pieniBussi} alt="Bussi" className={vehicleposition.bearing - 180 < mapBearingState ? "" : PysakkiMapStyle.flipped}/></div>
-                  <div className={PysakkiMapStyle.vehicleLabel} style={{fontSize: `${(zoomLevelState*zoomLevelState*2)*0.01}mm`, marginTop: `${(zoomLevelState*zoomLevelState*2)*0.05}%`}}>{routeIdToShortName.hasOwnProperty( vehicleposition.routeId ) ? routeIdToShortName[vehicleposition.routeId] : "?"}</div>
-                </div>
-              </Marker>
-          )}       
           {data.routes?.filter(route => route.shortName == props.routeShortName).map(route => 
             route.stops?.map(stop => 
               <Marker latitude={stop?.geometries?.geoJson.coordinates[1]} longitude={stop?.geometries?.geoJson.coordinates[0]} anchor='center'>
