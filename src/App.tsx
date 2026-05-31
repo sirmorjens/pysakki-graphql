@@ -12,7 +12,7 @@ export default function App() {
   const refresh = () => {
     setRefreshedQueryOptions(prev => ({
       fetchKey: (prev?.fetchKey ?? 0) + 1,
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'store-and-network',
     }));
   };
 
@@ -36,7 +36,7 @@ export default function App() {
       }
     `,
     // tähän pysäkin gtfsID (eg. "Lahti:103653", "Lahti:104030") lähtöjen määrä, häiriöiden kieli (fi, en, sv), näytetäänkö perutut vuorot (false = näytetään) ja mistä asti vuorot haetaan (testaamiseen, pitäisi aina olla 0 eli nykyinen)
-    {"id": "Lahti:104030", "departures": 14, "kieli": "en", "cancel": false, "alkuaika": 0},
+    {"id": "Lahti:104030", "departures": 10, "kieli": "en", "cancel": false, "alkuaika": 0},
     refreshedQueryOptions ?? {}
   );
 

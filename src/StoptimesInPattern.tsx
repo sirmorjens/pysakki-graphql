@@ -23,17 +23,17 @@ export default function StoptimesInPattern({stoptimesInPattern}: Props)
                 }
             `, stoptimesInPattern
         )
+
+    let stoptimeMap = data.stoptimes!.toReversed().map((stoptime) => <Stoptime stoptime={stoptime!}/>)
         // let rows = [];
         // for(var i = data.stoptimes.length-1; i >= 0; i--) {
         //     rows.push(<li><Stoptime stoptime={data.stoptimes[i]}/></li>) // tulostaa ajat uusimmasta alkaen
         // }
-
         return(
             // reitti (reittikoodi, määränpää)
             // ajat (oikea tai suunniteltu)
             <section>
-                {<Pattern pattern={data.pattern!} />} <br />
-                {data.stoptimes!.toReversed().map((stoptime) => <Stoptime stoptime={stoptime!}/>)}
+                {stoptimeMap}
                 {/* {rows} */}
             </section>
         )

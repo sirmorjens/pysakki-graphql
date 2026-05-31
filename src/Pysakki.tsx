@@ -5,6 +5,7 @@ import type { PysakkiFragment$key } from "./__generated__/PysakkiFragment.graphq
 import Alerts from "./Alerts";
 // import StoptimesInPattern from "./StoptimesInPattern"; ei käytössä
 import Stoptime from "./Stoptime";
+import StoptimesInPattern from "./StoptimesInPattern";
 // import Pattern from "./Pattern"; ei käytössä, tarvitaan mahdollisesti bussien sijaintien hakemiseen
 
 export default function Pysakki(props: { pysakki: PysakkiFragment$key; }) 
@@ -16,7 +17,7 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
         name # pysäkin nimi
         gtfsId # pysäkin id
 
-        stoptimesForPatterns
+        stoptimesForPatterns(numberOfDepartures:  $departures, omitCanceled: $cancel, startTime: $alkuaika)
         {
             ...StoptimesInPatternFragment #StoptimeInsPattern.tsx
         }
@@ -40,7 +41,17 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
     let stopRows = [];
     let alertRows = [];
 
-    for ( var i = 0; i < data.stoptimesWithoutPatterns!.length; i++ ) { stopRows.push(<Stoptime stoptime={data.stoptimesWithoutPatterns![i]!}/>) }
+    for ( var i = 0; i < data.stoptimesWithoutPatterns!.length; i++ ) 
+    { 
+        if(i < 2) { stopRows.push(<div className="bigtrip"><Stoptime stoptime={data.stoptimesWithoutPatterns![i]!}/></div>) }
+        else { stopRows.push(<Stoptime stoptime={data.stoptimesWithoutPatterns![i]!}/>) }
+    }
+
+    // for ( var i = 0; i < data.stoptimesForPatterns!.length; i++ ) 
+    // { 
+    //     if(i < 2) { stopRows.push(<div className="bigtrip"><StoptimesInPattern stoptimesInPattern={data.stoptimesForPatterns![i]!}/></div>) }
+    //     else { stopRows.push(<StoptimesInPattern stoptimesInPattern={data.stoptimesForPatterns![i]!}/>) }
+    // }
 
     for ( var i = 0, l = data.alerts!.length; i < l; i++ ) { alertRows.push(<Alerts alert={data.alerts![i]!}/>) }
 
@@ -55,8 +66,7 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
         <div>
             <div className="grid-container">
                 <div className="header">
-                    {timeNow.toLocaleDateString('fi-FI', options)} <br /> <br />
-                    <b>{data.name}</b> <br />
+                    {timeNow.toLocaleDateString('fi-FI', options)}
                 </div>
                 {stopRows}
             </div>  

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<322ff58a2c1091f5e5f5a8c949fe2475>>
+ * @generated SignedSource<<5255ed2df425edf751533b294f31e53a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,7 +32,25 @@ export type PysakkiFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"PysakkiFragment">;
 };
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = [
+  {
+    "kind": "Variable",
+    "name": "numberOfDepartures",
+    "variableName": "departures"
+  },
+  {
+    "kind": "Variable",
+    "name": "omitCanceled",
+    "variableName": "cancel"
+  },
+  {
+    "kind": "Variable",
+    "name": "startTime",
+    "variableName": "alkuaika"
+  }
+];
+return {
   "argumentDefinitions": [
     {
       "kind": "RootArgument",
@@ -67,7 +85,7 @@ const node: ReaderFragment = {
     },
     {
       "alias": null,
-      "args": null,
+      "args": (v0/*: any*/),
       "concreteType": "StoptimesInPattern",
       "kind": "LinkedField",
       "name": "stoptimesForPatterns",
@@ -83,23 +101,7 @@ const node: ReaderFragment = {
     },
     {
       "alias": null,
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "numberOfDepartures",
-          "variableName": "departures"
-        },
-        {
-          "kind": "Variable",
-          "name": "omitCanceled",
-          "variableName": "cancel"
-        },
-        {
-          "kind": "Variable",
-          "name": "startTime",
-          "variableName": "alkuaika"
-        }
-      ],
+      "args": (v0/*: any*/),
       "concreteType": "Stoptime",
       "kind": "LinkedField",
       "name": "stoptimesWithoutPatterns",
@@ -149,7 +151,8 @@ const node: ReaderFragment = {
   "type": "Stop",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "299da8841f1b4a8e2b7be29c6a12d62a";
+(node as any).hash = "c20ce6717c55b04b86677a4cd9024b04";
 
 export default node;

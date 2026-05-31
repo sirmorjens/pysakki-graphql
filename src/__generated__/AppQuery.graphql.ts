@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<722883e5d024b0753ead65705daba1b2>>
+ * @generated SignedSource<<4bf5245ed149f8f9efa46e1b3385a79c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -67,27 +67,44 @@ v6 = {
   "name": "name",
   "storageKey": null
 },
-v7 = {
+v7 = [
+  {
+    "kind": "Variable",
+    "name": "numberOfDepartures",
+    "variableName": "departures"
+  },
+  {
+    "kind": "Variable",
+    "name": "omitCanceled",
+    "variableName": "cancel"
+  },
+  {
+    "kind": "Variable",
+    "name": "startTime",
+    "variableName": "alkuaika"
+  }
+],
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "headsign",
   "storageKey": null
 },
-v8 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v9 = [
-  (v6/*: any*/),
-  (v7/*: any*/),
-  (v8/*: any*/)
-],
 v10 = [
-  (v7/*: any*/),
+  (v6/*: any*/),
+  (v8/*: any*/),
+  (v9/*: any*/)
+],
+v11 = [
+  (v8/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -124,7 +141,7 @@ v10 = [
         "name": "routeShortName",
         "storageKey": null
       },
-      (v8/*: any*/)
+      (v9/*: any*/)
     ],
     "storageKey": null
   }
@@ -192,7 +209,7 @@ return {
           },
           {
             "alias": null,
-            "args": null,
+            "args": (v7/*: any*/),
             "concreteType": "StoptimesInPattern",
             "kind": "LinkedField",
             "name": "stoptimesForPatterns",
@@ -205,7 +222,7 @@ return {
                 "kind": "LinkedField",
                 "name": "pattern",
                 "plural": false,
-                "selections": (v9/*: any*/),
+                "selections": (v10/*: any*/),
                 "storageKey": null
               },
               {
@@ -215,7 +232,7 @@ return {
                 "kind": "LinkedField",
                 "name": "stoptimes",
                 "plural": true,
-                "selections": (v10/*: any*/),
+                "selections": (v11/*: any*/),
                 "storageKey": null
               }
             ],
@@ -223,28 +240,12 @@ return {
           },
           {
             "alias": null,
-            "args": [
-              {
-                "kind": "Variable",
-                "name": "numberOfDepartures",
-                "variableName": "departures"
-              },
-              {
-                "kind": "Variable",
-                "name": "omitCanceled",
-                "variableName": "cancel"
-              },
-              {
-                "kind": "Variable",
-                "name": "startTime",
-                "variableName": "alkuaika"
-              }
-            ],
+            "args": (v7/*: any*/),
             "concreteType": "Stoptime",
             "kind": "LinkedField",
             "name": "stoptimesWithoutPatterns",
             "plural": true,
-            "selections": (v10/*: any*/),
+            "selections": (v11/*: any*/),
             "storageKey": null
           },
           {
@@ -254,7 +255,7 @@ return {
             "kind": "LinkedField",
             "name": "patterns",
             "plural": true,
-            "selections": (v9/*: any*/),
+            "selections": (v10/*: any*/),
             "storageKey": null
           },
           {
@@ -299,23 +300,23 @@ return {
                 "name": "alertSeverityLevel",
                 "storageKey": null
               },
-              (v8/*: any*/)
+              (v9/*: any*/)
             ],
             "storageKey": null
           },
-          (v8/*: any*/)
+          (v9/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "203a1be399ab6d13dfc9947b77564279",
+    "cacheID": "dafd07baea85f207a0a7ece3095fc0ee",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery(\n  $id: String!\n  $departures: Int!\n  $kieli: String!\n  $cancel: Boolean!\n  $alkuaika: Long!\n) {\n  stop(id: $id) {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: $kieli)\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: $departures, omitCanceled: $cancel, startTime: $alkuaika) {\n    ...StoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  realtimeState\n  trip {\n    routeShortName\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
+    "text": "query AppQuery(\n  $id: String!\n  $departures: Int!\n  $kieli: String!\n  $cancel: Boolean!\n  $alkuaika: Long!\n) {\n  stop(id: $id) {\n    ...PysakkiFragment\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: $kieli)\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFragment on Stop {\n  name\n  gtfsId\n  stoptimesForPatterns(numberOfDepartures: $departures, omitCanceled: $cancel, startTime: $alkuaika) {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: $departures, omitCanceled: $cancel, startTime: $alkuaika) {\n    ...StoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  realtimeState\n  trip {\n    routeShortName\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
   }
 };
 })();

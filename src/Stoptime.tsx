@@ -27,7 +27,7 @@ export default function Stoptime({stoptime}: Props)
         const realSeconds = data.realtimeArrival!.valueOf();
         const scheduledSeconds = data.scheduledArrival!.valueOf();
 
-        let shownTime = new Date(scheduledSeconds * 1000).toISOString().slice(11, 16); // hh:mm
+        let shownTime = " ~" + new Date(scheduledSeconds * 1000).toISOString().slice(11, 16); // hh:mm
 
         let cancelState= "";
         let arrivalState= "";
@@ -37,7 +37,7 @@ export default function Stoptime({stoptime}: Props)
         let secondsNow = Math.round(d.getTime() / 1000)%86400;
 
         // merkitään bussi saapuvaksi jos saapumisaika lähestyy
-        if((realSeconds-3600*3)-secondsNow <= 30) { arrivalState = "Saapuu" }
+        if((realSeconds-3600*3)-secondsNow <= 30) { arrivalState = "Saapuu pysäkille" }
 
         if(data.realtimeState != "SCHEDULED") {
             aikaClass = "oikeaaika"
@@ -52,11 +52,10 @@ export default function Stoptime({stoptime}: Props)
 
         return( // reittikoodi, määränpää, aika (suunniteltu), onko vuoro peruttu
             <p className="trip">
-                <b className="reittikoodi">{data.trip!.routeShortName}</b> <br />
-                <b className="paikka">{data.headsign}</b> <br />
-                <b className={aikaClass}>{shownTime}</b>
-                <b className="reittihäiriö">{cancelState}</b>
-                <b className="saapumistilanne">{arrivalState}</b>
+                <b className="reittikoodi">{data.trip!.routeShortName}</b>
+                <b className={aikaClass}>{shownTime}  </b> 
+                <b className="saapumistilanne">{arrivalState}</b><b className="reittihäiriö">{cancelState}</b> <br />
+                <b className="paikka">{data.headsign}</b>
             </p>
         ) 
 

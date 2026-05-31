@@ -1,5 +1,5 @@
 :root {
-  --text: #6b6375;
+  --text: #08060d;
   --text-h: #08060d;
   --bg: #fff;
   --border: #e5e4e7;
@@ -47,9 +47,31 @@ body {
 .trip {
   background: #f1f1f1;
   border: solid 2px #08060d;
-  height: 120px;
-  padding: 10px 0 10px 5px;
+  padding: 15px 0 5px 5px;
   margin: 0;
+}
+.bigtrip .trip {
+  background: #f1f1f1;
+  border: solid 2px #08060d;
+  padding: 20px 0 5px 5px;
+  margin: 0;
+}
+.bigtrip .reittikoodi {
+    font-size: 70px;
+}
+.bigtrip .aika {
+    font-size: 60px;
+}
+.bigtrip .oikeaaika  {
+    font-size: 60px;
+}
+.bigtrip .peruttuaika {
+    font-size: 60px;
+}
+.bigtrip .paikka {
+  font-size: 40px;
+  display:inline-block;
+  padding-top: 20px;
 }
 .reittihäiriö {
   font-size: 35px;
@@ -57,31 +79,28 @@ body {
   background: red;
   margin: 5px;
 }
-.reittikoodi {
-  color: #0f00c0;
-}
-.oikeaaika {
-  color: #009e00;
-}
+
 .peruttuaika {
-  color: #009e00;
   text-decoration: line-through red 3px;
 }
 .aika {
   color: #000f;
 }
-.reittikoodi, .aika, .oikeaaika, .peruttuaika {
+.aika, .oikeaaika, .peruttuaika {
     font-size: 44px;
+}
+.reittikoodi {
+  font-size: 55px;
+  width: 110px;
+  display: inline-block;
 }
 .paikka {
   font-size: 24px;
-  color: #6b6375;
   display:inline-block;
-  height:60px;
+  padding-top: 10px;
 }
 .saapumistilanne {
   font-size: 30px;
-  color: #009e00;
 }
 
 /* Style the header */
@@ -89,19 +108,19 @@ body {
   grid-area: header;
   background-color: #f1f1f1;
   color: black;
-  padding: 30px;
+  padding: 10px 0 20px 5px;
   text-align: left;
-  font-size: 35px;
+  font-size: 40px;
 }
 
 /* The grid container */
 .grid-container {
   display: grid;
   grid-template-areas: 
-    'header header' 
-    'p p';
-  grid-template-columns: 1fr 1fr;
-  gap: 3px;
+    'header' 
+    'p';
+  grid-template-columns: 1fr;
+  gap: 6px;
 } 
 
 .alert {
