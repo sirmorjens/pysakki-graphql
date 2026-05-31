@@ -2,6 +2,8 @@ import type { AppQuery } from "./__generated__/AppQuery.graphql";
 import { graphql, useLazyLoadQuery } from "react-relay";
 import Pysakki from "./Pysakki.tsx";
 
+import LR_Header from './LR_components/LR_Header.tsx'
+
 import PysakkiMap from "./PysakkiMap.tsx"
 import { useEffect, useState } from 'react';
 
@@ -101,10 +103,11 @@ export default function App() {
            // haetut tiedot
 
 
-    <div>
-      <PysakkiMap pysakki={pysakki!} rentalsData={rentalsData} routeShortName={routeShortName} />
-      {timeNow.toLocaleString('fi-FI')}
+    <div className="LR_mainContainer">
+      <LR_Header />
+
       <Pysakki pysakki={pysakki!} setRouteShortName={setRouteShortName} />
+      <PysakkiMap pysakki={pysakki!} rentalsData={rentalsData} routeShortName={routeShortName} />
     </div>
   );
 }

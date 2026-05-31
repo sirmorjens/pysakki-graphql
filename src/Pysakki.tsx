@@ -13,13 +13,11 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; setRouteS
     graphql`
       fragment PysakkiFragment on Stop
       {
-        name # pysäkin nimi
-        gtfsId # pysäkin id
         stoptimesForPatterns
         {
             ...StoptimesInPatternFragment #StoptimeInsPattern.tsx
         }
-        stoptimesWithoutPatterns(numberOfDepartures: 15) # tähän haluttu määrä saapuvien bussien aikoja - muutoksen jälkeen npx relay-compiler 
+        stoptimesWithoutPatterns(numberOfDepartures: 12) # tähän haluttu määrä saapuvien bussien aikoja - muutoksen jälkeen npx relay-compiler 
         {
             ...StoptimeFragment #Stoptime.tsx
             ...PysakkiFirstStoptimeFragment #---
@@ -40,6 +38,10 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; setRouteS
     let alertRows = [];
     
     const firstArrivalData = useFragment<PysakkiFirstStoptimeFragment$key>(
+            
+            // haetaan kaikki pysähdykset tässä
+            // tehdään listat ja passataan ylös ja alas
+
             graphql`
                 fragment PysakkiFirstStoptimeFragment on Stoptime
                 {
@@ -70,25 +72,13 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; setRouteS
         alertRows.push(<Alerts alert={data.alerts![i]!}/>)
     }
     
-    const [input, setinput] = useState("")
-    const setVal = () => {
-        console.log(input)
-        console.log("setting state")
-        props.setRouteShortName(input ?? "")
-    } 
+
 
     return ( 
         // Pysäkin nimi, pysäkin gtfsID-tunniste
         // häiriöt, jos niitä on
         // reitit ja niiden koodit ja saapumisajat
-        <div>
-            {/*
-            <div style={{fontFamily: 'DM Sans Variable'}}>    
-                <input type="text" onInput={(e)=>setinput(e.target.value)} />
-                <button onClick={setVal}>Manual route</button>
-            </div>
-            */}
-            <b>{data.name}</b> - <i>{data.gtfsId}</i> <br />
+        <div className="stopRows">
             {alertRows}
             {stopRows} <br />
         </div>    

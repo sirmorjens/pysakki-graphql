@@ -312,7 +312,6 @@ const updateMap = () => {
     // or closeby vehicle to destination
     let lat1, lat2, lng1, lng2, minLat, maxLat, minLng, maxLng;
 
-
     [lng1, lat1] = (routeGeometries[0].geojson.geometry as LineString).coordinates.slice(-1)[0];
 
     // no vehicle pos data available, display stop position
@@ -336,7 +335,7 @@ const updateMap = () => {
     
     const bounds: LngLatBoundsLike = [minLng, minLat, maxLng, maxLat, ] as [number,number,number,number]
 
-    //mapRefState?.fitBounds(bounds, {padding: {left: 80, top: 80, right: 80, bottom: 80}, linear: true, /* animate: false */})
+    mapRefState?.fitBounds(bounds, {padding: {left: 80, top: 80, right: 80, bottom: 80}, linear: true, /* animate: false */})
 
   }
 
@@ -360,7 +359,7 @@ const updateMap = () => {
       })
       
       // update screen positions 
-      // implement cooldown for epaper display
+      // with intervals for epaper
       if(( Date.now() - lastRealtimeRender ) > realtimeRenderCooldown )
       { 
         setVehiclePositionsState( [...Object.values(VehiclePositionsData)] ) 
@@ -450,6 +449,7 @@ const updateMap = () => {
         attributionControl={false}
         style={{width: "100%", height: "30%"}}
         mapStyle={mapstyle as StyleSpecification}>
+
           {routeEndStopMarkers}
    
           <VehicleMarkersLayer vehiclePositions={VehiclePositionsState} />

@@ -46,10 +46,9 @@ export default function Stoptime({stoptime}: Props) {
 
     return (
         <div className="stopRow">
-        <p>{data.serviceDay}</p>
             <p className="route">{data.trip?.routeShortName}</p>
             <div className="destination_time">
-                <p className="destination">{data.headsign?.split(" - ").slice(-1)}</p>
+                <p className="destination">{data.headsign?.split(" - ").slice(-1)} <span style={{fontSize: "9mm", fontWeight: 600}}>via {data.headsign?.split(" - ").slice(-3,-1).join(", ")}</span></p>
                 <p className="time">{Math.random() > 0.6 ? <span>~</span> : ""}{time.minutes != null ? Math.max( time.minutes, 0 ).toString() + " min" : time.time}</p>
             </div>
         </div>
