@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a6f089b29707e2b7b4c97fdcce269c02>>
+ * @generated SignedSource<<13ff63bef71f268f89dcdd26af9c6c4a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,8 +14,6 @@ export type PysakkiFragment$data = {
   readonly alerts: ReadonlyArray<{
     readonly " $fragmentSpreads": FragmentRefs<"AlertsFragment">;
   } | null | undefined> | null | undefined;
-  readonly gtfsId: string;
-  readonly name: string;
   readonly patterns: ReadonlyArray<{
     readonly " $fragmentSpreads": FragmentRefs<"PatternFragment">;
   } | null | undefined> | null | undefined;
@@ -41,20 +39,6 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
-      "kind": "ScalarField",
-      "name": "name",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "gtfsId",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
       "concreteType": "StoptimesInPattern",
       "kind": "LinkedField",
       "name": "stoptimesForPatterns",
@@ -74,7 +58,7 @@ const node: ReaderFragment = {
         {
           "kind": "Literal",
           "name": "numberOfDepartures",
-          "value": 15
+          "value": 12
         }
       ],
       "concreteType": "Stoptime",
@@ -93,7 +77,7 @@ const node: ReaderFragment = {
           "name": "PysakkiFirstStoptimeFragment"
         }
       ],
-      "storageKey": "stoptimesWithoutPatterns(numberOfDepartures:15)"
+      "storageKey": "stoptimesWithoutPatterns(numberOfDepartures:12)"
     },
     {
       "alias": null,
@@ -132,6 +116,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "3b4414f6aaff17e12eab6bdf364c7f7f";
+(node as any).hash = "50418c79bb1dd30962f132c4d87f6baf";
 
 export default node;
