@@ -51,10 +51,8 @@ body {
   margin: 0;
 }
 .bigtrip .trip {
-  background: #f1f1f1;
-  border: solid 2px #08060d;
   padding: 20px 0 5px 5px;
-  margin: 0;
+  white-space: nowrap;
 }
 .bigtrip .reittikoodi {
     font-size: 70px;
@@ -68,6 +66,9 @@ body {
 .bigtrip .peruttuaika {
     font-size: 60px;
 }
+.bigtrip .tulevatajat {
+    font-size: 50px;
+}
 .bigtrip .paikka {
   font-size: 35px;
   display:inline-block;
@@ -76,18 +77,19 @@ body {
 .reittihäiriö {
   font-size: 35px;
   color:white;
-  background: red;
+  background: #000f;
   margin: 5px;
 }
-
 .peruttuaika {
-  text-decoration: line-through red 3px;
-}
-.aika {
-  color: #000f;
+  text-decoration: line-through #000f 3px;
 }
 .aika, .oikeaaika, .peruttuaika {
     font-size: 44px;
+    color: #000f;
+}
+.tulevatajat {
+  font-size: 34px;
+  color: #000f;
 }
 .reittikoodi {
   font-size: 55px;

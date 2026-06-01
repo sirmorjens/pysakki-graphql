@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5255ed2df425edf751533b294f31e53a>>
+ * @generated SignedSource<<1b0cdd599f747b8f3b2926423eb2d3a3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,7 +20,7 @@ export type PysakkiFragment$data = {
     readonly " $fragmentSpreads": FragmentRefs<"PatternFragment">;
   } | null | undefined> | null | undefined;
   readonly stoptimesForPatterns: ReadonlyArray<{
-    readonly " $fragmentSpreads": FragmentRefs<"StoptimesInPatternFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"PysakkiTimesInPatternFragment">;
   } | null | undefined> | null | undefined;
   readonly stoptimesWithoutPatterns: ReadonlyArray<{
     readonly " $fragmentSpreads": FragmentRefs<"StoptimeFragment">;
@@ -32,25 +32,7 @@ export type PysakkiFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"PysakkiFragment">;
 };
 
-const node: ReaderFragment = (function(){
-var v0 = [
-  {
-    "kind": "Variable",
-    "name": "numberOfDepartures",
-    "variableName": "departures"
-  },
-  {
-    "kind": "Variable",
-    "name": "omitCanceled",
-    "variableName": "cancel"
-  },
-  {
-    "kind": "Variable",
-    "name": "startTime",
-    "variableName": "alkuaika"
-  }
-];
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [
     {
       "kind": "RootArgument",
@@ -63,6 +45,10 @@ return {
     {
       "kind": "RootArgument",
       "name": "departures"
+    },
+    {
+      "kind": "RootArgument",
+      "name": "inPatternDepartures"
     }
   ],
   "kind": "Fragment",
@@ -85,7 +71,13 @@ return {
     },
     {
       "alias": null,
-      "args": (v0/*: any*/),
+      "args": [
+        {
+          "kind": "Variable",
+          "name": "numberOfDepartures",
+          "variableName": "inPatternDepartures"
+        }
+      ],
       "concreteType": "StoptimesInPattern",
       "kind": "LinkedField",
       "name": "stoptimesForPatterns",
@@ -94,14 +86,30 @@ return {
         {
           "args": null,
           "kind": "FragmentSpread",
-          "name": "StoptimesInPatternFragment"
+          "name": "PysakkiTimesInPatternFragment"
         }
       ],
       "storageKey": null
     },
     {
       "alias": null,
-      "args": (v0/*: any*/),
+      "args": [
+        {
+          "kind": "Variable",
+          "name": "numberOfDepartures",
+          "variableName": "departures"
+        },
+        {
+          "kind": "Variable",
+          "name": "omitCanceled",
+          "variableName": "cancel"
+        },
+        {
+          "kind": "Variable",
+          "name": "startTime",
+          "variableName": "alkuaika"
+        }
+      ],
       "concreteType": "Stoptime",
       "kind": "LinkedField",
       "name": "stoptimesWithoutPatterns",
@@ -151,8 +159,7 @@ return {
   "type": "Stop",
   "abstractKey": null
 };
-})();
 
-(node as any).hash = "c20ce6717c55b04b86677a4cd9024b04";
+(node as any).hash = "46aad67367d86babbef4715d06449679";
 
 export default node;

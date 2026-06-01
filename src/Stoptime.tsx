@@ -1,11 +1,29 @@
 import { graphql, useFragment } from "react-relay";
 import type { StoptimeFragment$key } from "./__generated__/StoptimeFragment.graphql";
 
+type PatternStopTime = {
+    serviceDay: number,
+    realtimeArrival: number,
+    headsign: string;
+    trip: {
+        routeShortName: string;
+    }
+}
+
 type Props = {
   stoptime: StoptimeFragment$key;
+  patternsLookUp: {
+    [route: string]: PatternStopTime[]
+  }
 };
 
-export default function Stoptime({stoptime}: Props) 
+const arrivalTimeToString = (pattern: PatternStopTime): string => {
+    const time = new Date( (pattern.serviceDay + pattern.realtimeArrival) * 1000 )
+
+    return `${time.getHours().toString().padStart(2,"0")}:${time.getMinutes().toString().padStart(2,"0")} `
+}
+
+export default function Stoptime({stoptime, patternsLookUp}: Props) 
     {
         const data = useFragment<StoptimeFragment$key>(
             graphql`
@@ -23,21 +41,26 @@ export default function Stoptime({stoptime}: Props)
                 }
             `, stoptime
         )
-        
+  
+
         const realSeconds = data.realtimeArrival!.valueOf();
         const scheduledSeconds = data.scheduledArrival!.valueOf();
 
-        let shownTime = " ~" + new Date(scheduledSeconds * 1000).toISOString().slice(11, 16); // hh:mm
+        let shownTime = "~" + new Date(scheduledSeconds * 1000).toISOString().slice(11, 16); // hh:mm
+
 
         let cancelState= "";
         let arrivalState= "";
         let aikaClass = "aika"
+        let patternsMap = patternsLookUp[data.trip!.routeShortName!].slice(1).map(ptr => arrivalTimeToString(ptr) );
+        
+        if(shownTime.substring(1)==patternsMap[0].substring(0,5)) { patternsMap = patternsMap.slice(1)}
 
         let d = new Date();
         let secondsNow = Math.round(d.getTime() / 1000)%86400;
 
         // merkitään bussi saapuvaksi jos saapumisaika lähestyy
-        if((realSeconds-3600*3)-secondsNow <= 30) { arrivalState = "Saapuu pysäkille" }
+        if((realSeconds-3600*3)-secondsNow <= 30) { arrivalState = "Saapuu" }
 
         if(data.realtimeState != "SCHEDULED") {
             aikaClass = "oikeaaika"
@@ -47,16 +70,18 @@ export default function Stoptime({stoptime}: Props)
             else { shownTime = new Date(realSeconds * 1000).toISOString().slice(11, 16); }
 
             if(data.realtimeState == "CANCELED") { cancelState = "Peruttu"; aikaClass = "peruttuaika"; arrivalState = "" }
-
         } 
 
         return( // reittikoodi, määränpää, aika (suunniteltu), onko vuoro peruttu
-            <p className="trip">
+            <div className="trip">
                 <b className="reittikoodi">{data.trip!.routeShortName}</b>
-                <b className={aikaClass}>{shownTime}  </b> 
-                <b className="saapumistilanne">{arrivalState}</b><b className="reittihäiriö">{cancelState}</b> <br />
+                <b className={aikaClass}>{shownTime} </b>
+                <b className="tulevatajat">{patternsMap.slice(0,2)}</b> <br />
                 <b className="paikka">{data.headsign}</b>
-            </p>
+
+                <b className="reittihäiriö">{cancelState}</b>
+                <b className="saapumistilanne">{arrivalState}</b> 
+            </div>
         ) 
 
     };

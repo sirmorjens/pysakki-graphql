@@ -12,7 +12,7 @@ export default function App() {
   const refresh = () => {
     setRefreshedQueryOptions(prev => ({
       fetchKey: (prev?.fetchKey ?? 0) + 1,
-      fetchPolicy: 'store-and-network',
+      fetchPolicy: 'network-only',
     }));
   };
 
@@ -28,15 +28,15 @@ export default function App() {
 
   const data = useLazyLoadQuery<AppQuery>(
     graphql`
-      query AppQuery($id: String!, $departures: Int!, $kieli: String!, $cancel: Boolean!, $alkuaika: Long!) {
+      query AppQuery($id: String!, $inPatternDepartures: Int!, $departures: Int!, $kieli: String!, $cancel: Boolean!, $alkuaika: Long!) {
         stop(id: $id) 
         {
           ...PysakkiFragment #Pysakki.tsx
         }
       }
     `,
-    // tähän pysäkin gtfsID (eg. "Lahti:103653", "Lahti:104030") lähtöjen määrä, häiriöiden kieli (fi, en, sv), näytetäänkö perutut vuorot (false = näytetään) ja mistä asti vuorot haetaan (testaamiseen, pitäisi aina olla 0 eli nykyinen)
-    {"id": "Lahti:104030", "departures": 10, "kieli": "en", "cancel": false, "alkuaika": 0},
+    // tähän pysäkin gtfsID (eg. "Lahti:103653", "Lahti:104167") lähtöjen määrä, häiriöiden kieli (fi, en, sv), näytetäänkö perutut vuorot (false = näytetään) ja mistä asti vuorot haetaan (testaamiseen, pitäisi aina olla 0 eli nykyinen)
+    {"id": "Lahti:104167", "departures": 10, "kieli": "en", "cancel": false, "alkuaika": 0, "inPatternDepartures": 5},
     refreshedQueryOptions ?? {}
   );
 
