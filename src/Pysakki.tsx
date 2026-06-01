@@ -7,7 +7,7 @@ import Alerts from "./Alerts";
 import Stoptime from "./Stoptime";
 // import Pattern from "./Pattern"; ei käytössä, tarvitaan mahdollisesti bussien sijaintien hakemiseen
 
-export default function Pysakki(props: { pysakki: PysakkiFragment$key; setRouteShortNamesDirectionOnMap: (args: {shortName: string, directionId: string}[]) => void }) 
+export default function Pysakki(props: { pysakki: PysakkiFragment$key; setRouteShortNamesDirectionOnMap: (args: {shortName: string, directionId: number}[]) => void }) 
 {
     const data = useFragment<PysakkiFragment$key>(
     graphql`
@@ -62,7 +62,7 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; setRouteS
                 }
         `, data.stoptimesWithoutPatterns![0]   
     )
-    console.log(firstArrivalData)
+
     useEffect(() => {
         console.log("Setting new route")
 

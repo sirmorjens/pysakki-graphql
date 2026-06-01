@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c53a15ca3f22fe186dbccfe7ab8fc493>>
+ * @generated SignedSource<<07167413627f5131df8506436ab77b57>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,10 @@ export type PysakkiMapFragment$data = {
       readonly patternGeometry: {
         readonly points: any | null | undefined;
       } | null | undefined;
+      readonly stops: ReadonlyArray<{
+        readonly lat: number | null | undefined;
+        readonly lon: number | null | undefined;
+      }> | null | undefined;
     } | null | undefined> | null | undefined;
     readonly shortName: string | null | undefined;
     readonly stops: ReadonlyArray<{
@@ -125,6 +129,31 @@ return {
             {
               "alias": null,
               "args": null,
+              "concreteType": "Stop",
+              "kind": "LinkedField",
+              "name": "stops",
+              "plural": true,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "lat",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "lon",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
               "concreteType": "Geometry",
               "kind": "LinkedField",
               "name": "patternGeometry",
@@ -152,6 +181,6 @@ return {
 };
 })();
 
-(node as any).hash = "9b5d7661669ab6460f483b2e801788f9";
+(node as any).hash = "86719160727ae7c03ffdc60ec0449812";
 
 export default node;

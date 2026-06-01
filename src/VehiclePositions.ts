@@ -53,7 +53,7 @@ export const VehiclePositionsWS = async (
 }
 
 export const SubscribeToRoutePositions = (routeShortName: string) => {
-    console.log("call: " + routeShortName)
+
     if(!mqttClient.connected && routeShortName != "")
     {
         console.log("set to pending")

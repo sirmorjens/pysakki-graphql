@@ -17,7 +17,7 @@ export default function LR_Header () {
         {},
         {}
     );
-    console.log("LR HEDER UNR")
+
     const nimi = data.stop!.name
 
     const date = new Date();

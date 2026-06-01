@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<215284747a2031a79d74137b6c0fd757>>
+ * @generated SignedSource<<7c9f4c03095b975441d5637162b3714e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,7 +19,7 @@ export type PysakkiFirstStoptimeFragment$data = {
     readonly alerts: ReadonlyArray<{
       readonly " $fragmentSpreads": FragmentRefs<"AlertsFragment">;
     } | null | undefined> | null | undefined;
-    readonly directionId: string | null | undefined;
+    readonly directionId: number;
     readonly routeShortName: string | null | undefined;
   } | null | undefined;
   readonly " $fragmentType": "PysakkiFirstStoptimeFragment";

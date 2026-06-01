@@ -2685,7 +2685,7 @@ type Trip implements Node {
   pattern. Possible values: 0, 1 or `null` if the direction is irrelevant, i.e.
   the pattern has trips only in one direction.
   """
-  directionId: String
+  directionId: Int!
   "List of coordinates of this trip's route"
   geometry: [[Float]]
   "ID of the trip in format `FeedId:TripId`"

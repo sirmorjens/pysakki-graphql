@@ -7,7 +7,6 @@ import {
   type MapRef,
   type LayerProps,
   type StyleSpecification,
-  type ViewStateChangeEvent,
   type LngLatBoundsLike
 } from '@vis.gl/react-maplibre';
 
@@ -126,7 +125,7 @@ const routeIdToShortName: {
   [routeId: string]: string
 } = {} 
 
-export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rentalsData: PysakkiMapRentalsFragment$key; routeShortNamesDirectionIdOnMap: {shortName: string, directionId: string}[]}) {
+export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rentalsData: PysakkiMapRentalsFragment$key; routeShortNamesDirectionIdOnMap: {shortName: string, directionId: number}[]}) {
 
   const routeShortNamesOnMap = props.routeShortNamesDirectionIdOnMap.map(showonmap => showonmap.shortName)
   const routeDirectionIdsFromThisStop = {} as {[shortName: string]: number}
@@ -137,17 +136,17 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
 
   // state definitions 
   const [VehiclePositionsState, setVehiclePositionsState] = useState<VehiclePositionItem[]>([]);
+  const [routeStopsPosState, setRouteStopsPosState] = useState<Position[]>([])
   const [mapRefState, setMapRef] = useState<MapRef | null>();
   const [mapGeoJsonDataState, setMapGeoJsonDataState] = useState<FeatureCollection>({  
     type: 'FeatureCollection',
     features: []
   })
 
-
-
   const routeGeometries: Array<{
     shortName: string, 
-    geojson: Feature
+    geojson: Feature,
+    stops: Position[]
   }> = []
 
   const mapGeoJsonData: FeatureCollection = {
@@ -175,6 +174,10 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
           patterns {
             name
             directionId
+            stops {
+              lat
+              lon
+            }
             patternGeometry {
               points
             }
@@ -224,13 +227,18 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
       SubscribeToRoutePositions(`/gtfsrt/vp/Lahti/+/+/BUS/${routeId}/#`)
         
       const routePattern = route.patterns!.filter((pattern) => pattern?.directionId == routeDirectionIdsFromThisStop[route.shortName!])
+  
 
       if(routePattern.length)
       {
+        const routeStops: Position[] = routePattern[0]!.stops!.map(stop => [stop!.lat!, stop!.lon!])
+
         routeGeometries.push( {
           shortName: (route.shortName as string),
-          geojson: GeoJSONfromPolylines( routePattern[0]!.patternGeometry?.points )
+          geojson: GeoJSONfromPolylines( routePattern[0]!.patternGeometry?.points ),
+          stops: routeStops
         })
+
       }
     })
 
@@ -240,6 +248,7 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
     routeGeometries.forEach((routeGeometry) => {
 
       mapGeoJsonData.features.push(routeGeometry.geojson)
+
 
       const [destLng, destLat] = (routeGeometry.geojson.geometry as LineString).coordinates.slice(-1)[0]
       
@@ -287,6 +296,8 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
         </Marker>
     ))
 
+
+    setRouteStopsPosState(routeGeometries.flatMap(routeGeometry => routeGeometry.stops))
     setMapGeoJsonDataState(mapGeoJsonData);
     setVehiclePositionsState( [...Object.values(VehiclePositionsData)] )
     updateMap()
@@ -406,7 +417,6 @@ const updateMap = () => {
     "rgba(204, 235, 197, 0.4)",
     "rgba(255, 237, 111, 0.4)"
   ]
-
   let nominalColorIndex = 0;
   const getNextNominalColor = (): {
     color: string,
@@ -441,12 +451,10 @@ const updateMap = () => {
    
           <VehicleMarkersLayer vehiclePositions={VehiclePositionsState} />
 
-          {data.routes?.filter(route => routeShortNamesOnMap.includes( route.shortName! )).map(route => 
-            route.stops?.map(stop => 
-              <Marker latitude={stop?.geometries?.geoJson.coordinates[1]} longitude={stop?.geometries?.geoJson.coordinates[0]} anchor='center'>
+          {routeStopsPosState.map(routestop =>
+              <Marker latitude={routestop[0]} longitude={routestop[1]} anchor='center'>
                 <div className={PysakkiMapStyle.singleStop}></div>
-              </Marker>
-            )
+              </Marker>   
           )}
           {rentalsData.map(rentalStation => 
             <Marker latitude={rentalStation.lat!} longitude={rentalStation.lon!}>
