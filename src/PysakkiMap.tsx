@@ -126,12 +126,17 @@ const routeIdToShortName: {
   [routeId: string]: string
 } = {} 
 
-export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rentalsData: PysakkiMapRentalsFragment$key; routeShortName: string}) {
+export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rentalsData: PysakkiMapRentalsFragment$key; routeShortNamesDirectionIdOnMap: {shortName: string, directionId: string}[]}) {
+
+  const routeShortNamesOnMap = props.routeShortNamesDirectionIdOnMap.map(showonmap => showonmap.shortName)
+  const routeDirectionIdsFromThisStop = {} as {[shortName: string]: number}
+  
+  props.routeShortNamesDirectionIdOnMap.forEach(
+    routeAndDirection => routeDirectionIdsFromThisStop[routeAndDirection.shortName] = routeAndDirection.directionId
+  )
 
   // state definitions 
   const [VehiclePositionsState, setVehiclePositionsState] = useState<VehiclePositionItem[]>([]);
-  const [zoomLevelState, changeZoomLevelState] = useState(11)
-  const [mapBearingState, changeMapBearingState] = useState(0)
   const [mapRefState, setMapRef] = useState<MapRef | null>();
   const [mapGeoJsonDataState, setMapGeoJsonDataState] = useState<FeatureCollection>({  
     type: 'FeatureCollection',
@@ -158,6 +163,7 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
           geoJson
         }
         routes {
+          
           stops {
             name
             geometries {
@@ -167,7 +173,8 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
           shortName
           gtfsId
           patterns {
-
+            name
+            directionId
             patternGeometry {
               points
             }
@@ -200,9 +207,10 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
   useEffect(() => {
     if (data.routes) data.routes.forEach(route => {
 
-      if(route.shortName != props.routeShortName) return  
+      // jos ei ole listalla, ei piirretä kartalle
+      if( !(routeShortNamesOnMap.includes( route.shortName! )) ) return  
 
-      const routeId: number = parseInt( route.gtfsId.split(":")[1] )
+      const routeId: string = route.gtfsId.split(":")[1]
 
       // lookup for position data to get shortname (eg. "1K", not available in pos. data) via route id
       Object.assign(routeIdToShortName, {
@@ -214,48 +222,34 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
       // un-listen other routes (if present)
       UnSubscribeAll();
       SubscribeToRoutePositions(`/gtfsrt/vp/Lahti/+/+/BUS/${routeId}/#`)
-          
+        
+      const routePattern = route.patterns!.filter((pattern) => pattern?.directionId == routeDirectionIdsFromThisStop[route.shortName!])
 
-      routeGeometries.push( {
-        shortName: (route.shortName as string),
-        geojson: GeoJSONfromPolylines( route.patterns![0]?.patternGeometry?.points )
-      })
+      if(routePattern.length)
+      {
+        routeGeometries.push( {
+          shortName: (route.shortName as string),
+          geojson: GeoJSONfromPolylines( routePattern[0]!.patternGeometry?.points )
+        })
+      }
     })
 
     // clear old endpoints
     endPointCoordinates.clear()
 
-
     routeGeometries.forEach((routeGeometry) => {
-      mapGeoJsonData.features.push(routeGeometry.geojson)
 
-      const [startLng, startLat] = (routeGeometry.geojson.geometry as LineString).coordinates[0]
-        // rounded coords as key to group overlapping/very closely positioned endpoints
-      const startHash = roundedCoordsAsKey([startLng, startLat])
+      mapGeoJsonData.features.push(routeGeometry.geojson)
 
       const [destLng, destLat] = (routeGeometry.geojson.geometry as LineString).coordinates.slice(-1)[0]
       
       const destHash = roundedCoordsAsKey([destLng, destLat])
         
-      if( endPointCoordinates.has(startHash) )
-      {
-        const endPoint = endPointCoordinates.get(startHash)!
-        endPoint.labels.push( routeGeometry.shortName )
-        endPointCoordinates.set(startHash, endPoint)  
-      } 
-      else
-      {
-        const endPoint = {
-          labels: [routeGeometry.shortName],
-          coords: [startLat, startLng],
-        }
-        endPointCoordinates.set(startHash, endPoint)
-      }
-
       if( endPointCoordinates.has(destHash) )
       {
         const endPoint = endPointCoordinates.get(destHash)!
-        endPoint.labels.push( routeGeometry.shortName )
+        
+        if(!(endPoint.labels.includes(routeGeometry.shortName))) endPoint.labels.push( routeGeometry.shortName )
         endPointCoordinates.set(destHash, endPoint)  
       }
       else
@@ -273,7 +267,6 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
     // stuff when it should and does when is should not 
     // drives me up the wall
     routeEndStopMarkers = []
-
 
     // push endpoints into markers
     endPointCoordinates.forEach((endPoint) => 
@@ -301,8 +294,12 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
     return () => {
 
     }
-  }, [mapRefState, props.routeShortName])
+  }, [mapRefState, props.routeShortNamesDirectionIdOnMap])
 
+  useEffect(() => {
+    if(mapRefState) mapRefState.resize();
+
+  }, [mapRefState])
 // update map view to show current stop and end stop
 const updateMap = () => {
 
@@ -314,19 +311,8 @@ const updateMap = () => {
 
     [lng1, lat1] = (routeGeometries[0].geojson.geometry as LineString).coordinates.slice(-1)[0];
 
-    // no vehicle pos data available, display stop position
-    if(VehiclePositionsState.length)
-    { 
-      // implement way to display only the arriving vehicle,
-      // not some other vehicle on same route
-      lat2 = VehiclePositionsState[0].position[0]
-      lng2 = VehiclePositionsState[0].position[1]
-    }
-    else
-    {
-      lat2 = data.geometries?.geoJson.coordinates[1]
-      lng2 = data.geometries?.geoJson.coordinates[0]
-    }
+    lat2 = data.geometries?.geoJson.coordinates[1]
+    lng2 = data.geometries?.geoJson.coordinates[0]
 
     minLng = lng1 > lng2 ? lng2 : lng1
     maxLng = lng1 > lng2 ? lng1 : lng2
@@ -436,7 +422,7 @@ const updateMap = () => {
   }
 
   return (
-
+    <div className="mapContainer">
       <MapLibreMap
         ref={setMapRef}
         reuseMaps={true}
@@ -446,15 +432,16 @@ const updateMap = () => {
           zoom: 12,
           pitch: 0,
         }}
+        onLoad={(a) => console.log(a)}
         attributionControl={false}
-        style={{width: "100%", height: "30%"}}
+        style={{width: "100%", height: "100%"}}
         mapStyle={mapstyle as StyleSpecification}>
 
           {routeEndStopMarkers}
    
           <VehicleMarkersLayer vehiclePositions={VehiclePositionsState} />
 
-          {data.routes?.filter(route => route.shortName == props.routeShortName).map(route => 
+          {data.routes?.filter(route => routeShortNamesOnMap.includes( route.shortName! )).map(route => 
             route.stops?.map(stop => 
               <Marker latitude={stop?.geometries?.geoJson.coordinates[1]} longitude={stop?.geometries?.geoJson.coordinates[0]} anchor='center'>
                 <div className={PysakkiMapStyle.singleStop}></div>
@@ -474,6 +461,6 @@ const updateMap = () => {
           </Source>
 
       </MapLibreMap>
-
+    </div>
   );
 }

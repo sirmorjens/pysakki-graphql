@@ -3,6 +3,7 @@ import { graphql, useLazyLoadQuery } from "react-relay";
 import Pysakki from "./Pysakki.tsx";
 
 import LR_Header from './LR_components/LR_Header.tsx'
+import LR_Footer from './LR_components/LR_Footer.tsx'
 
 import PysakkiMap from "./PysakkiMap.tsx"
 import { useEffect, useState } from 'react';
@@ -58,7 +59,7 @@ export default function App() {
   const data = useLazyLoadQuery<AppQuery>(
     graphql`
       query AppQuery {
-        stop(id: "Lahti:103653") # tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030"
+        stop(id: "Lahti:104167") # tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030"
         # täytyy compilaa uudestaan id:n vaihdon jälkeen - npx relay-compiler
         {
           ...PysakkiFragment #Pysakki.tsx
@@ -95,7 +96,7 @@ export default function App() {
   const pysakki = data.stop;
   const rentalsData = data.vehicleRentalsByBbox
 
-  const [routeShortName, setRouteShortName] = useState("");
+  const [routeShortNamesDirectionIdOnMap, setRouteShortNamesDirectionOnMap] = useState<{shortName: string, directionId: string}[]>([]);
 
   return ( // päivämäärä
            // haetut tiedot
@@ -104,8 +105,9 @@ export default function App() {
     <div className="LR_mainContainer">
       <LR_Header />
 
-      <Pysakki pysakki={pysakki!} setRouteShortName={setRouteShortName} />
-      <PysakkiMap pysakki={pysakki!} rentalsData={rentalsData} routeShortName={routeShortName} />
+      <Pysakki pysakki={pysakki!} setRouteShortNamesDirectionOnMap={ setRouteShortNamesDirectionOnMap } />
+      <PysakkiMap pysakki={pysakki!} rentalsData={rentalsData} routeShortNamesDirectionIdOnMap={ routeShortNamesDirectionIdOnMap } />
+      <LR_Footer />
     </div>
   );
 }

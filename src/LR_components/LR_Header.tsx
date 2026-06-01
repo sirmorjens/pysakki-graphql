@@ -7,7 +7,7 @@ export default function LR_Header () {
     const data = useLazyLoadQuery<LRHeaderQuery>(
         graphql`
         query LRHeaderQuery {
-            stop(id: "Lahti:104030") # tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030"
+            stop(id: "Lahti:104167") # tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030"
             # täytyy compilaa uudestaan id:n vaihdon jälkeen - npx relay-compiler
             {
                 name(language: "fi")

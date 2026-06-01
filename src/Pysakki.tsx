@@ -1,5 +1,5 @@
 import { graphql, useFragment } from "react-relay";
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import type { PysakkiFragment$key } from "./__generated__/PysakkiFragment.graphql";
 import type { PysakkiFirstStoptimeFragment$key } from "./__generated__/PysakkiFirstStoptimeFragment.graphql";
 import Alerts from "./Alerts";
@@ -7,7 +7,7 @@ import Alerts from "./Alerts";
 import Stoptime from "./Stoptime";
 // import Pattern from "./Pattern"; ei käytössä, tarvitaan mahdollisesti bussien sijaintien hakemiseen
 
-export default function Pysakki(props: { pysakki: PysakkiFragment$key; setRouteShortName: (routeShortName: string) => void }) 
+export default function Pysakki(props: { pysakki: PysakkiFragment$key; setRouteShortNamesDirectionOnMap: (args: {shortName: string, directionId: string}[]) => void }) 
 {
     const data = useFragment<PysakkiFragment$key>(
     graphql`
@@ -37,6 +37,9 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; setRouteS
     let stopRows = [];
     let alertRows = [];
     
+    const showOnMapQty = 3
+
+
     const firstArrivalData = useFragment<PysakkiFirstStoptimeFragment$key>(
             
             // haetaan kaikki pysähdykset tässä
@@ -49,20 +52,26 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; setRouteS
                     realtimeArrival # reaaliaikainen saapumisaika sekunneissa
                     scheduledArrival # suunniteltu saapumisaika sekunneissa
                     serviceDay # helpompi mätsätä timestamppeja kun on päivä
-                    trip {
+                    trip {    
                         routeShortName # reittikoodi
+                        directionId,
                         alerts {
                             ...AlertsFragment
                         }
                     }
                 }
-        `, data.stoptimesWithoutPatterns![0]
+        `, data.stoptimesWithoutPatterns![0]   
     )
-
+    console.log(firstArrivalData)
     useEffect(() => {
         console.log("Setting new route")
-        props.setRouteShortName(firstArrivalData?.trip?.routeShortName?.valueOf() ?? "")
-    }/*,[] set for manual control*/) 
+
+        props.setRouteShortNamesDirectionOnMap([{
+            shortName: firstArrivalData!.trip!.routeShortName!,
+            directionId: firstArrivalData!.trip!.directionId!
+        }])
+
+    }, []) 
     
     for(var i = 0; i < data.stoptimesWithoutPatterns!.length; i++) {
         stopRows.push(<Stoptime stoptime={data.stoptimesWithoutPatterns![i]!}/>)

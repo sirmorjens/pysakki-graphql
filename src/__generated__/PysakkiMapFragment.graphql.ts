@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3436a172a584e536c7ddf1b96c76270a>>
+ * @generated SignedSource<<c53a15ca3f22fe186dbccfe7ab8fc493>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,8 @@ export type PysakkiMapFragment$data = {
   readonly routes: ReadonlyArray<{
     readonly gtfsId: string;
     readonly patterns: ReadonlyArray<{
+      readonly directionId: number | null | undefined;
+      readonly name: string | null | undefined;
       readonly patternGeometry: {
         readonly points: any | null | undefined;
       } | null | undefined;
@@ -54,6 +56,13 @@ var v0 = {
     }
   ],
   "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
 };
 return {
   "argumentDefinitions": [],
@@ -78,13 +87,7 @@ return {
           "name": "stops",
           "plural": true,
           "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "name",
-              "storageKey": null
-            },
+            (v1/*: any*/),
             (v0/*: any*/)
           ],
           "storageKey": null
@@ -111,6 +114,14 @@ return {
           "name": "patterns",
           "plural": true,
           "selections": [
+            (v1/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "directionId",
+              "storageKey": null
+            },
             {
               "alias": null,
               "args": null,
@@ -141,6 +152,6 @@ return {
 };
 })();
 
-(node as any).hash = "b7279591caccad3ff031f2439ac13b98";
+(node as any).hash = "9b5d7661669ab6460f483b2e801788f9";
 
 export default node;

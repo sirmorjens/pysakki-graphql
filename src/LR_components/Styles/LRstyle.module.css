@@ -19,3 +19,28 @@
     font-weight: 700;
     text-align: right;
 }
+
+.footer {
+    flex: 0 0 50mm;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 95%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Barlow';
+    color: black;
+    font-weight: 600;
+    font-size: 12mm;
+}
+
+.footer div {
+    flex: 1;
+    height: 100%;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

@@ -12,6 +12,7 @@ export default function Stoptime({stoptime}: Props) {
             fragment StoptimeFragment on Stoptime
             {
                 headsign # määränpää
+                realtime
                 realtimeArrival # reaaliaikainen saapumisaika sekunneissa
                 scheduledArrival # suunniteltu saapumisaika sekunneissa
                 serviceDay # helpompi mätsätä timestamppeja kun on päivä
@@ -24,32 +25,30 @@ export default function Stoptime({stoptime}: Props) {
             }
         `, stoptime
     )
-    let realSeconds = data.realtimeArrival!.valueOf();
-    let scheduledSeconds = data.scheduledArrival!.valueOf();
-    let realTime = "";
 
-    const currentTime = new Date();
-    const scheduledTime = new Date( (data.scheduledArrival ?? 0) * 1000 )
-    const arrivalTime = new Date( ( (data.serviceDay ?? 0) + (data.realtimeArrival ?? 0)) * 1000 )
-    const [hours, minutes] = [arrivalTime.getHours(), arrivalTime.getMinutes()]
     const minutesVsHHMMThreshold = 1000*60*10 // arrivals inside ten minutes displayed as minutes
 
-    const time: {
-        minutes?: number | null,
-        time?: string,
-    } = (arrivalTime.getTime() - currentTime.getTime()) < minutesVsHHMMThreshold ? 
-                {minutes: Math.floor( ( (arrivalTime.getTime() - currentTime.getTime()) / 1000 / 60) - 1)} : 
-                {minutes: null, time: `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}`}
+    const currentTimeStamp = Date.now();
+    const isRealTime: boolean = data.realtime ? true : false
+    const arrivalTime = new Date( ( (data.serviceDay ?? 0) + (isRealTime ? data.realtimeArrival : data.scheduledArrival)) * 1000 )
 
-    // 
-    if( time.minutes && time.minutes < -1 ) return (false)
+    const [hours, minutes] = [arrivalTime.getHours(), arrivalTime.getMinutes()]
+    const minutesLeft: number | null = (arrivalTime.getTime() - currentTimeStamp) < minutesVsHHMMThreshold ? Math.floor( ( (arrivalTime.getTime() - currentTimeStamp) / 1000 / 60) - 1) : null
+
+const timeTxt: string = minutesLeft != null ? `${Math.max(minutesLeft, 0)} min` : `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}` 
+
+    const [destinationTxt, viaTxt]: [destinationTxt: string, viaTxt: string] = [
+        data.headsign!.split(" via ").slice(0,1).join(),
+        data.headsign!.split(" via ").slice(-1).join().split(" - ").join(", ")
+    ]
+
 
     return (
         <div className="stopRow">
             <p className="route">{data.trip?.routeShortName}</p>
             <div className="destination_time">
-                <p className="destination">{data.headsign?.split(" - ").slice(-1)} <span style={{fontSize: "9mm", fontWeight: 600}}>via {data.headsign?.split(" - ").slice(-3,-1).join(", ")}</span></p>
-                <p className="time">{Math.random() > 0.6 ? <span>~</span> : ""}{time.minutes != null ? Math.max( time.minutes, 0 ).toString() + " min" : time.time}</p>
+                <p className="destination">{destinationTxt} <span style={{fontSize: "9mm", fontWeight: 600}}>via {viaTxt}</span></p>
+                <p className="time">{isRealTime ? "" : <span>~</span>}{timeTxt}</p>
             </div>
         </div>
     )

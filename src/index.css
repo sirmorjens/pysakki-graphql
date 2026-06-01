@@ -63,7 +63,6 @@
   height: 691mm;
   width: 389mm;
   overflow: hidden;
-  border: 1px solid #0f0;
 }
 body {
   margin: 0;
@@ -78,6 +77,17 @@ body {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+}
+div.mapContainer {
+  flex: 0 0 240mm;
+  margin: 5mm 0mm 5mm 0mm;
+  border: 1px solid #00000030;
+  width: 95%;
+  border-radius: 5mm;
+  overflow: hidden;
+  display: flex;
+  justify-content: stretch;
+  align-items: stretch;
 }
 
 div.stopRows {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2df264569eaad50553a1484265dc5bc5>>
+ * @generated SignedSource<<215284747a2031a79d74137b6c0fd757>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type PysakkiFirstStoptimeFragment$data = {
     readonly alerts: ReadonlyArray<{
       readonly " $fragmentSpreads": FragmentRefs<"AlertsFragment">;
     } | null | undefined> | null | undefined;
+    readonly directionId: string | null | undefined;
     readonly routeShortName: string | null | undefined;
   } | null | undefined;
   readonly " $fragmentType": "PysakkiFirstStoptimeFragment";
@@ -80,6 +81,13 @@ const node: ReaderFragment = {
         {
           "alias": null,
           "args": null,
+          "kind": "ScalarField",
+          "name": "directionId",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
           "concreteType": "Alert",
           "kind": "LinkedField",
           "name": "alerts",
@@ -101,6 +109,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "1effd284c4baf4a534316fa99a674936";
+(node as any).hash = "13a379baad386785a93492505556f76c";
 
 export default node;

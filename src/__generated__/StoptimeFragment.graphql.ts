@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b831e6877e748d574ac0046f9efee6e5>>
+ * @generated SignedSource<<fe66f809d8514c53f3525cf5b2f538ad>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type StoptimeFragment$data = {
   readonly headsign: string | null | undefined;
+  readonly realtime: boolean | null | undefined;
   readonly realtimeArrival: number | null | undefined;
   readonly scheduledArrival: number | null | undefined;
   readonly serviceDay: any | null | undefined;
@@ -39,6 +40,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "headsign",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "realtime",
       "storageKey": null
     },
     {
@@ -101,6 +109,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "34f1ab50e417e7966fc4ba070ac3e6b7";
+(node as any).hash = "79f8b02167828051660649fe4140cd7b";
 
 export default node;

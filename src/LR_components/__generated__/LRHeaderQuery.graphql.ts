@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<13dc5a33b7db59d1d9646cda2f506941>>
+ * @generated SignedSource<<79df0af36f10e870dee5f806c364e1ff>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,7 +25,7 @@ var v0 = [
   {
     "kind": "Literal",
     "name": "id",
-    "value": "Lahti:104030"
+    "value": "Lahti:104167"
   }
 ],
 v1 = {
@@ -58,7 +58,7 @@ return {
         "selections": [
           (v1/*: any*/)
         ],
-        "storageKey": "stop(id:\"Lahti:104030\")"
+        "storageKey": "stop(id:\"Lahti:104167\")"
       }
     ],
     "type": "QueryType",
@@ -87,21 +87,21 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "stop(id:\"Lahti:104030\")"
+        "storageKey": "stop(id:\"Lahti:104167\")"
       }
     ]
   },
   "params": {
-    "cacheID": "ebfd015c1202cf808ac94125ef389293",
+    "cacheID": "3e7b87968427e3aca31406fbcb90ffd4",
     "id": null,
     "metadata": {},
     "name": "LRHeaderQuery",
     "operationKind": "query",
-    "text": "query LRHeaderQuery {\n  stop(id: \"Lahti:104030\") {\n    name(language: \"fi\")\n    id\n  }\n}\n"
+    "text": "query LRHeaderQuery {\n  stop(id: \"Lahti:104167\") {\n    name(language: \"fi\")\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "098f50a3acc665eb006d65b49e835190";
+(node as any).hash = "154a0f987608e526b19aae36f0451768";
 
 export default node;
