@@ -6,6 +6,6 @@ import relay from "vite-plugin-relay"
 export default defineConfig({
   plugins: [relay, react()],
   server : {
-    open: true
+    open: false
   }
 })

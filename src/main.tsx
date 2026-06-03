@@ -1,6 +1,5 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './styles/grid.css'
 import App from './App.tsx'
 import { RelayEnvironmentProvider } from "react-relay";
 import { Environment, Network } from "relay-runtime";

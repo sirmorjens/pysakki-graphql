@@ -74,10 +74,10 @@ export default function Stoptime({stoptime, patternsLookUp}: Props)
 
         return( // reittikoodi, määränpää, aika (suunniteltu), onko vuoro peruttu
             <div className="trip">
-                <b className="reittikoodi">{data.trip!.routeShortName}</b>
-                <b className={aikaClass}>{shownTime} </b>
-                <b className="tulevatajat">{patternsMap.slice(0,2)}</b> <br />
-                <b className="paikka">{data.headsign}</b>
+                <p className="reittikoodi">{data.trip!.routeShortName}</p>
+                <p className={aikaClass}>{shownTime} </p>
+                <p className="tulevatajat">{patternsMap.slice(0,2)}</p> <br />
+                <p className="paikka">{data.headsign}</p>
 
                 <b className="reittihäiriö">{cancelState}</b>
                 <b className="saapumistilanne">{arrivalState}</b> 

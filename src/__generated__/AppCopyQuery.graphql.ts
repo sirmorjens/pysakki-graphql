@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<61736c2ae613a69fd12d4cce1a525870>>
+ * @generated SignedSource<<d36846d92ff7ad5725b9dddf7d078493>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type RealtimeState = "ADDED" | "CANCELED" | "MODIFIED" | "SCHEDULED" | "UPDATED" | "%future added value";
-export type AppQuery$variables = {
+export type AppCopyQuery$variables = {
   alkuaika: any;
   cancel: boolean;
   departures: number;
@@ -19,7 +19,7 @@ export type AppQuery$variables = {
   inPatternDepartures: number;
   kieli: string;
 };
-export type AppQuery$data = {
+export type AppCopyQuery$data = {
   readonly stop: {
     readonly alerts: ReadonlyArray<{
       readonly alertDescriptionText: string;
@@ -50,9 +50,9 @@ export type AppQuery$data = {
     } | null | undefined> | null | undefined;
   } | null | undefined;
 };
-export type AppQuery = {
-  response: AppQuery$data;
-  variables: AppQuery$variables;
+export type AppCopyQuery = {
+  response: AppCopyQuery$data;
+  variables: AppCopyQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -230,7 +230,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AppQuery",
+    "name": "AppCopyQuery",
     "selections": [
       {
         "alias": null,
@@ -330,7 +330,7 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "AppQuery",
+    "name": "AppCopyQuery",
     "selections": [
       {
         "alias": null,
@@ -418,16 +418,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "40d61a4418c7731a7920e9af784edfd5",
+    "cacheID": "e270fcb2de8579fbb0638d7206c824e1",
     "id": null,
     "metadata": {},
-    "name": "AppQuery",
+    "name": "AppCopyQuery",
     "operationKind": "query",
-    "text": "query AppQuery(\n  $id: String!\n  $inPatternDepartures: Int!\n  $departures: Int!\n  $kieli: String!\n  $cancel: Boolean!\n  $alkuaika: Long!\n) {\n  stop(id: $id) {\n    name\n    gtfsId\n    stoptimesForPatterns(numberOfDepartures: $inPatternDepartures) {\n      stoptimes {\n        serviceDay\n        realtimeArrival\n        headsign\n        trip {\n          routeShortName\n          id\n        }\n      }\n    }\n    stoptimesWithoutPatterns(numberOfDepartures: $departures, omitCanceled: $cancel, startTime: $alkuaika) {\n      headsign\n      realtimeArrival\n      scheduledArrival\n      realtimeState\n      trip {\n        routeShortName\n        id\n      }\n    }\n    patterns {\n      ...PatternFragment\n      id\n    }\n    alerts {\n      alertDescriptionText(language: $kieli)\n      id\n    }\n    id\n  }\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n"
+    "text": "query AppCopyQuery(\n  $id: String!\n  $inPatternDepartures: Int!\n  $departures: Int!\n  $kieli: String!\n  $cancel: Boolean!\n  $alkuaika: Long!\n) {\n  stop(id: $id) {\n    name\n    gtfsId\n    stoptimesForPatterns(numberOfDepartures: $inPatternDepartures) {\n      stoptimes {\n        serviceDay\n        realtimeArrival\n        headsign\n        trip {\n          routeShortName\n          id\n        }\n      }\n    }\n    stoptimesWithoutPatterns(numberOfDepartures: $departures, omitCanceled: $cancel, startTime: $alkuaika) {\n      headsign\n      realtimeArrival\n      scheduledArrival\n      realtimeState\n      trip {\n        routeShortName\n        id\n      }\n    }\n    patterns {\n      ...PatternFragment\n      id\n    }\n    alerts {\n      alertDescriptionText(language: $kieli)\n      id\n    }\n    id\n  }\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c8d3dacc4abcd1fe26148e9742e2728d";
+(node as any).hash = "3a7911e08c084f7cdc854fdd88ac5519";
 
 export default node;

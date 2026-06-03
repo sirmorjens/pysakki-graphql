@@ -50,6 +50,10 @@ body {
   padding: 15px 0 5px 5px;
   margin: 0;
 }
+p {
+  display: inline;
+  margin: 0;
+}
 .bigtrip .trip {
   padding: 20px 0 5px 5px;
   white-space: nowrap;

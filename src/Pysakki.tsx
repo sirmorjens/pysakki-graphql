@@ -89,7 +89,7 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; })
     for ( var i = 0, l = data.alerts!.length; i < l; i++ ) { alertRows.push(<Alerts alert={data.alerts![i]!}/>) }
 
     let timeNow = new Date();
-    let options:any = { year: "numeric", month: "numeric", day: "2-digit", hour: "2-digit", minute: "2-digit" };
+    let options:any = { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" };
     let stoptimesMap = data!.stoptimesWithoutPatterns!.map(stoptime => <Stoptime stoptime={stoptime!} patternsLookUp={nextDeparturesInPattern}/>)
     for ( var i = 0; i < 2; i++) {stoptimesMap[i] = <div className="bigtrip">{stoptimesMap[i]}</div>}
 
