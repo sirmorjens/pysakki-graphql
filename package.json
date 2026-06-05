@@ -15,6 +15,7 @@
     "@fontsource/barlow": "^5.2.8",
     "@fontsource/barlow-semi-condensed": "^5.2.7",
     "@mapbox/polyline": "^1.2.1",
+    "@turf/turf": "^7.3.5",
     "@vis.gl/react-maplibre": "^8.1.1",
     "geojson-polyline": "^1.0.3",
     "gtfs-realtime-bindings": "^2.0.0",

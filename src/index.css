@@ -15,6 +15,14 @@
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
+  --mm9: 1.26vh;
+  --mm12: 1.68vh;
+  --mm15: 2.1vh;
+  --mm20: 2.8vh;
+  --mm25: 3.5vh;
+  --mm30: 4.2vh;
+  --mm40: 5.6vh;
+
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
   color-scheme: light dark;
@@ -28,6 +36,7 @@
   @media (max-width: 1024px) {
     font-size: 16px;
   }
+ 
 }
 
 @media (prefers-color-scheme: dark) {
@@ -60,8 +69,8 @@
   padding: 0;
   background: #fff;
   color: black;
-  height: 691mm;
-  width: 389mm;
+  height: 100vh;
+  aspect-ratio: 9 / 16;
   overflow: hidden;
 }
 body {
@@ -79,7 +88,7 @@ body {
   align-items: center;
 }
 div.mapContainer {
-  flex: 0 0 240mm;
+  flex: 0 0 30vh;
   margin: 5mm 0mm 5mm 0mm;
   border: 1px solid #00000030;
   width: 95%;
@@ -106,7 +115,7 @@ div.stopRow {
   justify-content: flex-start;
   align-items: center;
   margin: 0;
-  height: 25mm;
+  height: var(--mm25);
   border-bottom: 1px solid #00000090;
   color: black;
 }
@@ -118,18 +127,18 @@ div.stopRow:nth-child(even) {
 div.stopRow:nth-child(1), div.stopRow:nth-child(2)  {
   height: calc(90mm / 3);
   background: white;
-  height: 40mm;
+  height: var(--mm40);
   display: flex;
   align-items: center;
 }
 div.stopRow:nth-child(1) p, div.stopRow:nth-child(2) p {
-  font-size: 25mm;
+  font-size: var(--mm20);
 }
 
 p {
   padding: 0;
   font-family: 'Barlow', sans-serif;
-  font-size: 15mm;
+  font-size: var(--mm15);;
   line-height: 0mm;
   text-align: left;
 }

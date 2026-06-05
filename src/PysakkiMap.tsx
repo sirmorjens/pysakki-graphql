@@ -113,17 +113,17 @@ const layerStyle: LayerProps = {
 
 };
 
-let routeEndStopMarkers: ReactElement[] = []
+  let routeEndStopMarkers: ReactElement[] = []
 
-// rounded coords as a key to group overlapping/nearby coords
-let endPointCoordinates = new Map<string, {labels: string[], coords: Position}>()
-let VehiclePositionsData = {} as {[vId: number]: VehiclePositionItem}
+  // rounded coords as a key to group overlapping/nearby coords
+  let endPointCoordinates = new Map<string, {labels: string[], coords: Position}>()
+  let VehiclePositionsData = {} as {[vId: number]: VehiclePositionItem}
 
-// no "shortName" (eg. '1K', '23' etc) available in position data
-// only routeId, so let's map them together into a lookup table
-const routeIdToShortName: {
-  [routeId: string]: string
-} = {} 
+  // no "shortName" (eg. '1K', '23' etc) available in position data
+  // only routeId, so let's map them together into a lookup table
+  const routeIdToShortName: {
+    [routeId: string]: string
+  } = {} 
 
 export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rentalsData: PysakkiMapRentalsFragment$key; routeShortNamesDirectionIdOnMap: {shortName: string, directionId: number}[]}) {
 
@@ -200,7 +200,6 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
     props.rentalsData
   )
 
-
   useEffect(() => {
     VehiclePositionsWS(
       PositionMessageCallback
@@ -249,7 +248,6 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
 
       mapGeoJsonData.features.push(routeGeometry.geojson)
 
-
       const [destLng, destLat] = (routeGeometry.geojson.geometry as LineString).coordinates.slice(-1)[0]
       
       const destHash = roundedCoordsAsKey([destLng, destLat])
@@ -296,7 +294,6 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
         </Marker>
     ))
 
-
     setRouteStopsPosState(routeGeometries.flatMap(routeGeometry => routeGeometry.stops))
     setMapGeoJsonDataState(mapGeoJsonData);
     setVehiclePositionsState( [...Object.values(VehiclePositionsData)] )
@@ -311,29 +308,19 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
     if(mapRefState) mapRefState.resize();
 
   }, [mapRefState])
+
 // update map view to show current stop and end stop
 const updateMap = () => {
 
-    if(!routeGeometries.length) return;
+    /* 
+      IMPLEMENT BBOX 
+    */
+  
+    //mapRefState?.fitBounds(bounds, linear: true, /* animate: false */})
 
-    // display bounds either from displayed stop to destination
-    // or closeby vehicle to destination
-    let lat1, lat2, lng1, lng2, minLat, maxLat, minLng, maxLng;
+    const bounds: LngLatBoundsLike = [25.6612-mapBoundsOffset, 60.9827-mapBoundsOffset, 25.6612+mapBoundsOffset, 60.9827+mapBoundsOffset,]
 
-    [lng1, lat1] = (routeGeometries[0].geojson.geometry as LineString).coordinates.slice(-1)[0];
-
-    lat2 = data.geometries?.geoJson.coordinates[1]
-    lng2 = data.geometries?.geoJson.coordinates[0]
-
-    minLng = lng1 > lng2 ? lng2 : lng1
-    maxLng = lng1 > lng2 ? lng1 : lng2
-    minLat = lat1 > lat2 ? lat2 : lat1;
-    maxLat = lat1 > lat1 ? lat1 : lat2;
-    
-    const bounds: LngLatBoundsLike = [minLng, minLat, maxLng, maxLat, ] as [number,number,number,number]
-
-    mapRefState?.fitBounds(bounds, {padding: {left: 80, top: 80, right: 80, bottom: 80}, linear: true, /* animate: false */})
-
+    mapRefState?.fitBounds(bounds)
   }
 
   const PositionMessageCallback =
@@ -390,7 +377,6 @@ const updateMap = () => {
     return FeatureObj;
   } 
 
-
   const routeNominalColorPalette: string[] = [
     '#fff7ec',
     '#fee8c8',
@@ -417,6 +403,9 @@ const updateMap = () => {
     "rgba(204, 235, 197, 0.4)",
     "rgba(255, 237, 111, 0.4)"
   ]
+
+  const mapBoundsOffset = 0.025
+
   let nominalColorIndex = 0;
   const getNextNominalColor = (): {
     color: string,
@@ -439,10 +428,11 @@ const updateMap = () => {
         initialViewState={{
           latitude: 60.9827, /* jossain Lahden yllä */
           longitude: 25.6612,
-          zoom: 12,
+          zoom: 11,
+          bounds: [25.6612-mapBoundsOffset, 60.9827-mapBoundsOffset, 25.6612+mapBoundsOffset, 60.9827+mapBoundsOffset,],
           pitch: 0,
         }}
-        onLoad={(a) => console.log(a)}
+        onResize={updateMap}
         attributionControl={false}
         style={{width: "100%", height: "100%"}}
         mapStyle={mapstyle as StyleSpecification}>
@@ -456,6 +446,7 @@ const updateMap = () => {
                 <div className={PysakkiMapStyle.singleStop}></div>
               </Marker>   
           )}
+
           {rentalsData.map(rentalStation => 
             <Marker latitude={rentalStation.lat!} longitude={rentalStation.lon!}>
               <div className={PysakkiMapStyle.fillari}>

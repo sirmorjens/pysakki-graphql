@@ -47,7 +47,7 @@ const timeTxt: string = minutesLeft != null ? `${Math.max(minutesLeft, 0)} min` 
         <div className="stopRow">
             <p className="route">{data.trip?.routeShortName}</p>
             <div className="destination_time">
-                <p className="destination">{destinationTxt} <span style={{fontSize: "9mm", fontWeight: 600}}>via {viaTxt}</span></p>
+                <p className="destination">{destinationTxt} <span style={{fontSize: "var(--mm9)", fontWeight: 600}}>via {viaTxt}</span></p>
                 <p className="time">{isRealTime ? "" : <span>~</span>}{timeTxt}</p>
             </div>
         </div>
