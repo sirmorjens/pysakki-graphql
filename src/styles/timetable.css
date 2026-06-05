@@ -1,0 +1,136 @@
+:root {
+  --text: #08060d;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+#root {
+  width: 720px;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: left;
+  min-height: 95svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.kello {
+  float: right;
+}
+.trip {
+  background: #f1f1f1;
+  border-bottom: solid 2px rgb(199, 199, 199);
+  padding: 5px 0 3px 5px;
+  margin: 0;
+}
+.peruttuaika {
+  position: relative;
+  background: #f1f1f1;
+  border-bottom: solid 2px rgb(199, 199, 199);
+  padding: 5px 0 5px 5px;
+  margin: 0;
+  color: darkslategrey;
+}
+.peruttuaika::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  top: 50%;
+  left: 0;
+  background: darkslategrey;
+}
+p {
+  display: inline;
+  margin: 0;
+}
+.bigtrip .trip {
+  padding: 15px 0 3px 5px;
+  white-space: nowrap;
+}
+.bigtrip .peruttuaika {
+  padding: 15px 0 3px 5px;
+  white-space: nowrap;
+}
+.bigtrip .reittikoodi {
+    font-size: 60px;
+}
+.bigtrip .aika {
+    font-size: 60px;
+}
+.bigtrip .paikka {
+  font-size: 60px;
+  display:inline-block;
+}
+.reittihäiriö {
+  font-size: 35px;
+  color:white;
+  background: #000f;
+  margin: 5px;
+}
+.aika {
+  font-size: 30px;
+  float: right;
+  padding-right: 10px;
+}
+.reittikoodi {
+  font-size: 30px;
+  width: 110px;
+  display: inline-block;
+}
+.paikka {
+  font-size: 30px;
+  display:inline-block;
+}
+.saapumistilanne {
+  font-size: 30px;
+}
+
+/* Style the header */
+.header {
+  grid-area: header;
+  background-color: #f1f1f1;
+  padding: 10px 0 0 5px;
+  text-align: left;
+  font-size: 50px;
+  height: 60px;
+}
+.alert {
+  margin: 5px 0;
+  padding: 0 0 0 2px;
+  background-color: #cd9497;
+  color: #000f;
+  text-align: left;
+  font-size: 22px;
+  overflow: hidden;
+}

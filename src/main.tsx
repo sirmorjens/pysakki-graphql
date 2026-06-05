@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
+// import App from './App.tsx'
+import Timetable from './Timetable.tsx';
 import { RelayEnvironmentProvider } from "react-relay";
 import { Environment, Network } from "relay-runtime";
 import type { FetchFunction } from "relay-runtime";
@@ -31,7 +32,9 @@ const environment = new Environment({
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RelayEnvironmentProvider environment={environment}>
-      <App />
+    {/* Aikanäkymät */}
+      {/* <App /> */}
+      <Timetable />
     </RelayEnvironmentProvider>
   </StrictMode>
 );
