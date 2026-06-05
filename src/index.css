@@ -20,10 +20,12 @@
   --mm12: 1.68vh;
   --mm15: 2.1vh;
   --mm20: 2.8vh;
+  --mm22: 3.1vh;
   --mm25: 3.5vh;
   --mm30: 4.2vh;
   --mm40: 5.6vh;
   --mm45: 6.3vh;
+  --mm50: 7vh;
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
@@ -117,7 +119,7 @@ div.stopRow {
   justify-content: flex-start;
   align-items: center;
   margin: 0;
-  height: var(--mm25);
+  height: var(--mm22);
   border-bottom: 1px solid #00000090;
   color: black;
 }
@@ -127,14 +129,13 @@ div.stopRow:nth-child(even) {
 }
 
 div.stopRow:nth-child(1), div.stopRow:nth-child(2)  {
-  height: calc(90mm / 3);
   background: white;
   height: var(--mm40);
   display: flex;
   align-items: center;
 }
 div.stopRow:nth-child(1) p, div.stopRow:nth-child(2) p {
-  font-size: var(--mm20);
+  font-size: var(--mm25);
 }
 
 p {
@@ -151,7 +152,6 @@ div.destination_time {
   align-items: center;
 }
 p.destination {
-
   font-weight: 600;
   text-align: left;
   vertical-align: middle;
@@ -160,7 +160,7 @@ p.destination span {
   vertical-align: top;
 }
 p.route {
-  flex: 0 0 50mm;
+  flex: 0 0 var(--mm50);
   font-family: 'Inter Variable', sans-serif;
   font-weight: 800;
   text-align: left;
