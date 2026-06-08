@@ -76,8 +76,9 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; setRouteS
     for(var i = 0; i < data.stoptimesWithoutPatterns!.length; i++) {
         stopRows.push(<Stoptime stoptime={data.stoptimesWithoutPatterns![i]!}/>)
     }
-
+    console.log(data.alerts!.length)
     for(var i = 0, l = data.alerts!.length; i < l; i++) {
+        console.log(data.alerts![i])
         alertRows.push(<Alerts alert={data.alerts![i]!}/>)
     }
     

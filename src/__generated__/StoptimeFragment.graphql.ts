@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fe66f809d8514c53f3525cf5b2f538ad>>
+ * @generated SignedSource<<9311b648d76a99d38695139543582eec>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,11 +9,13 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type RealtimeState = "ADDED" | "CANCELED" | "MODIFIED" | "SCHEDULED" | "UPDATED" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type StoptimeFragment$data = {
   readonly headsign: string | null | undefined;
   readonly realtime: boolean | null | undefined;
   readonly realtimeArrival: number | null | undefined;
+  readonly realtimeState: RealtimeState | null | undefined;
   readonly scheduledArrival: number | null | undefined;
   readonly serviceDay: any | null | undefined;
   readonly trip: {
@@ -73,6 +75,13 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "realtimeState",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "Trip",
       "kind": "LinkedField",
       "name": "trip",
@@ -109,6 +118,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "79f8b02167828051660649fe4140cd7b";
+(node as any).hash = "ca1a4a15c0cd5ea1ede185256a998e95";
 
 export default node;

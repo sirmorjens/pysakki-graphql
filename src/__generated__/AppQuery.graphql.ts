@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cba610d48a171a4c3605c3dc209d1161>>
+ * @generated SignedSource<<1094036a7fcbc4497d61cfeb7b662201>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -112,10 +112,17 @@ v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "routeShortName",
+  "name": "realtimeState",
   "storageKey": null
 },
 v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "routeShortName",
+  "storageKey": null
+},
+v12 = {
   "alias": null,
   "args": null,
   "concreteType": "Alert",
@@ -161,14 +168,14 @@ v11 = {
   ],
   "storageKey": null
 },
-v12 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "directionId",
   "storageKey": null
 },
-v13 = {
+v14 = {
   "alias": null,
   "args": null,
   "concreteType": "StopGeometries",
@@ -186,14 +193,14 @@ v13 = {
   ],
   "storageKey": null
 },
-v14 = {
+v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "lat",
   "storageKey": null
 },
-v15 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -300,6 +307,7 @@ return {
                   (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
+                  (v10/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -308,8 +316,8 @@ return {
                     "name": "trip",
                     "plural": false,
                     "selections": [
-                      (v10/*: any*/),
                       (v11/*: any*/),
+                      (v12/*: any*/),
                       (v4/*: any*/)
                     ],
                     "storageKey": null
@@ -339,6 +347,7 @@ return {
               (v7/*: any*/),
               (v8/*: any*/),
               (v9/*: any*/),
+              (v10/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -347,10 +356,10 @@ return {
                 "name": "trip",
                 "plural": false,
                 "selections": [
-                  (v10/*: any*/),
                   (v11/*: any*/),
+                  (v12/*: any*/),
                   (v4/*: any*/),
-                  (v12/*: any*/)
+                  (v13/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -367,8 +376,8 @@ return {
             "selections": (v5/*: any*/),
             "storageKey": null
           },
-          (v11/*: any*/),
-          (v13/*: any*/),
+          (v12/*: any*/),
+          (v14/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -386,7 +395,7 @@ return {
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
-                  (v13/*: any*/),
+                  (v14/*: any*/),
                   (v4/*: any*/)
                 ],
                 "storageKey": null
@@ -414,7 +423,7 @@ return {
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
-                  (v12/*: any*/),
+                  (v13/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -423,8 +432,8 @@ return {
                     "name": "stops",
                     "plural": true,
                     "selections": [
-                      (v14/*: any*/),
                       (v15/*: any*/),
+                      (v16/*: any*/),
                       (v4/*: any*/)
                     ],
                     "storageKey": null
@@ -478,8 +487,8 @@ return {
             "kind": "InlineFragment",
             "selections": [
               (v2/*: any*/),
-              (v14/*: any*/),
-              (v15/*: any*/)
+              (v15/*: any*/),
+              (v16/*: any*/)
             ],
             "type": "VehicleRentalStation",
             "abstractKey": null
@@ -498,12 +507,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "02377e1402e0fbb58fa7da93ed84c712",
+    "cacheID": "bacc4382d7de646b229f42ae2c671121",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery {\n  stop(id: \"Lahti:104167\") {\n    ...PysakkiFragment\n    ...PysakkiMapFragment\n    id\n  }\n  vehicleRentalsByBbox(maximumLongitude: 25.7972, minimumLongitude: 25.5428, maximumLatitude: 61.0374, minimumLatitude: 60.9208) {\n    __typename\n    ... on VehicleRentalStation {\n      ...PysakkiMapRentalsFragment\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: \"fi\")\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFirstStoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  serviceDay\n  trip {\n    routeShortName\n    directionId\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment PysakkiFragment on Stop {\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 12) {\n    ...StoptimeFragment\n    ...PysakkiFirstStoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment PysakkiMapFragment on Stop {\n  geometries {\n    geoJson\n  }\n  routes {\n    stops {\n      name\n      geometries {\n        geoJson\n      }\n      id\n    }\n    shortName\n    gtfsId\n    patterns {\n      name\n      directionId\n      stops {\n        lat\n        lon\n        id\n      }\n      patternGeometry {\n        points\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment PysakkiMapRentalsFragment on VehicleRentalStation {\n  name\n  lat\n  lon\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtime\n  realtimeArrival\n  scheduledArrival\n  serviceDay\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
+    "text": "query AppQuery {\n  stop(id: \"Lahti:104167\") {\n    ...PysakkiFragment\n    ...PysakkiMapFragment\n    id\n  }\n  vehicleRentalsByBbox(maximumLongitude: 25.7972, minimumLongitude: 25.5428, maximumLatitude: 61.0374, minimumLatitude: 60.9208) {\n    __typename\n    ... on VehicleRentalStation {\n      ...PysakkiMapRentalsFragment\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: \"fi\")\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFirstStoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  serviceDay\n  trip {\n    routeShortName\n    directionId\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment PysakkiFragment on Stop {\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 12) {\n    ...StoptimeFragment\n    ...PysakkiFirstStoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment PysakkiMapFragment on Stop {\n  geometries {\n    geoJson\n  }\n  routes {\n    stops {\n      name\n      geometries {\n        geoJson\n      }\n      id\n    }\n    shortName\n    gtfsId\n    patterns {\n      name\n      directionId\n      stops {\n        lat\n        lon\n        id\n      }\n      patternGeometry {\n        points\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment PysakkiMapRentalsFragment on VehicleRentalStation {\n  name\n  lat\n  lon\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtime\n  realtimeArrival\n  scheduledArrival\n  serviceDay\n  realtimeState\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
   }
 };
 })();
