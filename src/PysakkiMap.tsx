@@ -10,6 +10,8 @@ import {
   type LngLatBoundsLike
 } from '@vis.gl/react-maplibre';
 
+import * as turf from '@turf/turf'
+
 import 'maplibre-gl/dist/maplibre-gl.css'; // See notes below
 import mapstyle from "./Map/pysakki_mapstyle.json"
 import { useFragment } from 'react-relay';
@@ -107,7 +109,7 @@ const layerStyle: LayerProps = {
     },
     paint: {
         'line-color': ["get", "routeColor"],
-        'line-width': 3,
+        'line-width': 1.5,
         "line-offset": ["*", ["get", "routeIndex"], 0.2]
     }
 
@@ -269,7 +271,13 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
       }
     })
 
-    // clear markers and endpoints
+
+    setMapGeoJsonDataState(mapGeoJsonData);
+
+    setRouteStopsPosState(routeGeometries.flatMap(routeGeometry => routeGeometry.stops))
+
+    setVehiclePositionsState( [...Object.values(VehiclePositionsData)] )
+      // clear markers and endpoints
     // somehow the way react either doesn't reinitialize
     // stuff when it should and does when is should not 
     // drives me up the wall
@@ -293,10 +301,7 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
           </div>
         </Marker>
     ))
-
-    setRouteStopsPosState(routeGeometries.flatMap(routeGeometry => routeGeometry.stops))
-    setMapGeoJsonDataState(mapGeoJsonData);
-    setVehiclePositionsState( [...Object.values(VehiclePositionsData)] )
+  
     updateMap()
 
     return () => {
@@ -316,11 +321,23 @@ const updateMap = () => {
       IMPLEMENT BBOX 
     */
   
+    // gather coords we want to fit
+    console.log(...routeGeometries.map(rg => (rg.geojson.geometry as LineString).coordinates))
+
+    const turfCoords = turf.lineString([
+        (data.geometries?.geoJson!.coordinates as Position),
+        ...Array.from(endPointCoordinates.values()).map(ep => [ep.coords[1], ep.coords[0]]),
+        
+      ])
+    // turf
+    //console.log(turfCoords)
+    const bounds = turf.bbox(turfCoords)
+
     //mapRefState?.fitBounds(bounds, linear: true, /* animate: false */})
 
-    const bounds: LngLatBoundsLike = [25.6612-mapBoundsOffset, 60.9827-mapBoundsOffset, 25.6612+mapBoundsOffset, 60.9827+mapBoundsOffset,]
+    //const bounds: LngLatBoundsLike = [25.6612-mapBoundsOffset, 60.9827-mapBoundsOffset, 25.6612+mapBoundsOffset, 60.9827+mapBoundsOffset,]
 
-    mapRefState?.fitBounds(bounds)
+    mapRefState?.fitBounds(bounds as LngLatBoundsLike, )
   }
 
   const PositionMessageCallback =
@@ -404,7 +421,7 @@ const updateMap = () => {
     "rgba(255, 237, 111, 0.4)"
   ]
 
-  const mapBoundsOffset = 0.025
+  const mapBoundsOffset = 0.055
 
   let nominalColorIndex = 0;
   const getNextNominalColor = (): {
@@ -436,8 +453,10 @@ const updateMap = () => {
         attributionControl={false}
         style={{width: "100%", height: "100%"}}
         mapStyle={mapstyle as StyleSpecification}>
+          <Source id="route"  type="geojson" data={mapGeoJsonDataState}>
+            <Layer {...layerStyle} />
+          </Source>
 
-          {routeEndStopMarkers}
    
           <VehicleMarkersLayer vehiclePositions={VehiclePositionsState} />
 
@@ -453,11 +472,10 @@ const updateMap = () => {
                 <img src={fillari} alt="Fillari" />
               </div>
             </Marker>
-          )}
+          )}          
+          {routeEndStopMarkers}
           <Marker latitude={data.geometries?.geoJson.coordinates[1]} longitude={data.geometries?.geoJson.coordinates[0]} color={"black"} />
-          <Source id="route" type="geojson" data={mapGeoJsonDataState}>
-            <Layer {...layerStyle} />
-          </Source>
+
 
       </MapLibreMap>
     </div>

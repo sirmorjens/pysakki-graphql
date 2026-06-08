@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1094036a7fcbc4497d61cfeb7b662201>>
+ * @generated SignedSource<<18eb3bd554a8b11514e46ac8e0737deb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,9 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type AppQuery$variables = Record<PropertyKey, never>;
+export type AppQuery$variables = {
+  id: string;
+};
 export type AppQuery$data = {
   readonly stop: {
     readonly " $fragmentSpreads": FragmentRefs<"PysakkiFragment" | "PysakkiMapFragment">;
@@ -27,12 +29,19 @@ export type AppQuery = {
 const node: ConcreteRequest = (function(){
 var v0 = [
   {
-    "kind": "Literal",
-    "name": "id",
-    "value": "Lahti:104167"
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "id"
   }
 ],
 v1 = [
+  {
+    "kind": "Variable",
+    "name": "id",
+    "variableName": "id"
+  }
+],
+v2 = [
   {
     "kind": "Literal",
     "name": "maximumLatitude",
@@ -54,75 +63,75 @@ v1 = [
     "value": 25.5428
   }
 ],
-v2 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v3 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "headsign",
   "storageKey": null
 },
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v5 = [
-  (v2/*: any*/),
+v6 = [
   (v3/*: any*/),
-  (v4/*: any*/)
+  (v4/*: any*/),
+  (v5/*: any*/)
 ],
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "realtime",
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "realtimeArrival",
   "storageKey": null
 },
-v8 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "scheduledArrival",
   "storageKey": null
 },
-v9 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "serviceDay",
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "realtimeState",
   "storageKey": null
 },
-v11 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "routeShortName",
   "storageKey": null
 },
-v12 = {
+v13 = {
   "alias": null,
   "args": null,
   "concreteType": "Alert",
@@ -164,18 +173,18 @@ v12 = {
       "name": "alertSeverityLevel",
       "storageKey": null
     },
-    (v4/*: any*/)
+    (v5/*: any*/)
   ],
   "storageKey": null
 },
-v13 = {
+v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "directionId",
   "storageKey": null
 },
-v14 = {
+v15 = {
   "alias": null,
   "args": null,
   "concreteType": "StopGeometries",
@@ -193,14 +202,14 @@ v14 = {
   ],
   "storageKey": null
 },
-v15 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "lat",
   "storageKey": null
 },
-v16 = {
+v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -209,14 +218,14 @@ v16 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "AppQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "Stop",
         "kind": "LinkedField",
         "name": "stop",
@@ -233,11 +242,11 @@ return {
             "name": "PysakkiMapFragment"
           }
         ],
-        "storageKey": "stop(id:\"Lahti:104167\")"
+        "storageKey": null
       },
       {
         "alias": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": null,
         "kind": "LinkedField",
         "name": "vehicleRentalsByBbox",
@@ -264,13 +273,13 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AppQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "Stop",
         "kind": "LinkedField",
         "name": "stop",
@@ -291,7 +300,7 @@ return {
                 "kind": "LinkedField",
                 "name": "pattern",
                 "plural": false,
-                "selections": (v5/*: any*/),
+                "selections": (v6/*: any*/),
                 "storageKey": null
               },
               {
@@ -302,12 +311,12 @@ return {
                 "name": "stoptimes",
                 "plural": true,
                 "selections": [
-                  (v3/*: any*/),
-                  (v6/*: any*/),
+                  (v4/*: any*/),
                   (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
+                  (v11/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -316,9 +325,9 @@ return {
                     "name": "trip",
                     "plural": false,
                     "selections": [
-                      (v11/*: any*/),
                       (v12/*: any*/),
-                      (v4/*: any*/)
+                      (v13/*: any*/),
+                      (v5/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -342,12 +351,12 @@ return {
             "name": "stoptimesWithoutPatterns",
             "plural": true,
             "selections": [
-              (v3/*: any*/),
-              (v6/*: any*/),
+              (v4/*: any*/),
               (v7/*: any*/),
               (v8/*: any*/),
               (v9/*: any*/),
               (v10/*: any*/),
+              (v11/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -356,10 +365,10 @@ return {
                 "name": "trip",
                 "plural": false,
                 "selections": [
-                  (v11/*: any*/),
                   (v12/*: any*/),
-                  (v4/*: any*/),
-                  (v13/*: any*/)
+                  (v13/*: any*/),
+                  (v5/*: any*/),
+                  (v14/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -373,11 +382,11 @@ return {
             "kind": "LinkedField",
             "name": "patterns",
             "plural": true,
-            "selections": (v5/*: any*/),
+            "selections": (v6/*: any*/),
             "storageKey": null
           },
-          (v12/*: any*/),
-          (v14/*: any*/),
+          (v13/*: any*/),
+          (v15/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -394,9 +403,9 @@ return {
                 "name": "stops",
                 "plural": true,
                 "selections": [
-                  (v2/*: any*/),
-                  (v14/*: any*/),
-                  (v4/*: any*/)
+                  (v3/*: any*/),
+                  (v15/*: any*/),
+                  (v5/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -422,8 +431,8 @@ return {
                 "name": "patterns",
                 "plural": true,
                 "selections": [
-                  (v2/*: any*/),
-                  (v13/*: any*/),
+                  (v3/*: any*/),
+                  (v14/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -432,9 +441,9 @@ return {
                     "name": "stops",
                     "plural": true,
                     "selections": [
-                      (v15/*: any*/),
                       (v16/*: any*/),
-                      (v4/*: any*/)
+                      (v17/*: any*/),
+                      (v5/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -456,21 +465,21 @@ return {
                     ],
                     "storageKey": null
                   },
-                  (v4/*: any*/)
+                  (v5/*: any*/)
                 ],
                 "storageKey": null
               },
-              (v4/*: any*/)
+              (v5/*: any*/)
             ],
             "storageKey": null
           },
-          (v4/*: any*/)
+          (v5/*: any*/)
         ],
-        "storageKey": "stop(id:\"Lahti:104167\")"
+        "storageKey": null
       },
       {
         "alias": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": null,
         "kind": "LinkedField",
         "name": "vehicleRentalsByBbox",
@@ -486,9 +495,9 @@ return {
           {
             "kind": "InlineFragment",
             "selections": [
-              (v2/*: any*/),
-              (v15/*: any*/),
-              (v16/*: any*/)
+              (v3/*: any*/),
+              (v16/*: any*/),
+              (v17/*: any*/)
             ],
             "type": "VehicleRentalStation",
             "abstractKey": null
@@ -496,7 +505,7 @@ return {
           {
             "kind": "InlineFragment",
             "selections": [
-              (v4/*: any*/)
+              (v5/*: any*/)
             ],
             "type": "Node",
             "abstractKey": "__isNode"
@@ -507,16 +516,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "bacc4382d7de646b229f42ae2c671121",
+    "cacheID": "8aa7fe0769d5a40e2ef3f772666ace13",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery {\n  stop(id: \"Lahti:104167\") {\n    ...PysakkiFragment\n    ...PysakkiMapFragment\n    id\n  }\n  vehicleRentalsByBbox(maximumLongitude: 25.7972, minimumLongitude: 25.5428, maximumLatitude: 61.0374, minimumLatitude: 60.9208) {\n    __typename\n    ... on VehicleRentalStation {\n      ...PysakkiMapRentalsFragment\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: \"fi\")\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFirstStoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  serviceDay\n  trip {\n    routeShortName\n    directionId\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment PysakkiFragment on Stop {\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 12) {\n    ...StoptimeFragment\n    ...PysakkiFirstStoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment PysakkiMapFragment on Stop {\n  geometries {\n    geoJson\n  }\n  routes {\n    stops {\n      name\n      geometries {\n        geoJson\n      }\n      id\n    }\n    shortName\n    gtfsId\n    patterns {\n      name\n      directionId\n      stops {\n        lat\n        lon\n        id\n      }\n      patternGeometry {\n        points\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment PysakkiMapRentalsFragment on VehicleRentalStation {\n  name\n  lat\n  lon\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtime\n  realtimeArrival\n  scheduledArrival\n  serviceDay\n  realtimeState\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
+    "text": "query AppQuery(\n  $id: String!\n) {\n  stop(id: $id) {\n    ...PysakkiFragment\n    ...PysakkiMapFragment\n    id\n  }\n  vehicleRentalsByBbox(maximumLongitude: 25.7972, minimumLongitude: 25.5428, maximumLatitude: 61.0374, minimumLatitude: 60.9208) {\n    __typename\n    ... on VehicleRentalStation {\n      ...PysakkiMapRentalsFragment\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: \"fi\")\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n\nfragment PysakkiFirstStoptimeFragment on Stoptime {\n  headsign\n  realtimeArrival\n  scheduledArrival\n  serviceDay\n  trip {\n    routeShortName\n    directionId\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment PysakkiFragment on Stop {\n  stoptimesForPatterns {\n    ...StoptimesInPatternFragment\n  }\n  stoptimesWithoutPatterns(numberOfDepartures: 12) {\n    ...StoptimeFragment\n    ...PysakkiFirstStoptimeFragment\n  }\n  patterns {\n    ...PatternFragment\n    id\n  }\n  alerts {\n    ...AlertsFragment\n    id\n  }\n}\n\nfragment PysakkiMapFragment on Stop {\n  geometries {\n    geoJson\n  }\n  routes {\n    stops {\n      name\n      geometries {\n        geoJson\n      }\n      id\n    }\n    shortName\n    gtfsId\n    patterns {\n      name\n      directionId\n      stops {\n        lat\n        lon\n        id\n      }\n      patternGeometry {\n        points\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment PysakkiMapRentalsFragment on VehicleRentalStation {\n  name\n  lat\n  lon\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtime\n  realtimeArrival\n  scheduledArrival\n  serviceDay\n  realtimeState\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n\nfragment StoptimesInPatternFragment on StoptimesInPattern {\n  pattern {\n    ...PatternFragment\n    id\n  }\n  stoptimes {\n    ...StoptimeFragment\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "95eb9162418774aef326da5ad6025073";
+(node as any).hash = "07dcf0591fce917056d89beec103c751";
 
 export default node;

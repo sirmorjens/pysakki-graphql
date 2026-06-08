@@ -7,7 +7,7 @@ export default function LR_Footer () {
     return (
         <div className={LRstyle.footer}>
             <div className={LRstyle.cta}>
-                <div><img src={palaute} alt="Puhekupla" /></div>
+                <div>QR-koodi</div>
                 <div><p>Kerro mielipiteesi pysäkkinäytöstä<br /><b>lsl.fi/asiakaspalvelu/palaute</b></p></div>
             </div>
             <div className={LRstyle.logo}><img src={temp_logo} alt="LSL" /></div>

@@ -58,8 +58,8 @@ export default function App() {
 
   const data = useLazyLoadQuery<AppQuery>(
     graphql`
-      query AppQuery {
-        stop(id: "Lahti:104167") # tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030"
+      query AppQuery($id: String!) {
+        stop(id: $id) # tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030"
         # täytyy compilaa uudestaan id:n vaihdon jälkeen - npx relay-compiler
         {
           ...PysakkiFragment #Pysakki.tsx
@@ -79,8 +79,8 @@ export default function App() {
         }
       }
     `,
-    variables,
-    refreshedQueryOptions ?? {},
+    {"id": "Lahti:104167", "departures": 12, "kieli": "en", "cancel": false, "alkuaika": 0, "inPatternDepartures": 5},
+    refreshedQueryOptions ?? {}
   );
 
   useEffect(() => {
@@ -96,17 +96,19 @@ export default function App() {
   const pysakki = data.stop;
   const rentalsData = data.vehicleRentalsByBbox
 
-  const [routeShortNamesDirectionIdOnMap, setRouteShortNamesDirectionOnMap] = useState<{shortName: string, directionId: string}[]>([]);
+  const [routeShortNamesDirectionIdOnMap, setRouteShortNamesDirectionOnMap] = useState<{shortName: string, directionId: number}[]>([]);
+
+  const fauxShortNames: {shortName: string, directionId: number}[] = [
+    {shortName: "1K", directionId: 1},
+  ]
+
 
   return ( // päivämäärä
            // haetut tiedot
-
-
     <div className="LR_mainContainer">
       <LR_Header />
-
       <Pysakki pysakki={pysakki!} setRouteShortNamesDirectionOnMap={ setRouteShortNamesDirectionOnMap } />
-      <PysakkiMap pysakki={pysakki!} rentalsData={rentalsData} routeShortNamesDirectionIdOnMap={ routeShortNamesDirectionIdOnMap } />
+      <PysakkiMap pysakki={pysakki!} rentalsData={rentalsData} routeShortNamesDirectionIdOnMap={ fauxShortNames } />
       <LR_Footer />
     </div>
   );

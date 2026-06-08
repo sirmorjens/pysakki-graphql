@@ -26,8 +26,6 @@ export default function Stoptime({stoptime}: Props) {
         `, stoptime
     )
 
-
-
     const minutesVsHHMMThreshold = 1000 * 60 * 10 // arrivals inside ten minutes displayed as minutes
 
     const currentTimeStamp = Date.now();
@@ -44,7 +42,7 @@ export default function Stoptime({stoptime}: Props) {
         data.headsign!.split(" via ").slice(-1).join().split(" - ").join(", ")
     ]
 
-    const isCanceled = Math.random()>0.7 || data!.realtimeState === 'CANCELED'
+    const isCanceled = data!.realtimeState === 'CANCELED'
 
     return (
         <div className={"stopRow " + (isCanceled ? "canceled" : "")}>
@@ -67,6 +65,7 @@ export default function Stoptime({stoptime}: Props) {
             </div>
 
         </div>
+        
     )
 
 };
