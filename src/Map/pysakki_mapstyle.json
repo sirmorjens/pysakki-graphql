@@ -63,7 +63,7 @@
         "text-font": ["Barlow Semi Condensed Regular"],
         "text-letter-spacing": 0,
         "text-rotation-alignment": "viewport",
-        "text-size": ["case", ["==", ["get", "class"], "suburb"], 25, 0],
+        "text-size": ["case", ["==", ["get", "class"], "suburb"], 18.5, 0],
         "text-justify": "left",
         "text-pitch-alignment": "viewport",
         "symbol-z-order": "viewport-y",

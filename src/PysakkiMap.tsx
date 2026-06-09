@@ -25,8 +25,11 @@ import {
 
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
 import PysakkiMapStyle from './PysakkiMap.module.css'
+
 import pieniBussi from "./assets/bussi.svg"
 import fillari from "./assets/fillari.svg"
+import phks from './assets/PHKS.svg'
+
 // @ts-expect-error - no types
 import polyline from '@mapbox/polyline'
 
@@ -72,14 +75,14 @@ const VehicleMarkersLayer = ({ vehiclePositions }: { vehiclePositions: VehiclePo
       {vehiclePositions.map((vehicleposition, idx) => (
         <Marker key={`vehicle-${idx}`} latitude={vehicleposition.position[0]} longitude={vehicleposition.position[1]}>
           <div className={PysakkiMapStyle.vehicle}>
-            <div className={PysakkiMapStyle.bussi} style={{width: `${(zoomLevel*zoomLevel*2)*0.05}mm`}}>
+            <div className={PysakkiMapStyle.bussi} style={{width: `${(zoomLevel*zoomLevel*2)*0.04}mm`}}>
               <img 
                 src={pieniBussi} 
                 alt="Bussi" 
                 className={vehicleposition.bearing - 180 < mapBearing ? "" : PysakkiMapStyle.flipped}
               />
             </div>
-            <div className={PysakkiMapStyle.vehicleLabel} style={{fontSize: `${(zoomLevel*zoomLevel*2)*0.01}mm`, marginTop: `${(zoomLevel*zoomLevel*2)*0.05}%`}}>
+            <div className={PysakkiMapStyle.vehicleLabel} style={{fontSize: `${(zoomLevel*zoomLevel*2)*0.008}mm`, marginTop: `${(zoomLevel*zoomLevel*2)*0.03}%`}}>
               {routeIdToShortName.hasOwnProperty( vehicleposition.routeId ) ? routeIdToShortName[vehicleposition.routeId] : "?"}
             </div>
           </div>
@@ -109,7 +112,7 @@ const layerStyle: LayerProps = {
     },
     paint: {
         'line-color': ["get", "routeColor"],
-        'line-width': 1.5,
+        'line-width': 2.5,
         "line-offset": ["*", ["get", "routeIndex"], 0.2]
     }
 
@@ -322,22 +325,26 @@ const updateMap = () => {
     */
   
     // gather coords we want to fit
-    console.log(...routeGeometries.map(rg => (rg.geojson.geometry as LineString).coordinates))
-
+    console.log(routeGeometries)
+    if(!routeGeometries.length) return
+    
+    console.log()
+    
     const turfCoords = turf.lineString([
         (data.geometries?.geoJson!.coordinates as Position),
-        ...Array.from(endPointCoordinates.values()).map(ep => [ep.coords[1], ep.coords[0]]),
-        
+        data.geometries?.geoJson!.coordinates.map(c => c-0.002),
+        ...Array.from( endPointCoordinates ).flatMap(([key, value]) => [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+0.010]])
       ])
+
     // turf
-    //console.log(turfCoords)
+    console.log(turfCoords)
     const bounds = turf.bbox(turfCoords)
 
     //mapRefState?.fitBounds(bounds, linear: true, /* animate: false */})
 
     //const bounds: LngLatBoundsLike = [25.6612-mapBoundsOffset, 60.9827-mapBoundsOffset, 25.6612+mapBoundsOffset, 60.9827+mapBoundsOffset,]
 
-    mapRefState?.fitBounds(bounds as LngLatBoundsLike, )
+   mapRefState?.fitBounds(bounds as LngLatBoundsLike, )
   }
 
   const PositionMessageCallback =
@@ -472,7 +479,14 @@ const updateMap = () => {
                 <img src={fillari} alt="Fillari" />
               </div>
             </Marker>
-          )}          
+          )}        
+
+          <Marker longitude={25.5681} latitude={60.9923}>
+            <div className={PysakkiMapStyle.poi}>
+              <img src={phks} alt="PHKS" />
+            </div>
+          </Marker>
+
           {routeEndStopMarkers}
           <Marker latitude={data.geometries?.geoJson.coordinates[1]} longitude={data.geometries?.geoJson.coordinates[0]} color={"black"} />
 

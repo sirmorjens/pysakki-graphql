@@ -56,6 +56,8 @@ export default function App() {
     return () => clearTimeout(timerId)
   }, [])
 
+  // next two 
+
   const data = useLazyLoadQuery<AppQuery>(
     graphql`
       query AppQuery($id: String!) {
@@ -99,6 +101,7 @@ export default function App() {
   const [routeShortNamesDirectionIdOnMap, setRouteShortNamesDirectionOnMap] = useState<{shortName: string, directionId: number}[]>([]);
 
   const fauxShortNames: {shortName: string, directionId: number}[] = [
+    {shortName: "2", directionId: 1},
     {shortName: "1K", directionId: 1},
   ]
 

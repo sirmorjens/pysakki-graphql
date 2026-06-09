@@ -26,8 +26,9 @@
   --mm40: 5.6vh;
   --mm45: 6.3vh;
   --mm50: 7vh;
+  --mm60: 8.4vh;
   --light: #1f1f1f;
-  --lightbg: #fcfcfc;
+  --lightbg: #f1f1f1;
   --canceledbg: #dfdfdf;
   --canceledTxt: rgb(12, 12, 12);
 
@@ -124,8 +125,9 @@ div.stopRow {
   align-items: center;
   margin: 0;
   height: var(--mm22);
-  border-bottom: 1px solid #00000090;
+  border-bottom: 2px solid #0000004d;
   color: black;
+  padding: 0px 10px 0px 10px;
 }
 
 
@@ -144,6 +146,8 @@ div.stopRow:nth-child(1) p, div.stopRow:nth-child(2) p {
   font-size: var(--mm25);
 }
 
+
+
 div.stopRow.canceled {
   background: var(--canceledbg);
   color: var(--canceledTxt);
@@ -156,7 +160,10 @@ div.stopRow.canceled::after {
   left: 0;
   width: 100%;
   height: 1px;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.75);
+}
+.warning {
+  height: 1.7vh;
 }
 
 p {
@@ -185,7 +192,7 @@ p.destination span {
   color: var(--light)
 }
 p.route {
-  flex: 0 0 var(--mm50);
+  flex: 0 0 var(--mm60);
   font-family: 'Inter Variable', sans-serif;
   font-weight: 800;
   text-align: left;
