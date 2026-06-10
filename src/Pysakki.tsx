@@ -1,85 +1,110 @@
 import { graphql, useFragment } from "react-relay";
 import type { PysakkiFragment$key } from "./__generated__/PysakkiFragment.graphql";
-import type { PysakkiFirstStoptimeFragment$key } from "./__generated__/PysakkiFirstStoptimeFragment.graphql";
-import Alerts from "./Alerts";
-// import StoptimesInPattern from "./StoptimesInPattern"; ei käytössä
+import type { PysakkiTimesInPatternFragment$key } from "./__generated__/PysakkiTimesInPatternFragment.graphql"
+import { useState, useEffect } from 'react'
+import { useLazyLoadQuery } from "react-relay";
+import type { PysakkiQuery } from "./__generated__/PysakkiQuery.graphql"
 import Stoptime from "./Stoptime";
 // import Pattern from "./Pattern"; ei käytössä, tarvitaan mahdollisesti bussien sijaintien hakemiseen
 
-export default function Pysakki(props: { pysakki: PysakkiFragment$key; }) 
-{
-    const data = useFragment<PysakkiFragment$key>(
-    graphql`
-      fragment PysakkiFragment on Stop
-      {
-        stoptimesForPatterns
-        {
-            ...StoptimesInPatternFragment #StoptimeInsPattern.tsx
-        }
-        stoptimesWithoutPatterns(numberOfDepartures: 12) # tähän haluttu määrä saapuvien bussien aikoja - muutoksen jälkeen npx relay-compiler 
-        {
-            ...StoptimeFragment #Stoptime.tsx
-            ...PysakkiFirstStoptimeFragment #---
-        }
-        patterns
-        {
-            ...PatternFragment #Pattern.tsx
-        }
-        alerts
-        {
-            ...AlertsFragment #Alerts.tsx
-        }
+type PatternStopTime = {
+    serviceDay: number,
+    realtimeArrival: number,
+    headsign: string;
+    trip: {
+        routeShortName: string;
     }
-    `,
-    props.pysakki
-    )
-    let stopRows = [];
-    let alertRows = [];
+}
+
+export default function Pysakki() 
+{
+
+
+    const nextDeparturesInPattern: {
+        [routename: string]: PatternStopTime[]
+    } = {}
+    const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
+ 
+    const refreshRate = 60 * 1000;
+ 
+    const refresh = () => {
+        setRefreshedQueryOptions(prev => ({
+        fetchKey: (prev?.fetchKey ?? 0) + 1,
+        fetchPolicy: 'network-only',
+        }));
+    };
+ 
+    useEffect(() => {
+ 
+        const timerId = setInterval(() => {
+        console.log("refresh")
+        refresh()
+        }, refreshRate)
     
-    const showOnMapQty = 3
-
-
-    const firstArrivalData = useFragment<PysakkiFirstStoptimeFragment$key>(
-            
-            // haetaan kaikki pysähdykset tässä
-            // tehdään listat ja passataan ylös ja alas
-
-            graphql`
-                fragment PysakkiFirstStoptimeFragment on Stoptime
+        return () => clearTimeout(timerId)
+    }, []);
+ 
+    const data = useLazyLoadQuery<PysakkiQuery>(
+        graphql`
+        query PysakkiQuery($id: String!, $departureQty: Int!, $lang: String!, $omitCanceled: Boolean!, $inPatternDeparturesQty: Int!) {
+            stop(id: $id) 
+            {
+                stoptimesForPatterns (numberOfDepartures: $inPatternDeparturesQty)
                 {
-                    headsign # määränpää
-                    realtimeArrival # reaaliaikainen saapumisaika sekunneissa
-                    scheduledArrival # suunniteltu saapumisaika sekunneissa
-                    serviceDay # helpompi mätsätä timestamppeja kun on päivä
-                    trip {    
-                        routeShortName # reittikoodi
-                        directionId,
-                        alerts {
-                            ...AlertsFragment
+                    ...PysakkiTimesInPatternFragment
+                }
+                stoptimesWithoutPatterns(numberOfDepartures:  $departureQty, omitCanceled: $omitCanceled)
+                {
+                    ...StoptimeFragment
+                }
+            }
+        }
+        `,
+        // tähän pysäkin gtfsID (eg. "Lahti:103641", "Lahti:104167") lähtöjen määrä, häiriöiden kieli (fi, en, sv), näytetäänkö perutut vuorot (false = näytetään) ja mistä asti vuorot haetaan (testaamiseen, pitäisi aina olla 0 eli nykyinen)
+        {"id": "Lahti:104167", "departureQty": 12, "omitCanceled": false, "inPatternDeparturesQty": 3, "lang": "fi"},
+        refreshedQueryOptions ?? {}
+    );
+    console.log(data)
+    data.stop!.stoptimesForPatterns?.forEach(stoptimeForPattern => {
+
+        const stoptimesInPattern = useFragment<PysakkiTimesInPatternFragment$key>(
+            graphql`
+                fragment PysakkiTimesInPatternFragment on StoptimesInPattern
+                {
+                    stoptimes {
+                        serviceDay
+                        realtimeArrival
+                        headsign
+                        trip {
+                            routeShortName
                         }
                     }
-                }
-        `, data.stoptimesWithoutPatterns![0]   
-    )
-    
-    for(var i = 0; i < data.stoptimesWithoutPatterns!.length; i++) {
-        stopRows.push(<Stoptime stoptime={data.stoptimesWithoutPatterns![i]!}/>)
-    }
-    console.log(data.alerts!.length)
-    for(var i = 0, l = data.alerts!.length; i < l; i++) {
-        console.log(data.alerts![i])
-        alertRows.push(<Alerts alert={data.alerts![i]!}/>)
-    }
-    
-
+        
+            }`, 
+            stoptimeForPattern
+        )
+        
+        stoptimesInPattern?.stoptimes?.toReversed().forEach((stoptime) => 
+        {
+            // routen nimi avaimeksi objektille
+            const routeName = stoptime?.trip!.routeShortName!
+            
+            // jos route ei jo listalla, alustetaan uusi taulukko
+            if( !nextDeparturesInPattern.hasOwnProperty( routeName ) )
+            {
+                nextDeparturesInPattern[routeName] = []
+            }
+            // routen taulukkoon uusi stoptime
+            nextDeparturesInPattern[routeName].push( stoptime as PatternStopTime)
+        })
+    })
 
     return ( 
-        // Pysäkin nimi, pysäkin gtfsID-tunniste
-        // häiriöt, jos niitä on
-        // reitit ja niiden koodit ja saapumisajat
         <div className="stopRows">
-            {alertRows}
-            {stopRows} <br />
-        </div>    
+            {data!.stop!.stoptimesWithoutPatterns!.map(
+                stoptime => 
+                <Stoptime stoptime={stoptime!} patternsLookUp={nextDeparturesInPattern}/>
+            )}
+        </div>   
     )
 };

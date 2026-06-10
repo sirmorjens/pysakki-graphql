@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d2093ab272dfa9080c75e476410da26f>>
+ * @generated SignedSource<<7dc82fd2eeca0623b9053bb59ad366bf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -26,7 +26,12 @@ export type AlertsFragment$key = {
 };
 
 const node: ReaderFragment = {
-  "argumentDefinitions": [],
+  "argumentDefinitions": [
+    {
+      "kind": "RootArgument",
+      "name": "lang"
+    }
+  ],
   "kind": "Fragment",
   "metadata": null,
   "name": "AlertsFragment",
@@ -42,14 +47,14 @@ const node: ReaderFragment = {
       "alias": null,
       "args": [
         {
-          "kind": "Literal",
+          "kind": "Variable",
           "name": "language",
-          "value": "fi"
+          "variableName": "lang"
         }
       ],
       "kind": "ScalarField",
       "name": "alertDescriptionText",
-      "storageKey": "alertDescriptionText(language:\"fi\")"
+      "storageKey": null
     },
     {
       "alias": null,
@@ -70,6 +75,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "191c81c21e7956f7e257f1aa02e8f520";
+(node as any).hash = "39c5f760e0d3270d7a12be1078ae95cd";
 
 export default node;

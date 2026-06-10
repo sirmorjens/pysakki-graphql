@@ -1,11 +1,29 @@
 import { graphql, useFragment } from "react-relay";
 import type { StoptimeFragment$key } from "./__generated__/StoptimeFragment.graphql";
 
+type PatternStopTime = {
+    serviceDay: number,
+    realtimeArrival: number,
+    headsign: string;
+    trip: {
+        routeShortName: string;
+    }
+}
+
+    const arrivalTimeToString = (pattern: PatternStopTime): string => {
+        const time = new Date( (pattern.serviceDay + pattern.realtimeArrival) * 1000 )
+
+        return `${time.getHours().toString().padStart(2,"0")}:${time.getMinutes().toString().padStart(2,"0")} `
+    }
+
 type Props = {
   stoptime: StoptimeFragment$key;
+  patternsLookUp: {
+    [route: string]: PatternStopTime[]
+  }
 };
 
-export default function Stoptime({stoptime}: Props) {
+export default function Stoptime({stoptime, patternsLookUp}: Props) {
     const data = useFragment<StoptimeFragment$key>(
         graphql`
             fragment StoptimeFragment on Stoptime
@@ -25,6 +43,9 @@ export default function Stoptime({stoptime}: Props) {
             }
         `, stoptime
     )
+
+    // @ts-expect-error ei käytössä tällä hetkellä
+    const patterns = patternsLookUp[data.trip!.routeShortName!].slice(1).map(ptr => arrivalTimeToString(ptr) );
 
     const minutesVsHHMMThreshold = 1000 * 60 * 10 // arrivals inside ten minutes displayed as minutes
 
@@ -64,12 +85,14 @@ export default function Stoptime({stoptime}: Props) {
                     <span>
                         via {viaTxt}
                     </span>
-
+                    
                 </p>
-
+                    
+                
                 <p className="time">
                     {isRealTime ? "" : <span>~</span>}
                     {timeTxt}
+                    {/* tarvitseeko implementoida? <p className="tulevatajat">{patternsMap.slice(0,2)}</p> */}
                 </p>
             </div>
 

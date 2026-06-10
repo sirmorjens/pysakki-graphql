@@ -82,7 +82,7 @@ const VehicleMarkersLayer = ({ vehiclePositions }: { vehiclePositions: VehiclePo
                 className={vehicleposition.bearing - 180 < mapBearing ? "" : PysakkiMapStyle.flipped}
               />
             </div>
-            <div className={PysakkiMapStyle.vehicleLabel} style={{fontSize: `${(zoomLevel*zoomLevel*2)*0.008}mm`, marginTop: `${(zoomLevel*zoomLevel*2)*0.03}%`}}>
+            <div className={PysakkiMapStyle.vehicleLabel} style={{fontSize: `${(zoomLevel*zoomLevel*2)*0.002}vh`, marginTop: `${(zoomLevel*zoomLevel*2)*0.001}vh`}}>
               {routeIdToShortName.hasOwnProperty( vehicleposition.routeId ) ? routeIdToShortName[vehicleposition.routeId] : "?"}
             </div>
           </div>
@@ -154,7 +154,7 @@ export default function PysakkiMap() {
     features: []
   }
 
-  const refreshRate = 30 * 1000
+  const refreshRateSec = 30 * 1000
   const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
 
   const refresh = () => {
@@ -169,7 +169,7 @@ export default function PysakkiMap() {
     const timerId = setInterval(() => {
       console.log("map refresh")
       refresh()
-    }, refreshRate)
+    }, refreshRateSec)
 
     return () => clearTimeout(timerId)
   }, [])
@@ -276,7 +276,9 @@ export default function PysakkiMap() {
       VehiclePositionsData = {};
       // un-listen other routes (if present)
       UnSubscribeAll();
-      SubscribeToRoutePositions(`/gtfsrt/vp/Lahti/+/+/BUS/${routeId}/#`)
+
+      // only subscribe if included in routes we're showing on map
+      if( Object.keys(routeDirectionIdsFromThisStop).includes(route!.shortName!) )SubscribeToRoutePositions(`/gtfsrt/vp/Lahti/+/+/BUS/${routeId}/#`)
         
       const routePattern = route.patterns!.filter((pattern) => pattern?.directionId == routeDirectionIdsFromThisStop[route.shortName!])
   
@@ -373,26 +375,19 @@ const updateMap = () => {
     */
   
     // gather coords we want to fit
-    console.log(routeGeometries)
+
     if(!routeGeometries.length) return
     
-    console.log()
-    
     const turfCoords = turf.lineString([
-        (data.stop.geometries?.geoJson!.coordinates as Position),
-        data.stop.geometries?.geoJson!.coordinates.map(c => c-0.002),
-        ...Array.from( endPointCoordinates ).flatMap(([key, value]) => [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+0.010]])
+        (data.stop!.geometries?.geoJson!.coordinates as Position),
+        data.stop!.geometries?.geoJson!.coordinates.map((c: number) => c-0.002),
+        ...Array.from( endPointCoordinates ).flatMap(([, value]) => [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+0.010]])
       ])
 
     // turf
-    console.log(turfCoords)
     const bounds = turf.bbox(turfCoords)
 
-    //mapRefState?.fitBounds(bounds, linear: true, /* animate: false */})
-
-    //const bounds: LngLatBoundsLike = [25.6612-mapBoundsOffset, 60.9827-mapBoundsOffset, 25.6612+mapBoundsOffset, 60.9827+mapBoundsOffset,]
-
-   mapRefState?.fitBounds(bounds as LngLatBoundsLike, )
+    mapRefState?.fitBounds(bounds as LngLatBoundsLike, )
   }
 
   const PositionMessageCallback =
@@ -483,7 +478,7 @@ const updateMap = () => {
     color: string,
     index: number,
   } => {
-    const color = routeNominalColorPalette[nominalColorIndex]
+    // const color = routeNominalColorPalette[nominalColorIndex]
     nominalColorIndex = nominalColorIndex == routeNominalColorPalette.length ? 0 : nominalColorIndex + 1;
 
     return {
@@ -536,7 +531,7 @@ const updateMap = () => {
           </Marker>
 
           {routeEndStopMarkers}
-          <Marker latitude={data.stop.geometries?.geoJson.coordinates[1]} longitude={data.stop.geometries?.geoJson.coordinates[0]} color={"black"} />
+          <Marker latitude={data.stop!.geometries?.geoJson.coordinates[1]} longitude={data.stop!.geometries?.geoJson.coordinates[0]} color={"black"} />
 
 
       </MapLibreMap>

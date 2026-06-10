@@ -1,12 +1,9 @@
-import type { AppQuery } from "./__generated__/AppQuery.graphql";
-import { graphql, useLazyLoadQuery } from "react-relay";
 import Pysakki from "./Pysakki.tsx";
-
 import LR_Header from './LR_components/LR_Header.tsx'
 import LR_Footer from './LR_components/LR_Footer.tsx'
-
 import PysakkiMap from "./PysakkiMap.tsx"
-import { useEffect, useState } from 'react';
+
+import { useEffect } from 'react';
 
 import '@fontsource/barlow-semi-condensed/100.css';
 import '@fontsource/barlow-semi-condensed/200.css';
@@ -28,50 +25,17 @@ import '@fontsource/barlow/600.css';
 import '@fontsource/barlow/700.css';
 import '@fontsource/barlow/800.css';
 import '@fontsource/barlow/900.css';
+
 export default function App() {
 
-  // copypaste graphql sivuilta
-  // refresh
-  const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
-
-
-  const refreshRate = 60 * 1000
-
-
-  const refresh = () => {
-    setRefreshedQueryOptions(prev => ({
-      fetchKey: (prev?.fetchKey ?? 0) + 1,
-      fetchPolicy: 'network-only',
-    }));
-  };
-
   useEffect(() => {
 
-    const timerId = setInterval(() => {
-      console.log("refresh")
-      refresh()
-    }, refreshRate)
-
-    return () => clearTimeout(timerId)
-  }, [])
-
-  // next two 
-
-  const data = useLazyLoadQuery<AppQuery>(
-    graphql`
-      query AppQuery($id: String!) {
-        stop(id: $id) # tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030"
-        # täytyy compilaa uudestaan id:n vaihdon jälkeen - npx relay-compiler
-        {
-          ...PysakkiFragment #Pysakki.tsx
-        }
-      }
-    `,
-    {"id": "Lahti:104167"},
-    refreshedQueryOptions ?? {}
-  );
-
-  useEffect(() => {
+    // error handleri
+    /*
+      jos jostain tulee throw mikävaan error
+      voidaan esim asettaa pieni viive ja refreshata sivu
+      niin pitäisi toimia kentällä
+    */
     const onError = (event: Event) => console.log("Error", event);
       
     window.addEventListener('error', onError);
@@ -81,15 +45,14 @@ export default function App() {
     }
   }, []);
 
-  const pysakki = data.stop;
+  return (
 
-  return ( // päivämäärä
-           // haetut tiedot
     <div className="LR_mainContainer">
       <LR_Header />
-      <Pysakki pysakki={pysakki!} />
+      <Pysakki />
       <PysakkiMap />
       <LR_Footer />
     </div>
+
   );
 }

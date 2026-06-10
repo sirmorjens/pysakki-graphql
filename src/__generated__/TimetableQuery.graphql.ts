@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7e74821b8deaeef529db701bd470a6da>>
+ * @generated SignedSource<<b93624219099bc38b3e05603ff10e88b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,13 +11,15 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type RealtimeState = "ADDED" | "CANCELED" | "MODIFIED" | "SCHEDULED" | "UPDATED" | "%future added value";
-export type AppQuery$variables = {
-  departuresQty: number;
+export type TimetableQuery$variables = {
+  alkuaika: any;
+  cancel: boolean;
+  departures: number;
   id: string;
-  lang: string;
-  omitCanceled: boolean;
+  inPatternDepartures: number;
+  kieli: string;
 };
-export type AppQuery$data = {
+export type TimetableQuery$data = {
   readonly stop: {
     readonly alerts: ReadonlyArray<{
       readonly alertDescriptionText: string;
@@ -48,90 +50,99 @@ export type AppQuery$data = {
     } | null | undefined> | null | undefined;
   } | null | undefined;
 };
-export type AppQuery = {
-  response: AppQuery$data;
-  variables: AppQuery$variables;
+export type TimetableQuery = {
+  response: TimetableQuery$data;
+  variables: TimetableQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "departuresQty"
+  "name": "alkuaika"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "id"
+  "name": "cancel"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "lang"
+  "name": "departures"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "omitCanceled"
+  "name": "id"
 },
-v4 = [
+v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "inPatternDepartures"
+},
+v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "kieli"
+},
+v6 = [
   {
     "kind": "Variable",
     "name": "id",
     "variableName": "id"
   }
 ],
-v5 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v6 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "gtfsId",
   "storageKey": null
 },
-v7 = {
-  "kind": "Variable",
-  "name": "numberOfDepartures",
-  "variableName": "departuresQty"
-},
-v8 = [
-  (v7/*: any*/)
+v9 = [
+  {
+    "kind": "Variable",
+    "name": "numberOfDepartures",
+    "variableName": "inPatternDepartures"
+  }
 ],
-v9 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "serviceDay",
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "realtimeArrival",
   "storageKey": null
 },
-v11 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "headsign",
   "storageKey": null
 },
-v12 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "routeShortName",
   "storageKey": null
 },
-v13 = {
+v14 = {
   "alias": null,
   "args": null,
   "concreteType": "Trip",
@@ -139,53 +150,62 @@ v13 = {
   "name": "trip",
   "plural": false,
   "selections": [
-    (v12/*: any*/)
+    (v13/*: any*/)
   ],
   "storageKey": null
 },
-v14 = [
-  (v7/*: any*/),
+v15 = [
+  {
+    "kind": "Variable",
+    "name": "numberOfDepartures",
+    "variableName": "departures"
+  },
   {
     "kind": "Variable",
     "name": "omitCanceled",
-    "variableName": "omitCanceled"
+    "variableName": "cancel"
+  },
+  {
+    "kind": "Variable",
+    "name": "startTime",
+    "variableName": "alkuaika"
   }
 ],
-v15 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "scheduledArrival",
   "storageKey": null
 },
-v16 = {
+v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "realtimeState",
   "storageKey": null
 },
-v17 = {
+v18 = {
   "alias": null,
   "args": [
     {
       "kind": "Variable",
       "name": "language",
-      "variableName": "lang"
+      "variableName": "kieli"
     }
   ],
   "kind": "ScalarField",
   "name": "alertDescriptionText",
   "storageKey": null
 },
-v18 = {
+v19 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v19 = {
+v20 = {
   "alias": null,
   "args": null,
   "concreteType": "Trip",
@@ -193,8 +213,8 @@ v19 = {
   "name": "trip",
   "plural": false,
   "selections": [
-    (v12/*: any*/),
-    (v18/*: any*/)
+    (v13/*: any*/),
+    (v19/*: any*/)
   ],
   "storageKey": null
 };
@@ -204,25 +224,27 @@ return {
       (v0/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/)
+      (v3/*: any*/),
+      (v4/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AppQuery",
+    "name": "TimetableQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "Stop",
         "kind": "LinkedField",
         "name": "stop",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
-          (v6/*: any*/),
+          (v7/*: any*/),
+          (v8/*: any*/),
           {
             "alias": null,
-            "args": (v8/*: any*/),
+            "args": (v9/*: any*/),
             "concreteType": "StoptimesInPattern",
             "kind": "LinkedField",
             "name": "stoptimesForPatterns",
@@ -236,10 +258,10 @@ return {
                 "name": "stoptimes",
                 "plural": true,
                 "selections": [
-                  (v9/*: any*/),
                   (v10/*: any*/),
                   (v11/*: any*/),
-                  (v13/*: any*/)
+                  (v12/*: any*/),
+                  (v14/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -248,17 +270,17 @@ return {
           },
           {
             "alias": null,
-            "args": (v14/*: any*/),
+            "args": (v15/*: any*/),
             "concreteType": "Stoptime",
             "kind": "LinkedField",
             "name": "stoptimesWithoutPatterns",
             "plural": true,
             "selections": [
+              (v12/*: any*/),
               (v11/*: any*/),
-              (v10/*: any*/),
-              (v15/*: any*/),
               (v16/*: any*/),
-              (v13/*: any*/)
+              (v17/*: any*/),
+              (v14/*: any*/)
             ],
             "storageKey": null
           },
@@ -286,7 +308,7 @@ return {
             "name": "alerts",
             "plural": true,
             "selections": [
-              (v17/*: any*/)
+              (v18/*: any*/)
             ],
             "storageKey": null
           }
@@ -300,27 +322,29 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/),
       (v3/*: any*/),
-      (v2/*: any*/)
+      (v4/*: any*/),
+      (v2/*: any*/),
+      (v5/*: any*/),
+      (v1/*: any*/),
+      (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "AppQuery",
+    "name": "TimetableQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "Stop",
         "kind": "LinkedField",
         "name": "stop",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
-          (v6/*: any*/),
+          (v7/*: any*/),
+          (v8/*: any*/),
           {
             "alias": null,
-            "args": (v8/*: any*/),
+            "args": (v9/*: any*/),
             "concreteType": "StoptimesInPattern",
             "kind": "LinkedField",
             "name": "stoptimesForPatterns",
@@ -334,10 +358,10 @@ return {
                 "name": "stoptimes",
                 "plural": true,
                 "selections": [
-                  (v9/*: any*/),
                   (v10/*: any*/),
                   (v11/*: any*/),
-                  (v19/*: any*/)
+                  (v12/*: any*/),
+                  (v20/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -346,17 +370,17 @@ return {
           },
           {
             "alias": null,
-            "args": (v14/*: any*/),
+            "args": (v15/*: any*/),
             "concreteType": "Stoptime",
             "kind": "LinkedField",
             "name": "stoptimesWithoutPatterns",
             "plural": true,
             "selections": [
+              (v12/*: any*/),
               (v11/*: any*/),
-              (v10/*: any*/),
-              (v15/*: any*/),
               (v16/*: any*/),
-              (v19/*: any*/)
+              (v17/*: any*/),
+              (v20/*: any*/)
             ],
             "storageKey": null
           },
@@ -368,9 +392,9 @@ return {
             "name": "patterns",
             "plural": true,
             "selections": [
-              (v5/*: any*/),
-              (v11/*: any*/),
-              (v18/*: any*/)
+              (v7/*: any*/),
+              (v12/*: any*/),
+              (v19/*: any*/)
             ],
             "storageKey": null
           },
@@ -382,28 +406,28 @@ return {
             "name": "alerts",
             "plural": true,
             "selections": [
-              (v17/*: any*/),
-              (v18/*: any*/)
+              (v18/*: any*/),
+              (v19/*: any*/)
             ],
             "storageKey": null
           },
-          (v18/*: any*/)
+          (v19/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "d335b9b38f810e413d7ce69f56f888cc",
+    "cacheID": "440a7ff5e5fe9cf1a301a61289b610ac",
     "id": null,
     "metadata": {},
-    "name": "AppQuery",
+    "name": "TimetableQuery",
     "operationKind": "query",
-    "text": "query AppQuery(\n  $id: String!\n  $departuresQty: Int!\n  $omitCanceled: Boolean!\n  $lang: String!\n) {\n  stop(id: $id) {\n    name\n    gtfsId\n    stoptimesForPatterns(numberOfDepartures: $departuresQty) {\n      stoptimes {\n        serviceDay\n        realtimeArrival\n        headsign\n        trip {\n          routeShortName\n          id\n        }\n      }\n    }\n    stoptimesWithoutPatterns(numberOfDepartures: $departuresQty, omitCanceled: $omitCanceled) {\n      headsign\n      realtimeArrival\n      scheduledArrival\n      realtimeState\n      trip {\n        routeShortName\n        id\n      }\n    }\n    patterns {\n      ...PatternFragment\n      id\n    }\n    alerts {\n      alertDescriptionText(language: $lang)\n      id\n    }\n    id\n  }\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n"
+    "text": "query TimetableQuery(\n  $id: String!\n  $inPatternDepartures: Int!\n  $departures: Int!\n  $kieli: String!\n  $cancel: Boolean!\n  $alkuaika: Long!\n) {\n  stop(id: $id) {\n    name\n    gtfsId\n    stoptimesForPatterns(numberOfDepartures: $inPatternDepartures) {\n      stoptimes {\n        serviceDay\n        realtimeArrival\n        headsign\n        trip {\n          routeShortName\n          id\n        }\n      }\n    }\n    stoptimesWithoutPatterns(numberOfDepartures: $departures, omitCanceled: $cancel, startTime: $alkuaika) {\n      headsign\n      realtimeArrival\n      scheduledArrival\n      realtimeState\n      trip {\n        routeShortName\n        id\n      }\n    }\n    patterns {\n      ...PatternFragment\n      id\n    }\n    alerts {\n      alertDescriptionText(language: $kieli)\n      id\n    }\n    id\n  }\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n"
   }
 };
 })();
 
-(node as any).hash = "574596f1e0afa1ab12fafd58a42f5794";
+(node as any).hash = "aef7d5c18b222a38fb8f0fe6d499e351";
 
 export default node;
