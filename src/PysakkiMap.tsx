@@ -93,7 +93,7 @@ const VehicleMarkersLayer = ({ vehiclePositions }: { vehiclePositions: VehiclePo
 };
 
 // how often render fresh realtime position
-let realtimeRenderCooldown = 30 * 1000 // 30 seconds
+let realtimeRenderCooldown = 60 * 1000 // 30 seconds
 let lastRealtimeRender = 0
 
 type VehiclePositionItem = {
@@ -154,7 +154,7 @@ export default function PysakkiMap() {
     features: []
   }
 
-  const refreshRateSec = 30 * 1000
+  const refreshRateSec = 60 * 1000
   const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
 
   const refresh = () => {
@@ -323,7 +323,7 @@ export default function PysakkiMap() {
         endPointCoordinates.set(destHash, endPoint)    
       }
     })
-
+    console.log("Map Refresh")
 
     setMapGeoJsonDataState(mapGeoJsonData);
 
@@ -360,7 +360,7 @@ export default function PysakkiMap() {
     return () => {
 
     }
-  }, [mapRefState])
+  }, [mapRefState, refreshedQueryOptions])
 
   useEffect(() => {
     if(mapRefState) mapRefState.resize();
@@ -387,7 +387,7 @@ const updateMap = () => {
     // turf
     const bounds = turf.bbox(turfCoords)
 
-    mapRefState?.fitBounds(bounds as LngLatBoundsLike, )
+    mapRefState?.fitBounds(bounds as LngLatBoundsLike, {linear: true, animate: false} )
   }
 
   const PositionMessageCallback =
@@ -510,14 +510,14 @@ const updateMap = () => {
    
           <VehicleMarkersLayer vehiclePositions={VehiclePositionsState} />
 
-          {routeStopsPosState.map(routestop =>
-              <Marker latitude={routestop[0]} longitude={routestop[1]} anchor='center'>
+          {routeStopsPosState.map((routestop, idx) =>
+              <Marker key={idx} latitude={routestop[0]} longitude={routestop[1]} anchor='center'>
                 <div className={PysakkiMapStyle.singleStop}></div>
               </Marker>   
           )}
 
-          {rentalsData.map(rentalStation => 
-            <Marker latitude={rentalStation.lat!} longitude={rentalStation.lon!}>
+          {rentalsData.map((rentalStation, idx) => 
+            <Marker key={idx} latitude={rentalStation.lat!} longitude={rentalStation.lon!}>
               <div className={PysakkiMapStyle.fillari}>
                 <img src={fillari} alt="Fillari" />
               </div>
