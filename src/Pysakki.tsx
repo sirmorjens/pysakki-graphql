@@ -1,5 +1,4 @@
 import { graphql, useFragment } from "react-relay";
-import type { PysakkiFragment$key } from "./__generated__/PysakkiFragment.graphql";
 import type { PysakkiTimesInPatternFragment$key } from "./__generated__/PysakkiTimesInPatternFragment.graphql"
 import { useState, useEffect } from 'react'
 import { useLazyLoadQuery } from "react-relay";
@@ -25,7 +24,7 @@ export default function Pysakki()
     } = {}
     const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
  
-    const refreshRate = 60 * 1000;
+    const refreshRateSec = 30 * 1000;
  
     const refresh = () => {
         setRefreshedQueryOptions(prev => ({
@@ -37,9 +36,9 @@ export default function Pysakki()
     useEffect(() => {
  
         const timerId = setInterval(() => {
-        console.log("refresh")
+        console.log("pysakki refresh")
         refresh()
-        }, refreshRate)
+        }, refreshRateSec)
     
         return () => clearTimeout(timerId)
     }, []);
@@ -64,7 +63,7 @@ export default function Pysakki()
         {"id": "Lahti:104167", "departureQty": 12, "omitCanceled": false, "inPatternDeparturesQty": 3, "lang": "fi"},
         refreshedQueryOptions ?? {}
     );
-    console.log(data)
+
     data.stop!.stoptimesForPatterns?.forEach(stoptimeForPattern => {
 
         const stoptimesInPattern = useFragment<PysakkiTimesInPatternFragment$key>(
