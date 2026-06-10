@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ac4e1186abd1165ad7a49d3a0bd674b5>>
+ * @generated SignedSource<<6f65c36082cde6e54658dfd0a761aa09>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,6 @@ import { FragmentRefs } from "relay-runtime";
 export type PysakkiMapRentalsFragment$data = ReadonlyArray<{
   readonly lat: number | null | undefined;
   readonly lon: number | null | undefined;
-  readonly name: string;
   readonly " $fragmentType": "PysakkiMapRentalsFragment";
 }>;
 export type PysakkiMapRentalsFragment$key = ReadonlyArray<{
@@ -33,13 +32,6 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "name",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "lat",
       "storageKey": null
     },
@@ -55,6 +47,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "0be3bcaed6f8a7fe7ba34f9e9463c725";
+(node as any).hash = "f5d75672ed0e37cebe16fee0851e3b40";
 
 export default node;

@@ -15,7 +15,7 @@ import * as turf from '@turf/turf'
 import 'maplibre-gl/dist/maplibre-gl.css'; // See notes below
 import mapstyle from "./Map/pysakki_mapstyle.json"
 import { useFragment } from 'react-relay';
-import { graphql } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 import {
   SubscribeToRoutePositions,
@@ -40,7 +40,7 @@ import type {
   Position 
 } from 'geojson';
 
-import type { PysakkiMapFragment$key } from './__generated__/PysakkiMapFragment.graphql';
+import type { PysakkiMapQuery } from './__generated__/PysakkiMapQuery.graphql'
 import type { PysakkiMapRentalsFragment$key } from './__generated__/PysakkiMapRentalsFragment.graphql';
 import { type ReactElement, useEffect, useState } from 'react';
 
@@ -130,14 +130,9 @@ const layerStyle: LayerProps = {
     [routeId: string]: string
   } = {} 
 
-export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rentalsData: PysakkiMapRentalsFragment$key; routeShortNamesDirectionIdOnMap: {shortName: string, directionId: number}[]}) {
+export default function PysakkiMap() {
 
-  const routeShortNamesOnMap = props.routeShortNamesDirectionIdOnMap.map(showonmap => showonmap.shortName)
-  const routeDirectionIdsFromThisStop = {} as {[shortName: string]: number}
-  
-  props.routeShortNamesDirectionIdOnMap.forEach(
-    routeAndDirection => routeDirectionIdsFromThisStop[routeAndDirection.shortName] = routeAndDirection.directionId
-  )
+
 
   // state definitions 
   const [VehiclePositionsState, setVehiclePositionsState] = useState<VehiclePositionItem[]>([]);
@@ -159,52 +154,108 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
     features: []
   }
 
-  const data = useFragment<PysakkiMapFragment$key>(
+  const refreshRate = 30 * 1000
+  const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
+
+  const refresh = () => {
+    setRefreshedQueryOptions(prev => ({
+      fetchKey: (prev?.fetchKey ?? 0) + 1,
+      fetchPolicy: 'network-only',
+    }));
+  };
+
+  useEffect(() => {
+
+    const timerId = setInterval(() => {
+      console.log("map refresh")
+      refresh()
+    }, refreshRate)
+
+    return () => clearTimeout(timerId)
+  }, [])
+
+  const data = useLazyLoadQuery<PysakkiMapQuery>(
     graphql`
-      fragment PysakkiMapFragment on Stop
-      {
-        geometries {
-          geoJson
-        }
-        routes {
-          
-          stops {
-            name
-            geometries {
-              geoJson
+      query PysakkiMapQuery($id: String!, $omitCanceled: Boolean!, $departuresQty: Int!) {
+        stop(id: $id)
+        {
+          geometries {
+            geoJson
+          }
+
+          stoptimesWithoutPatterns(numberOfDepartures: $departuresQty, omitCanceled: $omitCanceled)
+          {
+            headsign # määränpää
+            realtimeArrival # reaaliaikainen saapumisaika sekunteina
+            scheduledArrival # suunniteltu saapumisaika sekunteina
+            realtimeState # ADDED, CANCELED, MODIFIED, SCHEDULED, UPDATED
+
+            trip 
+            {
+              directionId
+              routeShortName # reittikoodi
             }
           }
-          shortName
-          gtfsId
-          patterns {
-            name
-            directionId
+
+          routes {
             stops {
-              lat
-              lon
+              name
+              geometries {
+                geoJson
+              }
             }
-            patternGeometry {
-              points
+
+            shortName
+            gtfsId
+            patterns {
+              name
+              directionId
+              stops {
+                lat
+                lon
+              }
+              patternGeometry {
+                points
+              }
             }
           }
         }
-    }
+        vehicleRentalsByBbox (
+          maximumLongitude: 25.7972,
+          minimumLongitude: 25.5428,
+          maximumLatitude: 61.0374,
+          minimumLatitude: 60.9208
+        )
+        {
+          ... on VehicleRentalStation{
+            ...PysakkiMapRentalsFragment
+          }
+          
+        }
+      }
     `,
-    props.pysakki
-  )
+    {"id": "Lahti:104167", "departuresQty": 2, "omitCanceled": false},
+    refreshedQueryOptions ?? {}
+  );
 
   const rentalsData = useFragment<PysakkiMapRentalsFragment$key>(
     graphql`
       fragment PysakkiMapRentalsFragment on VehicleRentalStation @relay(plural: true)
       {
-        name
         lat
         lon
       }
     `,
-    props.rentalsData
+    data.vehicleRentalsByBbox
   )
 
+  // haetaan 2 seuraavaa lähtöä ja kirjataan ne taulukkoon
+  const routeDirectionIdsFromThisStop = {} as {[shortName: string]: number}
+  
+  data!.stop!.stoptimesWithoutPatterns!.forEach(
+    stop => routeDirectionIdsFromThisStop[(stop!.trip!.routeShortName! as string)] = stop?.trip!.directionId!
+  )
+  
   useEffect(() => {
     VehiclePositionsWS(
       PositionMessageCallback
@@ -212,10 +263,7 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
   }, [])
 
   useEffect(() => {
-    if (data.routes) data.routes.forEach(route => {
-
-      // jos ei ole listalla, ei piirretä kartalle
-      if( !(routeShortNamesOnMap.includes( route.shortName! )) ) return  
+    if (data!.stop!.routes) data!.stop!.routes.forEach(route => {
 
       const routeId: string = route.gtfsId.split(":")[1]
 
@@ -310,7 +358,7 @@ export default function PysakkiMap(props: {pysakki: PysakkiMapFragment$key; rent
     return () => {
 
     }
-  }, [mapRefState, props.routeShortNamesDirectionIdOnMap])
+  }, [mapRefState])
 
   useEffect(() => {
     if(mapRefState) mapRefState.resize();
@@ -331,8 +379,8 @@ const updateMap = () => {
     console.log()
     
     const turfCoords = turf.lineString([
-        (data.geometries?.geoJson!.coordinates as Position),
-        data.geometries?.geoJson!.coordinates.map(c => c-0.002),
+        (data.stop.geometries?.geoJson!.coordinates as Position),
+        data.stop.geometries?.geoJson!.coordinates.map(c => c-0.002),
         ...Array.from( endPointCoordinates ).flatMap(([key, value]) => [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+0.010]])
       ])
 
@@ -488,7 +536,7 @@ const updateMap = () => {
           </Marker>
 
           {routeEndStopMarkers}
-          <Marker latitude={data.geometries?.geoJson.coordinates[1]} longitude={data.geometries?.geoJson.coordinates[0]} color={"black"} />
+          <Marker latitude={data.stop.geometries?.geoJson.coordinates[1]} longitude={data.stop.geometries?.geoJson.coordinates[0]} color={"black"} />
 
 
       </MapLibreMap>

@@ -1,5 +1,4 @@
 import { graphql, useFragment } from "react-relay";
-import { useEffect } from 'react'
 import type { PysakkiFragment$key } from "./__generated__/PysakkiFragment.graphql";
 import type { PysakkiFirstStoptimeFragment$key } from "./__generated__/PysakkiFirstStoptimeFragment.graphql";
 import Alerts from "./Alerts";
@@ -7,7 +6,7 @@ import Alerts from "./Alerts";
 import Stoptime from "./Stoptime";
 // import Pattern from "./Pattern"; ei käytössä, tarvitaan mahdollisesti bussien sijaintien hakemiseen
 
-export default function Pysakki(props: { pysakki: PysakkiFragment$key; setRouteShortNamesDirectionOnMap: (args: {shortName: string, directionId: number}[]) => void }) 
+export default function Pysakki(props: { pysakki: PysakkiFragment$key; }) 
 {
     const data = useFragment<PysakkiFragment$key>(
     graphql`
@@ -62,16 +61,6 @@ export default function Pysakki(props: { pysakki: PysakkiFragment$key; setRouteS
                 }
         `, data.stoptimesWithoutPatterns![0]   
     )
-
-    useEffect(() => {
-        console.log("Setting new route")
-
-        props.setRouteShortNamesDirectionOnMap([{
-            shortName: firstArrivalData!.trip!.routeShortName!,
-            directionId: firstArrivalData!.trip!.directionId!
-        }])
-
-    }, []) 
     
     for(var i = 0; i < data.stoptimesWithoutPatterns!.length; i++) {
         stopRows.push(<Stoptime stoptime={data.stoptimesWithoutPatterns![i]!}/>)
