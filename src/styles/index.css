@@ -1,20 +1,4 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
   --mm9: 1.26vh;
   --mm10: 1.4vh;
   --mm12: 1.68vh;
@@ -32,20 +16,14 @@
   --canceledbg: #dfdfdf;
   --canceledTxt: rgb(12, 12, 12);
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  color: #000000;
+  background: #000000;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
- 
+
 }
 
 @media (prefers-color-scheme: dark) {
@@ -148,7 +126,17 @@ div.stopRow:nth-child(1) p, div.stopRow:nth-child(2) p {
   font-size: var(--mm25);
 }
 
-
+.warning {
+  position: absolute;
+  height: 2.3vh;
+  margin-left: 0.55vh;
+}
+div.stopRow:nth-child(1) .warning, div.stopRow:nth-child(2) .warning {
+  height: 3vh;
+  margin-top: 0.5vh;
+  margin-left: 0.25vh;
+  position: absolute;
+}
 
 div.stopRow.canceled {
   background: var(--canceledbg);
@@ -163,9 +151,6 @@ div.stopRow.canceled::after {
   width: 100%;
   height: 1px;
   border-bottom: 2px solid rgba(0, 0, 0, 0.75);
-}
-.warning {
-  height: 1.7vh;
 }
 
 p {
