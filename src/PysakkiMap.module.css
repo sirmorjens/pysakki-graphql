@@ -56,10 +56,10 @@ div.routeEndPoint:after {
     border-radius: 50%;
 }
 .stem {
-    height: 7mm;
+    height: 2vh;
     width: 0;
     border: none;
-    border-left: 1px solid #585858;
+    border-left: 2px solid #585858;
     margin: 0mm;
 }
 .singleStop {
@@ -79,7 +79,7 @@ div.routeEndPoint:after {
     background: #ffffffc5;
     color: #ffffff;
     border: 1px solid #000;
-    padding: 0.5vh 0.9vh 0.5vh 0.9vh;
+    padding: 0.4vh 0.3vh 0.4vh 0.3vh;
     border-radius: 10mm;
     box-sizing: border-box;
     z-index: 999;
@@ -125,9 +125,9 @@ div.routeEndPoint:after {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0.2mm 0.2mm 0.2mm 0.2mm;
+    margin: 0.2vh 0.2vh 0.2vh 0.2vh;
     font-family: "DM Sans Variable", sans-serif;
-    font-size: 1.9vh;
+    font-size: 1.5vh;
     font-weight: 700;
     color: black;
     text-shadow: 2px 2px 6px #00000020;
