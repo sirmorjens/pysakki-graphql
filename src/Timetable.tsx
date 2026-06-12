@@ -54,7 +54,12 @@ export default function Timetable() {
 
             trip 
             {
-                routeShortName # reittikoodi
+              routeShortName # reittikoodi
+
+              alerts
+              {
+                alertDescriptionText
+              }
             }
           }
           patterns
@@ -86,6 +91,7 @@ export default function Timetable() {
     const realSeconds = element!.realtimeArrival!.valueOf();
     const scheduledSeconds = element!.scheduledArrival!.valueOf();
     let headsign = element!.headsign;
+    let tripAlertRows:any[] = [];
     if( inc < 2 ) { headsign = headsign!.split(" ")[0]; inc++ }
 
     let shownTime = "~" + new Date(scheduledSeconds * 1000).toISOString().slice(11, 16); // hh:mm
@@ -122,11 +128,16 @@ export default function Timetable() {
         if(element!.realtimeState == "CANCELED") { tripClass = "peruttuaika";}
     } 
 
+    element!.trip!.alerts!.forEach(alert => {
+      tripAlertRows.push(<br />, alert?.alertDescriptionText);
+    });
+
     stopRows.push( // reittikoodi, määränpää, aika (suunniteltu), onko vuoro peruttu
         <div className={tripClass}>
             <b className="reittikoodi">{element!.trip!.routeShortName}</b>
             <p className="paikka">{headsign}</p>
             <b className="aika">{shownTime} </b>
+            <p>{tripAlertRows}</p>
             {/* <p className="tulevatajat">{nextStoptimes.slice(0,2)}</p> <br /> */}
 
             {/* <b className="reittihäiriö">{cancelState}</b> */}
@@ -140,19 +151,21 @@ export default function Timetable() {
   pysakki!.alerts?.forEach(element => {
     alertRows.push(element?.alertDescriptionText)
   });
+  // alertRows[0] = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since 1966, when designers at Letraset and James Mosley, the librarian at St Bride Printing Library, took a 1914 Cicero translation and scrambled it to make dummy text for Letraset's Body Type sheets. It has survived not only many decades, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised thanks to these sheets and more recently with desktop publishing software including versions of Lorem Ipsum."
 
+  if(alertRows[0] != null) {
+    stopRows = stopRows.slice(0, -2);
+  }
 
   if(pysakki != null) {
     return (
         <div>
-
             <div className="timetable">
-                <div className="header">
-                    <b className="pysakki">{pysakki.name}</b> <b className="kello">{timeNow.toLocaleDateString('fi-FI', options).slice(-5)}</b>
-                </div>
-                {stopRows}
+              {stopRows}
             </div>  
-            <footer className="alert">{alertRows}</footer>
+            <div className="alert">
+              {alertRows}
+            </div>
         </div>
     );
   } else return (

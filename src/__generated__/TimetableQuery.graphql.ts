@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b93624219099bc38b3e05603ff10e88b>>
+ * @generated SignedSource<<743b989b9e9f6d8fd6a2c8e94358e8b6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -45,6 +45,9 @@ export type TimetableQuery$data = {
       readonly realtimeState: RealtimeState | null | undefined;
       readonly scheduledArrival: number | null | undefined;
       readonly trip: {
+        readonly alerts: ReadonlyArray<{
+          readonly alertDescriptionText: string;
+        } | null | undefined> | null | undefined;
         readonly routeShortName: string | null | undefined;
       } | null | undefined;
     } | null | undefined> | null | undefined;
@@ -142,19 +145,7 @@ v13 = {
   "name": "routeShortName",
   "storageKey": null
 },
-v14 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Trip",
-  "kind": "LinkedField",
-  "name": "trip",
-  "plural": false,
-  "selections": [
-    (v13/*: any*/)
-  ],
-  "storageKey": null
-},
-v15 = [
+v14 = [
   {
     "kind": "Variable",
     "name": "numberOfDepartures",
@@ -171,18 +162,25 @@ v15 = [
     "variableName": "alkuaika"
   }
 ],
-v16 = {
+v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "scheduledArrival",
   "storageKey": null
 },
-v17 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "realtimeState",
+  "storageKey": null
+},
+v17 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "alertDescriptionText",
   "storageKey": null
 },
 v18 = {
@@ -203,19 +201,6 @@ v19 = {
   "args": null,
   "kind": "ScalarField",
   "name": "id",
-  "storageKey": null
-},
-v20 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Trip",
-  "kind": "LinkedField",
-  "name": "trip",
-  "plural": false,
-  "selections": [
-    (v13/*: any*/),
-    (v19/*: any*/)
-  ],
   "storageKey": null
 };
 return {
@@ -261,7 +246,18 @@ return {
                   (v10/*: any*/),
                   (v11/*: any*/),
                   (v12/*: any*/),
-                  (v14/*: any*/)
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Trip",
+                    "kind": "LinkedField",
+                    "name": "trip",
+                    "plural": false,
+                    "selections": [
+                      (v13/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -270,7 +266,7 @@ return {
           },
           {
             "alias": null,
-            "args": (v15/*: any*/),
+            "args": (v14/*: any*/),
             "concreteType": "Stoptime",
             "kind": "LinkedField",
             "name": "stoptimesWithoutPatterns",
@@ -278,9 +274,32 @@ return {
             "selections": [
               (v12/*: any*/),
               (v11/*: any*/),
+              (v15/*: any*/),
               (v16/*: any*/),
-              (v17/*: any*/),
-              (v14/*: any*/)
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Trip",
+                "kind": "LinkedField",
+                "name": "trip",
+                "plural": false,
+                "selections": [
+                  (v13/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Alert",
+                    "kind": "LinkedField",
+                    "name": "alerts",
+                    "plural": true,
+                    "selections": [
+                      (v17/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
             ],
             "storageKey": null
           },
@@ -361,7 +380,19 @@ return {
                   (v10/*: any*/),
                   (v11/*: any*/),
                   (v12/*: any*/),
-                  (v20/*: any*/)
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Trip",
+                    "kind": "LinkedField",
+                    "name": "trip",
+                    "plural": false,
+                    "selections": [
+                      (v13/*: any*/),
+                      (v19/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -370,7 +401,7 @@ return {
           },
           {
             "alias": null,
-            "args": (v15/*: any*/),
+            "args": (v14/*: any*/),
             "concreteType": "Stoptime",
             "kind": "LinkedField",
             "name": "stoptimesWithoutPatterns",
@@ -378,9 +409,34 @@ return {
             "selections": [
               (v12/*: any*/),
               (v11/*: any*/),
+              (v15/*: any*/),
               (v16/*: any*/),
-              (v17/*: any*/),
-              (v20/*: any*/)
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Trip",
+                "kind": "LinkedField",
+                "name": "trip",
+                "plural": false,
+                "selections": [
+                  (v13/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Alert",
+                    "kind": "LinkedField",
+                    "name": "alerts",
+                    "plural": true,
+                    "selections": [
+                      (v17/*: any*/),
+                      (v19/*: any*/)
+                    ],
+                    "storageKey": null
+                  },
+                  (v19/*: any*/)
+                ],
+                "storageKey": null
+              }
             ],
             "storageKey": null
           },
@@ -418,16 +474,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "440a7ff5e5fe9cf1a301a61289b610ac",
+    "cacheID": "c6f6fcc6fa69d23d68e4db6d735f0ac6",
     "id": null,
     "metadata": {},
     "name": "TimetableQuery",
     "operationKind": "query",
-    "text": "query TimetableQuery(\n  $id: String!\n  $inPatternDepartures: Int!\n  $departures: Int!\n  $kieli: String!\n  $cancel: Boolean!\n  $alkuaika: Long!\n) {\n  stop(id: $id) {\n    name\n    gtfsId\n    stoptimesForPatterns(numberOfDepartures: $inPatternDepartures) {\n      stoptimes {\n        serviceDay\n        realtimeArrival\n        headsign\n        trip {\n          routeShortName\n          id\n        }\n      }\n    }\n    stoptimesWithoutPatterns(numberOfDepartures: $departures, omitCanceled: $cancel, startTime: $alkuaika) {\n      headsign\n      realtimeArrival\n      scheduledArrival\n      realtimeState\n      trip {\n        routeShortName\n        id\n      }\n    }\n    patterns {\n      ...PatternFragment\n      id\n    }\n    alerts {\n      alertDescriptionText(language: $kieli)\n      id\n    }\n    id\n  }\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n"
+    "text": "query TimetableQuery(\n  $id: String!\n  $inPatternDepartures: Int!\n  $departures: Int!\n  $kieli: String!\n  $cancel: Boolean!\n  $alkuaika: Long!\n) {\n  stop(id: $id) {\n    name\n    gtfsId\n    stoptimesForPatterns(numberOfDepartures: $inPatternDepartures) {\n      stoptimes {\n        serviceDay\n        realtimeArrival\n        headsign\n        trip {\n          routeShortName\n          id\n        }\n      }\n    }\n    stoptimesWithoutPatterns(numberOfDepartures: $departures, omitCanceled: $cancel, startTime: $alkuaika) {\n      headsign\n      realtimeArrival\n      scheduledArrival\n      realtimeState\n      trip {\n        routeShortName\n        alerts {\n          alertDescriptionText\n          id\n        }\n        id\n      }\n    }\n    patterns {\n      ...PatternFragment\n      id\n    }\n    alerts {\n      alertDescriptionText(language: $kieli)\n      id\n    }\n    id\n  }\n}\n\nfragment PatternFragment on Pattern {\n  name\n  headsign\n}\n"
   }
 };
 })();
 
-(node as any).hash = "aef7d5c18b222a38fb8f0fe6d499e351";
+(node as any).hash = "58f2f260a91bb98b0af2e719928ccc4d";
 
 export default node;
