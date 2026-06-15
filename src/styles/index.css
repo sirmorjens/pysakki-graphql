@@ -130,7 +130,7 @@ div.stopRow:nth-child(1) p, div.stopRow:nth-child(2) p {
 
 .warning {
   position: absolute;
-  height: 2.3vh;
+  height: 2.5vh;
   margin-left: 0.55vh;
 }
 div.stopRow:nth-child(1) .warning, div.stopRow:nth-child(2) .warning {
@@ -212,4 +212,14 @@ p {
 
 .hidden {
   display: none;
+}
+.destination.alert {
+  font-weight: 500;
+  font-family: 'Barlow Semi Condensed';
+  margin-left: 0.5vh;
+}
+.alert.routealert {
+  font-weight: 500;
+  font-family: 'Barlow Semi Condensed';
+  margin-left: 0vh;
 }

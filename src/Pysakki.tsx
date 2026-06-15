@@ -2,8 +2,10 @@ import { graphql, useFragment } from "react-relay";
 import type { PysakkiTimesInPatternFragment$key } from "./__generated__/PysakkiTimesInPatternFragment.graphql"
 import { useState, useEffect } from 'react'
 import { useLazyLoadQuery } from "react-relay";
-import type { PysakkiQuery, PysakkiQuery$data } from "./__generated__/PysakkiQuery.graphql"
+import type { PysakkiQuery } from "./__generated__/PysakkiQuery.graphql"
+import type { StoptimeFragment$data } from "./__generated__/StoptimeFragment.graphql";
 import Stoptime from "./Stoptime";
+import type { AlertSeverityLevelType } from "./__generated__/AlertsFragment.graphql";
 
 // import Pattern from "./Pattern"; ei käytössä, tarvitaan mahdollisesti bussien sijaintien hakemiseen
 
@@ -16,15 +18,25 @@ type PatternStopTime = {
     }
 }
 
-type StopTime = {
-    /* generate type with graphql codegen */
-    anything?: any;
+type StopTime = any /* generate type with graphql codegen */
+
+type RowData = {
+    RowType: 'STOPTIME' | 'STOPALERT' | 'ROUTEALERT'
+    StopTime?: StopTime /* see above */
+    Alert?: AlertText | null;
 }
 
 type AlertText = {
-    alertText: string;
+        readonly alertSeverityLevel?: AlertSeverityLevelType;
+        readonly alertHeaderText?: string;
+        readonly alertDescriptionText?: string;
 }
 
+// max letters before line split
+const ALERT_MAX_LETTERS_PER_ROW = {
+    'STOPALERT': 50,
+    'ROUTEALERT': 50,
+};
 export default function Pysakki() 
 {
 
@@ -62,12 +74,15 @@ export default function Pysakki()
                 {
                     ...PysakkiTimesInPatternFragment
                 }
-                stoptimesWithoutPatterns(numberOfDepartures:  $departureQty, omitCanceled: $omitCanceled)
-                {
-                    ...StoptimeFragment
-                }
-                
+
                 # WIP: noudetaan stoprowit tässä ja iteroidaan
+
+                alerts {
+                    alertSeverityLevel
+                    alertHeaderText(language: $lang)
+                    alertDescriptionText(language: $lang)
+                }
+              
                 stoprows: stoptimesWithoutPatterns(numberOfDepartures:  $departureQty, omitCanceled: $omitCanceled)
                 {
                     headsign # määränpää
@@ -78,8 +93,11 @@ export default function Pysakki()
                     realtimeState
                     trip {
                         routeShortName # reittikoodi
-                        alerts {
-                            ...AlertsFragment
+                        alerts
+                        {
+                            alertSeverityLevel
+                            alertHeaderText(language: $lang)
+                            alertDescriptionText(language: $lang)
                         }
                     }
                 }
@@ -91,21 +109,85 @@ export default function Pysakki()
         refreshedQueryOptions ?? {}
     );
 
+    const splitAlertTextToRows = (alertObj: AlertText, RowType: 'STOPALERT' | 'ROUTEALERT'): RowData[] => {
+        if( alertObj.alertDescriptionText!.length < ALERT_MAX_LETTERS_PER_ROW[RowType] ) return [{RowType: RowType, Alert: alertObj}]
+
+        const BaseAlert: AlertText = {
+            alertSeverityLevel: alertObj.alertSeverityLevel,
+            alertHeaderText: alertObj.alertHeaderText,
+            alertDescriptionText: ''
+        }
+
+        const descriptionTxtSegments = alertObj.alertDescriptionText!.split(' ').reduce<Array<string>>((segments, word, index): string[] => {
+            if(!segments.length) segments.push('')
+
+            /* todo split long words */
+
+            if(segments[segments.length - 1].length + word.length > ALERT_MAX_LETTERS_PER_ROW[RowType]) segments.push('')
+            segments[segments.length? segments.length - 1 : 0] += word + " "
+            return segments
+        }, [])
+
+        const alertRows = descriptionTxtSegments.map(segment => ({RowType: RowType, Alert: {...BaseAlert, alertDescriptionText: segment}}))
+        console.log(alertRows)
+        return alertRows;
+    }
+    const fakeRouteAlert = [
+    {
+        alertSeverityLevel: 'INFO',
+        alertHeaderText: 'Reitin häiriötiedote',
+        alertDescriptionText: 'Reitin häiriötiedote'
+    }
+    ]
+    const fakeAlerts = [
+    {
+        alertSeverityLevel: 'INFO',
+        alertHeaderText: 'Pysäkkimuutos: Rautatieasema F',
+        alertDescriptionText: 'Rautatieasema F on siirretty 20 m Hämeenkadun suuntaan (työmaa). (Pysäkkitiedotteet työn alla)'
+    }
+    ]
+
+    const fakeTimeTables: StopTime[] = JSON.parse('[{"headsign":"Hörölä via Paavola - Kiveriö","realtime":true,"realtimeArrival":52667,"scheduledArrival":52576,"serviceDay":1781470800,"realtimeState":"UPDATED","trip":{"routeShortName":"5","alerts":[]}},{"headsign":"Mukkula via Paavola","realtime":true,"realtimeArrival":52915,"scheduledArrival":52876,"serviceDay":1781470800,"realtimeState":"UPDATED","trip":{"routeShortName":"32","alerts":[]}},{"headsign":"Soltti via Yliopisto - Mukkula","realtime":true,"realtimeArrival":53122,"scheduledArrival":53098,"serviceDay":1781470800,"realtimeState":"UPDATED","trip":{"routeShortName":"1","alerts":[]}},{"headsign":"Mukkula via Niemi","realtime":false,"realtimeArrival":53758,"scheduledArrival":53758,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"2","alerts":[]}},{"headsign":"Kytölä via Paavola","realtime":true,"realtimeArrival":53849,"scheduledArrival":53394,"serviceDay":1781470800,"realtimeState":"UPDATED","trip":{"routeShortName":"10K","alerts":[{"alertDescriptionText":"Reitin/lähdön häiriötiedote, pitkä häiriöteksti rivittyy useammalle riville (työn alla)","alertHeaderText":"Reitin häiriötiedote","alertSeverityLevel":"INFO"}]}},{"headsign":"Karjusaari via Yliopisto - Mukkula","realtime":false,"realtimeArrival":53998,"scheduledArrival":53998,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"1K","alerts":[]}},{"headsign":"Hörölä via Paavola - Kiveriö","realtime":false,"realtimeArrival":54376,"scheduledArrival":54376,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"5","alerts":[]}},{"headsign":"Mukkula via Paavola","realtime":false,"realtimeArrival":54676,"scheduledArrival":54676,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"32","alerts":[]}},{"headsign":"Soltti via Yliopisto - Mukkula","realtime":false,"realtimeArrival":54898,"scheduledArrival":54898,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"1","alerts":[]}},{"headsign":"Kytölä via Paavola","realtime":false,"realtimeArrival":55314,"scheduledArrival":55314,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"11","alerts":[]}},{"headsign":"Mukkula via Niemi","realtime":false,"realtimeArrival":55558,"scheduledArrival":55558,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"2","alerts":[]}},{"headsign":"Karjusaari via Yliopisto - Mukkula","realtime":false,"realtimeArrival":55798,"scheduledArrival":55798,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"1K","alerts":[]}}]')
+
     // wip: lähtöjen iterointi tässä ja alerttien yms. syöttö joukkoon jolloin rendataan rivit sisällön mukaan
-    const timetableRows = [];
+    const timetableRows: RowData[] = [];
     
-    data.stop!.stoprows!.forEach(stoptime => {
-        timetableRows.push(stoptime)
+    /*data.stop!.stoprows!.forEach(stoptime => {*/
+    fakeTimeTables.forEach(stoptime => {
+        timetableRows.push({RowType: 'STOPTIME', StopTime: stoptime})
 
         // jos rivillä myös alertteja
         if(stoptime?.trip?.alerts)
         {
-            // seuraavalle riville trip alert
-            timetableRows.push(/* alert info */)
+            (stoptime?.trip?.alerts as AlertText[]).forEach(alert => 
+                timetableRows.push(...splitAlertTextToRows(alert as AlertText, 'ROUTEALERT'))
+            )
         }
     })
-    
-    console.log()
+
+
+    // pysäkin häiriöt
+    if(data.stop?.alerts) 
+    {
+        const StopAlerts: RowData[] = []
+
+        // debug 
+        fakeAlerts.forEach(fakeAlert => 
+            StopAlerts.push(...splitAlertTextToRows(fakeAlert as AlertText, 'STOPALERT'))       
+        )
+
+        data.stop!.alerts!.map(alert => 
+            StopAlerts.push(...splitAlertTextToRows(alert as AlertText, 'STOPALERT'))
+        )
+
+        // syödään stopin riveistä vikat
+        StopAlerts.forEach((stopalert, index) => 
+            timetableRows[(timetableRows.length) - StopAlerts.length + index] = stopalert
+        )
+    }
+
+
+
 
     // iteroidaan patternit lookup-taulukkoon josta haku linjan nimellä tms
     data.stop!.stoptimesForPatterns?.forEach(stoptimeForPattern => {
@@ -144,9 +226,9 @@ export default function Pysakki()
 
     return ( 
         <div className="stopRows">
-            {data!.stop!.stoptimesWithoutPatterns!.map(
-                stoptime => 
-                <Stoptime stoptime={stoptime!} patternsLookUp={nextDeparturesInPattern}/>
+            {timetableRows.map(
+                rowdata => 
+                (<Stoptime rowdata={rowdata!} patternsLookUp={nextDeparturesInPattern}/>)
             )}
         </div>   
     )

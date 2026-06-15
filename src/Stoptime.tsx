@@ -1,6 +1,18 @@
-import { graphql, useFragment } from "react-relay";
-import type { StoptimeFragment$key } from "./__generated__/StoptimeFragment.graphql";
+import type { AlertSeverityLevelType } from "./__generated__/AlertsFragment.graphql"
 
+type StopTime = any /* generate type with graphql codegen */
+
+type RowData = {
+    RowType: 'STOPTIME' | 'STOPALERT' | 'ROUTEALERT'
+    StopTime?: StopTime /* see above */
+    Alert?: AlertText | null;
+}
+
+type AlertText = {
+        readonly alertSeverityLevel?: AlertSeverityLevelType;
+        readonly alertHeaderText?: string;
+        readonly alertDescriptionText?: string;
+}
 function WarningSign () {
     return (
         <svg className="warning" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
@@ -26,43 +38,51 @@ type PatternStopTime = {
     }
 
 type Props = {
-  stoptime: StoptimeFragment$key;
+  rowdata: RowData /* run graphql codegen and include other possible types */;
   patternsLookUp: {
     [route: string]: PatternStopTime[]
   }
 };
 
-export default function Stoptime({stoptime, patternsLookUp}: Props) {
-
+export default function Stoptime({rowdata, patternsLookUp}: Props) {
     const MAX_DESTINATION_LETTERS = 16
 
-    const data = useFragment<StoptimeFragment$key>(
-        graphql`
-            fragment StoptimeFragment on Stoptime
-            {
-                headsign # määränpää
-                realtime
-                realtimeArrival # reaaliaikainen saapumisaika sekunneissa
-                scheduledArrival # suunniteltu saapumisaika sekunneissa
-                serviceDay # helpompi mätsätä timestamppeja kun on päivä
-                realtimeState
-                trip {
-                    routeShortName # reittikoodi
-                    alerts {
-                        ...AlertsFragment
-                    }
-                }
-            }
-        `, stoptime
-    )
+    // jos alert ruutu, returnataan ajoissa
 
-    const patterns = patternsLookUp[data.trip!.routeShortName!].slice(1).map(ptr => arrivalTimeToString(ptr) );
+    if( rowdata.RowType === 'ROUTEALERT' )
+    {
+        return (
+            <div className={"stopRow"}>
+                <p className="route"></p>
+                <p className="destination alert routealert">
+                    {rowdata.Alert!.alertDescriptionText}
+                </p>
+            </div>
+            
+        )
+    }
+    if( rowdata.RowType === 'STOPALERT' )
+    {
+        return (
+            <div className={"stopRow"}>
+                <p className="destination alert stopalert">
+                    {rowdata.Alert!.alertDescriptionText}
+                </p>
+
+            </div>
+            
+        )
+    }
+
+    // jos aikatauluruutu, tämä koodi ajetaan
+
+    const patterns = patternsLookUp[rowdata.StopTime.trip!.routeShortName!].slice(1).map(ptr => arrivalTimeToString(ptr) );
 
     const minutesVsHHMMThreshold = 1000 * 60 * 10 // arrivals inside ten minutes displayed as minutes
 
     const currentTimeStamp = Date.now();
-    const isRealTime: boolean = data.realtime ? true : false
-    const arrivalTime = new Date( ( (data.serviceDay ?? 0) + (isRealTime ? data.realtimeArrival : data.scheduledArrival)) * 1000 )
+    const isRealTime: boolean = rowdata.StopTime.realtime ? true : false
+    const arrivalTime = new Date( ( (rowdata.StopTime.serviceDay ?? 0) + (isRealTime ? rowdata.StopTime.realtimeArrival : rowdata.StopTime.scheduledArrival)) * 1000 )
 
     const [hours, minutes] = [arrivalTime.getHours(), arrivalTime.getMinutes()]
     const minutesLeft: number | null = (arrivalTime.getTime() - currentTimeStamp) < minutesVsHHMMThreshold ? Math.floor( ( (arrivalTime.getTime() - currentTimeStamp) / 1000 / 60) - 1) : null
@@ -70,20 +90,20 @@ export default function Stoptime({stoptime, patternsLookUp}: Props) {
     const timeTxt: string = minutesLeft != null ? `${Math.max(minutesLeft, 0)} min` : `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}` 
 
     const [destinationTxt, viaTxt]: [destinationTxt: string, viaTxt: string] = [
-        data.headsign!.split(" via ").slice(0,1).join(),
-        data.headsign!.split(" via ").slice(-1).join().split(" - ").join(", ")
+        rowdata.StopTime.headsign!.split(" via ").slice(0,1).join(),
+        rowdata.StopTime.headsign!.split(" via ").slice(-1).join().split(" - ").join(", ")
     ]
 
-    const isCanceled = data!.realtimeState === 'CANCELED'
+    const isCanceled = rowdata.StopTime!.realtimeState === 'CANCELED'
 
     return (
         <div className={"stopRow " + (isCanceled ? "canceled" : "")}>
             
             <p className="route">
 
-                {data.trip?.routeShortName}
+                {rowdata.StopTime.trip?.routeShortName}
 
-                { /* milloin näytetään kolmio (poikkeusreitti tai muu reittitiedote) */ isCanceled ? (
+                { /* milloin näytetään kolmio (poikkeusreitti tai muu reittitiedote) */ rowdata.StopTime.trip.alerts.length ? (
                     <WarningSign />
                 ) : ""}
             </p>

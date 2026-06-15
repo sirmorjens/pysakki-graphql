@@ -148,3 +148,7 @@ div.routeEndPoint:after {
     font-family: "Inter Variable";
     font-weight: 700;
 }
+.label.alt {
+    color: black;
+    background: #ffffffaf;
+}

@@ -1,8 +1,9 @@
 tänne voi päivitellä todo itemejä
 
 pysäkki
-- poikkeustiedotteiden näyttäminen riveillä
-- reittitiedotteiden näyttäminen
+- poikkeustiedotteiden näyttäminen riveillä --
+- reittitiedotteiden näyttäminen --
+- pitkien sanojen splittaus
 
 
 kartta
