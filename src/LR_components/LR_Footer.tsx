@@ -12,7 +12,7 @@ export default function LR_Footer () {
                 <div>
                     <img src={qr} alt="https://www.lsl.fi/naytot/" />
                 </div>
-                <div><p>Kerro mielipiteesi pysäkkinäytöstä<br /><b>https://www.lsl.fi/naytot/</b></p></div>
+                <div><p>Kerro mielipiteesi pysäkkinäytöstä<br /><span className={LRstyle.link}>https://www.lsl.fi/naytot/</span></p></div>
             </div>
             <div className={LRstyle.logo}><img src={temp_logo} alt="LSL" /></div>
         </div>
