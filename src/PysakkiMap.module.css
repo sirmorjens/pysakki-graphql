@@ -71,19 +71,6 @@ div.routeEndPoint:after {
     z-index: 50;
 }
 
-.label {
-    
-    margin: 0mm;
-    display: flex;
-    flex-direction: row;
-    background: #ffffffc5;
-    color: #ffffff;
-    border: 1px solid #000;
-    padding: 0.4vh 0.3vh 0.4vh 0.3vh;
-    border-radius: 10mm;
-    box-sizing: border-box;
-    z-index: 999;
-}
 .vehicle {
     height: 1vh;
     width: 1vh;
@@ -126,18 +113,38 @@ div.routeEndPoint:after {
     justify-content: center;
     align-items: center;
     margin: 0.2vh 0.2vh 0.2vh 0.2vh;
-    font-family: "DM Sans Variable", sans-serif;
+    font-family: "Inter Variable", sans-serif;
     font-size: 1.5vh;
     font-weight: 700;
-    color: black;
     text-shadow: 2px 2px 6px #00000020;
 }
 .label div:after {
     content: "/";
-    font-weight: 500;
+
     color: #000;
 }
 .label div:last-child:after {
     content: "";
 
+}
+
+.label {
+    margin: 0;
+    display: flex;
+    aspect-ratio: 1/1;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background: #000000ff;
+    color: #ffffff;
+    border: 1px solid #000;
+    border-radius: 50%;
+    box-sizing: border-box;
+    z-index: 999;
+}
+.label div {
+    flex: 1;
+    margin: 0.2vh;
+    font-family: "Inter Variable";
+    font-weight: 700;
 }
