@@ -65,9 +65,10 @@
     height: var(--mm20);
     margin: 0;
     margin-top: 0.25vh;
-    padding: 0.5vh;
+    padding: 0.4vh;
     border-radius: 0.7vh;
-    border: 2px solid #00000070;
+    border: 2px solid #00000060;
+    box-sizing: bo;
 }
 .footer div.cta div p {
     font-size: var(--mm9);
