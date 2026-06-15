@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a829f00a564d2039e866cb3546c2c44a>>
+ * @generated SignedSource<<95a1c56254f1a97b8b826ed85ec40ce0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,6 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
+export type RealtimeState = "ADDED" | "CANCELED" | "MODIFIED" | "SCHEDULED" | "UPDATED" | "%future added value";
 export type PysakkiQuery$variables = {
   departureQty: number;
   id: string;
@@ -19,6 +20,20 @@ export type PysakkiQuery$variables = {
 };
 export type PysakkiQuery$data = {
   readonly stop: {
+    readonly stoprows: ReadonlyArray<{
+      readonly headsign: string | null | undefined;
+      readonly realtime: boolean | null | undefined;
+      readonly realtimeArrival: number | null | undefined;
+      readonly realtimeState: RealtimeState | null | undefined;
+      readonly scheduledArrival: number | null | undefined;
+      readonly serviceDay: any | null | undefined;
+      readonly trip: {
+        readonly alerts: ReadonlyArray<{
+          readonly " $fragmentSpreads": FragmentRefs<"AlertsFragment">;
+        } | null | undefined> | null | undefined;
+        readonly routeShortName: string | null | undefined;
+      } | null | undefined;
+    } | null | undefined> | null | undefined;
     readonly stoptimesForPatterns: ReadonlyArray<{
       readonly " $fragmentSpreads": FragmentRefs<"PysakkiTimesInPatternFragment">;
     } | null | undefined> | null | undefined;
@@ -88,37 +103,125 @@ v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "serviceDay",
+  "name": "headsign",
   "storageKey": null
 },
 v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "realtimeArrival",
+  "name": "realtime",
   "storageKey": null
 },
 v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "headsign",
+  "name": "realtimeArrival",
   "storageKey": null
 },
 v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "routeShortName",
+  "name": "scheduledArrival",
   "storageKey": null
 },
 v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "serviceDay",
+  "storageKey": null
+},
+v13 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "realtimeState",
+  "storageKey": null
+},
+v14 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "routeShortName",
+  "storageKey": null
+},
+v15 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "id",
   "storageKey": null
-};
+},
+v16 = [
+  (v8/*: any*/),
+  (v9/*: any*/),
+  (v10/*: any*/),
+  (v11/*: any*/),
+  (v12/*: any*/),
+  (v13/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "Trip",
+    "kind": "LinkedField",
+    "name": "trip",
+    "plural": false,
+    "selections": [
+      (v14/*: any*/),
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "Alert",
+        "kind": "LinkedField",
+        "name": "alerts",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "alertCause",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": [
+              {
+                "kind": "Variable",
+                "name": "language",
+                "variableName": "lang"
+              }
+            ],
+            "kind": "ScalarField",
+            "name": "alertDescriptionText",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "alertEffect",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "alertSeverityLevel",
+            "storageKey": null
+          },
+          (v15/*: any*/)
+        ],
+        "storageKey": null
+      },
+      (v15/*: any*/)
+    ],
+    "storageKey": null
+  }
+];
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -171,6 +274,51 @@ return {
               }
             ],
             "storageKey": null
+          },
+          {
+            "alias": "stoprows",
+            "args": (v7/*: any*/),
+            "concreteType": "Stoptime",
+            "kind": "LinkedField",
+            "name": "stoptimesWithoutPatterns",
+            "plural": true,
+            "selections": [
+              (v8/*: any*/),
+              (v9/*: any*/),
+              (v10/*: any*/),
+              (v11/*: any*/),
+              (v12/*: any*/),
+              (v13/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Trip",
+                "kind": "LinkedField",
+                "name": "trip",
+                "plural": false,
+                "selections": [
+                  (v14/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Alert",
+                    "kind": "LinkedField",
+                    "name": "alerts",
+                    "plural": true,
+                    "selections": [
+                      {
+                        "args": null,
+                        "kind": "FragmentSpread",
+                        "name": "AlertsFragment"
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -215,9 +363,9 @@ return {
                 "name": "stoptimes",
                 "plural": true,
                 "selections": [
-                  (v8/*: any*/),
-                  (v9/*: any*/),
+                  (v12/*: any*/),
                   (v10/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -226,8 +374,8 @@ return {
                     "name": "trip",
                     "plural": false,
                     "selections": [
-                      (v11/*: any*/),
-                      (v12/*: any*/)
+                      (v14/*: any*/),
+                      (v15/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -244,110 +392,36 @@ return {
             "kind": "LinkedField",
             "name": "stoptimesWithoutPatterns",
             "plural": true,
-            "selections": [
-              (v10/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "realtime",
-                "storageKey": null
-              },
-              (v9/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "scheduledArrival",
-                "storageKey": null
-              },
-              (v8/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "realtimeState",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "Trip",
-                "kind": "LinkedField",
-                "name": "trip",
-                "plural": false,
-                "selections": [
-                  (v11/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "Alert",
-                    "kind": "LinkedField",
-                    "name": "alerts",
-                    "plural": true,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "alertCause",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": [
-                          {
-                            "kind": "Variable",
-                            "name": "language",
-                            "variableName": "lang"
-                          }
-                        ],
-                        "kind": "ScalarField",
-                        "name": "alertDescriptionText",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "alertEffect",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "alertSeverityLevel",
-                        "storageKey": null
-                      },
-                      (v12/*: any*/)
-                    ],
-                    "storageKey": null
-                  },
-                  (v12/*: any*/)
-                ],
-                "storageKey": null
-              }
-            ],
+            "selections": (v16/*: any*/),
             "storageKey": null
           },
-          (v12/*: any*/)
+          {
+            "alias": "stoprows",
+            "args": (v7/*: any*/),
+            "concreteType": "Stoptime",
+            "kind": "LinkedField",
+            "name": "stoptimesWithoutPatterns",
+            "plural": true,
+            "selections": (v16/*: any*/),
+            "storageKey": null
+          },
+          (v15/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "9c6dc0ee9d9a966359a386002e779fcb",
+    "cacheID": "439e66b2d89cff64d575c49a77a858cc",
     "id": null,
     "metadata": {},
     "name": "PysakkiQuery",
     "operationKind": "query",
-    "text": "query PysakkiQuery(\n  $id: String!\n  $departureQty: Int!\n  $lang: String!\n  $omitCanceled: Boolean!\n  $inPatternDeparturesQty: Int!\n) {\n  stop(id: $id) {\n    stoptimesForPatterns(numberOfDepartures: $inPatternDeparturesQty) {\n      ...PysakkiTimesInPatternFragment\n    }\n    stoptimesWithoutPatterns(numberOfDepartures: $departureQty, omitCanceled: $omitCanceled) {\n      ...StoptimeFragment\n    }\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: $lang)\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PysakkiTimesInPatternFragment on StoptimesInPattern {\n  stoptimes {\n    serviceDay\n    realtimeArrival\n    headsign\n    trip {\n      routeShortName\n      id\n    }\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtime\n  realtimeArrival\n  scheduledArrival\n  serviceDay\n  realtimeState\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n"
+    "text": "query PysakkiQuery(\n  $id: String!\n  $departureQty: Int!\n  $lang: String!\n  $omitCanceled: Boolean!\n  $inPatternDeparturesQty: Int!\n) {\n  stop(id: $id) {\n    stoptimesForPatterns(numberOfDepartures: $inPatternDeparturesQty) {\n      ...PysakkiTimesInPatternFragment\n    }\n    stoptimesWithoutPatterns(numberOfDepartures: $departureQty, omitCanceled: $omitCanceled) {\n      ...StoptimeFragment\n    }\n    stoprows: stoptimesWithoutPatterns(numberOfDepartures: $departureQty, omitCanceled: $omitCanceled) {\n      headsign\n      realtime\n      realtimeArrival\n      scheduledArrival\n      serviceDay\n      realtimeState\n      trip {\n        routeShortName\n        alerts {\n          ...AlertsFragment\n          id\n        }\n        id\n      }\n    }\n    id\n  }\n}\n\nfragment AlertsFragment on Alert {\n  alertCause\n  alertDescriptionText(language: $lang)\n  alertEffect\n  alertSeverityLevel\n}\n\nfragment PysakkiTimesInPatternFragment on StoptimesInPattern {\n  stoptimes {\n    serviceDay\n    realtimeArrival\n    headsign\n    trip {\n      routeShortName\n      id\n    }\n  }\n}\n\nfragment StoptimeFragment on Stoptime {\n  headsign\n  realtime\n  realtimeArrival\n  scheduledArrival\n  serviceDay\n  realtimeState\n  trip {\n    routeShortName\n    alerts {\n      ...AlertsFragment\n      id\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "587e96d87864a052bbaaf90d8539e892";
+(node as any).hash = "13c51e5b7af717408aaa54e52f036470";
 
 export default node;

@@ -2,8 +2,9 @@ import { graphql, useFragment } from "react-relay";
 import type { PysakkiTimesInPatternFragment$key } from "./__generated__/PysakkiTimesInPatternFragment.graphql"
 import { useState, useEffect } from 'react'
 import { useLazyLoadQuery } from "react-relay";
-import type { PysakkiQuery } from "./__generated__/PysakkiQuery.graphql"
+import type { PysakkiQuery, PysakkiQuery$data } from "./__generated__/PysakkiQuery.graphql"
 import Stoptime from "./Stoptime";
+
 // import Pattern from "./Pattern"; ei käytössä, tarvitaan mahdollisesti bussien sijaintien hakemiseen
 
 type PatternStopTime = {
@@ -13,6 +14,15 @@ type PatternStopTime = {
     trip: {
         routeShortName: string;
     }
+}
+
+type StopTime = {
+    /* generate type with graphql codegen */
+    anything?: any;
+}
+
+type AlertText = {
+    alertText: string;
 }
 
 export default function Pysakki() 
@@ -56,6 +66,23 @@ export default function Pysakki()
                 {
                     ...StoptimeFragment
                 }
+                
+                # WIP: noudetaan stoprowit tässä ja iteroidaan
+                stoprows: stoptimesWithoutPatterns(numberOfDepartures:  $departureQty, omitCanceled: $omitCanceled)
+                {
+                    headsign # määränpää
+                    realtime
+                    realtimeArrival # reaaliaikainen saapumisaika sekunneissa
+                    scheduledArrival # suunniteltu saapumisaika sekunneissa
+                    serviceDay # helpompi mätsätä timestamppeja kun on päivä
+                    realtimeState
+                    trip {
+                        routeShortName # reittikoodi
+                        alerts {
+                            ...AlertsFragment
+                        }
+                    }
+                }
             }
         }
         `,
@@ -64,6 +91,23 @@ export default function Pysakki()
         refreshedQueryOptions ?? {}
     );
 
+    // wip: lähtöjen iterointi tässä ja alerttien yms. syöttö joukkoon jolloin rendataan rivit sisällön mukaan
+    const timetableRows = [];
+    
+    data.stop!.stoprows!.forEach(stoptime => {
+        timetableRows.push(stoptime)
+
+        // jos rivillä myös alertteja
+        if(stoptime?.trip?.alerts)
+        {
+            // seuraavalle riville trip alert
+            timetableRows.push(/* alert info */)
+        }
+    })
+    
+    console.log()
+
+    // iteroidaan patternit lookup-taulukkoon josta haku linjan nimellä tms
     data.stop!.stoptimesForPatterns?.forEach(stoptimeForPattern => {
 
         const stoptimesInPattern = useFragment<PysakkiTimesInPatternFragment$key>(
