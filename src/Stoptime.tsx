@@ -33,6 +33,9 @@ type Props = {
 };
 
 export default function Stoptime({stoptime, patternsLookUp}: Props) {
+
+    const MAX_DESTINATION_LETTERS = 16
+
     const data = useFragment<StoptimeFragment$key>(
         graphql`
             fragment StoptimeFragment on Stoptime
@@ -53,7 +56,6 @@ export default function Stoptime({stoptime, patternsLookUp}: Props) {
         `, stoptime
     )
 
-    // @ts-expect-error ei käytössä tällä hetkellä
     const patterns = patternsLookUp[data.trip!.routeShortName!].slice(1).map(ptr => arrivalTimeToString(ptr) );
 
     const minutesVsHHMMThreshold = 1000 * 60 * 10 // arrivals inside ten minutes displayed as minutes
@@ -81,28 +83,29 @@ export default function Stoptime({stoptime, patternsLookUp}: Props) {
 
                 {data.trip?.routeShortName}
 
-                { /* milloin näytetään kolmio (poikkeusreitti tai muu reittitiedote) */ false ? (
+                { /* milloin näytetään kolmio (poikkeusreitti tai muu reittitiedote) */ isCanceled ? (
                     <WarningSign />
                 ) : ""}
             </p>
             
             <div className="destination_time">
                 <p className="destination">
-
-
-                    {destinationTxt} 
+                    {destinationTxt.slice(0,MAX_DESTINATION_LETTERS)}
+                    {destinationTxt.length > MAX_DESTINATION_LETTERS ? 
+                    "..." : ""} 
+                    {destinationTxt.length < Math.ceil( MAX_DESTINATION_LETTERS / 1.5)? 
                     <span>
-                        via {viaTxt}
+                        via <span className="viaDests">{viaTxt}</span>
                     </span>
-                    
+                    : ""}   
                 </p>
                     
-                
                 <p className="time">
                     {isRealTime ? "" : <span>~</span>}
                     {timeTxt}
-                    {/* tarvitseeko implementoida? <p className="tulevatajat">{patternsMap.slice(0,2)}</p> */}
                 </p>
+                
+                <p className="tulevatajat hidden">{patterns.slice(1,3)}</p>
             </div>
 
         </div>

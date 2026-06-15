@@ -1,4 +1,5 @@
 :root {
+  --mm3: 0.46vh;
   --mm9: 1.26vh;
   --mm10: 1.4vh;
   --mm12: 1.68vh;
@@ -11,6 +12,7 @@
   --mm45: 6.3vh;
   --mm50: 7vh;
   --mm60: 8.4vh;
+  --light_via: #3d3d3d;
   --light: #1f1f1f;
   --lightbg: #fdfdfd;
   --canceledbg: #dfdfdf;
@@ -171,14 +173,23 @@ p.destination {
   font-weight: 600;
   text-align: left;
   vertical-align: middle;
+  
 }
 p.destination span {
-  vertical-align: middle;
+  margin: 0;
+  padding: 0;
   font-size: var(--mm10);
-  margin-left: var(--mm9);
+  margin-left: var(--mm3);
   font-weight: 600;
-  color: var(--light)
+  color: var(--light_via);
 }
+p.destination span span.viaDests {
+  margin: 0;
+  color: var(--light);
+  font-weight: 600;
+}
+
+
 p.route {
   flex: 0 0 var(--mm60);
   font-family: 'Inter Variable', sans-serif;
@@ -191,9 +202,14 @@ p.time {
   font-family: 'Inter Variable', sans-serif;
   font-weight: 700;
   text-align: right;
+  letter-spacing: 0.02vh;
 }
 
 p {
   margin: 0;
   padding: 0;
+}
+
+.hidden {
+  display: none;
 }
