@@ -345,7 +345,7 @@ export default function PysakkiMap() {
         anchor='bottom'
         offset={[0,0]}>
           <div className={[PysakkiMapStyle.routeEndPoint, false  /* kesken */  ? "" : PysakkiMapStyle.destination].join(" ")}>
-            <div className={PysakkiMapStyle.label}>
+            <div className={PysakkiMapStyle.label + " " + PysakkiMapStyle.alt}>
               {endPoint.labels.map((label) => 
                 <div>{label}</div>
               )}
