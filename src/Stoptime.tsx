@@ -91,9 +91,9 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
         `${Math.max(minutesLeft, 0)}` : 
         `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}` 
 
-    const [destinationTxt, viaTxt]: [destinationTxt: string, viaTxt: string] = [
+    const [destinationTxt, viaTxt]: [destinationTxt: string, viaTxt: string | null] = [
         rowdata.StopTime.headsign!.split(" via ").slice(0,1).join(),
-        rowdata.StopTime.headsign!.split(" via ").slice(-1).join().split(" - ").join(", ")
+        rowdata.StopTime.headsign!.split(" via ").length > 1 ? rowdata.StopTime.headsign!.split(" via ").slice(-1).join().split(" - ").join(", ") : null
     ]
 
     const isCanceled = rowdata.StopTime!.realtimeState === 'CANCELED'
@@ -115,11 +115,14 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
                     {destinationTxt.slice(0,MAX_DESTINATION_LETTERS)}
                     {destinationTxt.length > MAX_DESTINATION_LETTERS ? 
                     "..." : ""} 
-                    {destinationTxt.length < Math.ceil( MAX_DESTINATION_LETTERS / 1.5)? 
-                    <span>
-                        via <span className="viaDests">{viaTxt}</span>
-                    </span>
-                    : ""}   
+                    {
+                        destinationTxt.length < Math.ceil( MAX_DESTINATION_LETTERS / 1.5 ) &&
+                        viaTxt != null ? 
+                        <span>
+                            via <span className="viaDests">{viaTxt}</span>
+                        </span>
+                        : ""
+                    }   
                 </p>
                     
                 <p className="time">
