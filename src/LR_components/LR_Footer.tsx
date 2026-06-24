@@ -1,6 +1,5 @@
 import LRstyle from './Styles/LRstyle.module.css'
 
-import palaute from '../assets/palaute.svg'
 import qr from '../assets/qrcode.png'
 import temp_logo from '../assets/temp_logo.png'
 

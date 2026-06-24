@@ -81,8 +81,13 @@ export default function Timetable() {
   const stoptime = pysakki?.stoptimesWithoutPatterns;
   // const inPatternStoptime = pysakki?.stoptimesForPatterns;
   
+  // @ts-ignore
   let timeNow = new Date()
+
+  // @ts-ignore
   let options:any = { hour: "2-digit", minute: "2-digit" };
+
+  // @ts-ignore
   let stopRows:any[] = [];
   let inc = 0;
 

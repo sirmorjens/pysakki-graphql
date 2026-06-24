@@ -5,6 +5,7 @@ import relay from "vite-plugin-relay"
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [relay, react()],
+  base: "/dev/pysakki/",
   server : {
     open: false
   }

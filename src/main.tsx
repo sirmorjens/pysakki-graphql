@@ -1,6 +1,5 @@
 import { createRoot } from 'react-dom/client'
 import './styles/index.css'
-import Timetable from './Timetable.tsx';
 import App from './App.tsx'
 import { RelayEnvironmentProvider } from "react-relay";
 import { Environment, Network } from "relay-runtime";
