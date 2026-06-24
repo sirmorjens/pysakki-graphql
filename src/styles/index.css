@@ -112,8 +112,24 @@ div.stopRow {
   height: var(--mm25);
 }
 
-
-
+div.alertRow {
+  width: 95%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0;
+  height: var(--mm22);
+  border-bottom: 2px solid #0000004d;
+  color: black;
+  padding: 0vh 0.4vh 0vh 0.4vh;
+  box-sizing: border-box;
+  height: var(--mm25); 
+}
+span.min {
+  font-weight: 500;
+  font-family: 'Inter Variable';
+}
 div.stopRow:nth-child(even) {
   background: var(--lightbg);
 }
@@ -216,10 +232,12 @@ p {
 .destination.alert {
   font-weight: 500;
   font-family: 'Barlow Semi Condensed';
+  font-size: var(--mm12);
   margin-left: 0.5vh;
 }
 .alert.routealert {
   font-weight: 500;
   font-family: 'Barlow Semi Condensed';
   margin-left: 0vh;
+  font-size: var(--mm12);
 }

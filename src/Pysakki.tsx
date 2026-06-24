@@ -3,11 +3,9 @@ import type { PysakkiTimesInPatternFragment$key } from "./__generated__/PysakkiT
 import { useState, useEffect } from 'react'
 import { useLazyLoadQuery } from "react-relay";
 import type { PysakkiQuery } from "./__generated__/PysakkiQuery.graphql"
-import type { StoptimeFragment$data } from "./__generated__/StoptimeFragment.graphql";
 import Stoptime from "./Stoptime";
-import type { AlertSeverityLevelType } from "./__generated__/AlertsFragment.graphql";
+import { splitAlertTextToRows, type AlertText, type RowData, type StopTime } from "./PysakkiUtils";
 
-// import Pattern from "./Pattern"; ei käytössä, tarvitaan mahdollisesti bussien sijaintien hakemiseen
 
 type PatternStopTime = {
     serviceDay: number,
@@ -18,25 +16,8 @@ type PatternStopTime = {
     }
 }
 
-type StopTime = any /* generate type with graphql codegen */
 
-type RowData = {
-    RowType: 'STOPTIME' | 'STOPALERT' | 'ROUTEALERT'
-    StopTime?: StopTime /* see above */
-    Alert?: AlertText | null;
-}
 
-type AlertText = {
-        readonly alertSeverityLevel?: AlertSeverityLevelType;
-        readonly alertHeaderText?: string;
-        readonly alertDescriptionText?: string;
-}
-
-// max letters before line split
-const ALERT_MAX_LETTERS_PER_ROW = {
-    'STOPALERT': 50,
-    'ROUTEALERT': 50,
-};
 export default function Pysakki() 
 {
 
@@ -109,29 +90,7 @@ export default function Pysakki()
         refreshedQueryOptions ?? {}
     );
 
-    const splitAlertTextToRows = (alertObj: AlertText, RowType: 'STOPALERT' | 'ROUTEALERT'): RowData[] => {
-        if( alertObj.alertDescriptionText!.length < ALERT_MAX_LETTERS_PER_ROW[RowType] ) return [{RowType: RowType, Alert: alertObj}]
 
-        const BaseAlert: AlertText = {
-            alertSeverityLevel: alertObj.alertSeverityLevel,
-            alertHeaderText: alertObj.alertHeaderText,
-            alertDescriptionText: ''
-        }
-
-        const descriptionTxtSegments = alertObj.alertDescriptionText!.split(' ').reduce<Array<string>>((segments, word, index): string[] => {
-            if(!segments.length) segments.push('')
-
-            /* todo split long words */
-
-            if(segments[segments.length - 1].length + word.length > ALERT_MAX_LETTERS_PER_ROW[RowType]) segments.push('')
-            segments[segments.length? segments.length - 1 : 0] += word + " "
-            return segments
-        }, [])
-
-        const alertRows = descriptionTxtSegments.map(segment => ({RowType: RowType, Alert: {...BaseAlert, alertDescriptionText: segment}}))
-        console.log(alertRows)
-        return alertRows;
-    }
 
     const fakeAlerts = [
     {
@@ -147,13 +106,13 @@ export default function Pysakki()
 
     ]
 
-    const fakeTimeTables: StopTime[] = JSON.parse('[{"headsign":"Hörölä via Paavola - Kiveriö","realtime":true,"realtimeArrival":52667,"scheduledArrival":52576,"serviceDay":1781470800,"realtimeState":"UPDATED","trip":{"routeShortName":"5","alerts":[{"alertDescriptionText":"Reitin/lähdön häiriötiedote, pitkä häiriöteksti rivittyy useammalle riville (työn alla)","alertHeaderText":"Reitin häiriötiedote","alertSeverityLevel":"INFO"}]}},{"headsign":"Mukkula via Paavola","realtime":true,"realtimeArrival":52915,"scheduledArrival":52876,"serviceDay":1781470800,"realtimeState":"UPDATED","trip":{"routeShortName":"32","alerts":[]}},{"headsign":"Soltti via Yliopisto - Mukkula","realtime":true,"realtimeArrival":53122,"scheduledArrival":53098,"serviceDay":1781470800,"realtimeState":"UPDATED","trip":{"routeShortName":"1","alerts":[]}},{"headsign":"Mukkula via Niemi","realtime":false,"realtimeArrival":53758,"scheduledArrival":53758,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"2","alerts":[]}},{"headsign":"Kytölä via Paavola","realtime":true,"realtimeArrival":53849,"scheduledArrival":53394,"serviceDay":1781470800,"realtimeState":"UPDATED","trip":{"routeShortName":"10K","alerts":[{"alertDescriptionText":"Reitin/lähdön häiriötiedote, pitkä häiriöteksti rivittyy useammalle riville (työn alla)","alertHeaderText":"Reitin häiriötiedote","alertSeverityLevel":"INFO"}]}},{"headsign":"Karjusaari via Yliopisto - Mukkula","realtime":false,"realtimeArrival":53998,"scheduledArrival":53998,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"1K","alerts":[]}},{"headsign":"Hörölä via Paavola - Kiveriö","realtime":false,"realtimeArrival":54376,"scheduledArrival":54376,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"5","alerts":[]}},{"headsign":"Mukkula via Paavola","realtime":false,"realtimeArrival":54676,"scheduledArrival":54676,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"32","alerts":[]}},{"headsign":"Soltti via Yliopisto - Mukkula","realtime":false,"realtimeArrival":54898,"scheduledArrival":54898,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"1","alerts":[]}},{"headsign":"Kytölä via Paavola","realtime":false,"realtimeArrival":55314,"scheduledArrival":55314,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"11","alerts":[]}},{"headsign":"Mukkula via Niemi","realtime":false,"realtimeArrival":55558,"scheduledArrival":55558,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"2","alerts":[]}},{"headsign":"Karjusaari via Yliopisto - Mukkula","realtime":false,"realtimeArrival":55798,"scheduledArrival":55798,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"1K","alerts":[]}}]')
+    // const fakeTimeTables: StopTime[] = JSON.parse('[{"headsign":"Hörölä via Paavola - Kiveriö","realtime":true,"realtimeArrival":52667,"scheduledArrival":52576,"serviceDay":1781470800,"realtimeState":"UPDATED","trip":{"routeShortName":"5","alerts":[{"alertDescriptionText":"Reitin/lähdön häiriötiedote, pitkä häiriöteksti rivittyy useammalle riville (työn alla)","alertHeaderText":"Reitin häiriötiedote","alertSeverityLevel":"INFO"}]}},{"headsign":"Mukkula via Paavola","realtime":true,"realtimeArrival":52915,"scheduledArrival":52876,"serviceDay":1781470800,"realtimeState":"UPDATED","trip":{"routeShortName":"32","alerts":[]}},{"headsign":"Soltti via Yliopisto - Mukkula","realtime":true,"realtimeArrival":53122,"scheduledArrival":53098,"serviceDay":1781470800,"realtimeState":"UPDATED","trip":{"routeShortName":"1","alerts":[]}},{"headsign":"Mukkula via Niemi","realtime":false,"realtimeArrival":53758,"scheduledArrival":53758,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"2","alerts":[]}},{"headsign":"Kytölä via Paavola","realtime":true,"realtimeArrival":53849,"scheduledArrival":53394,"serviceDay":1781470800,"realtimeState":"UPDATED","trip":{"routeShortName":"10K","alerts":[{"alertDescriptionText":"Reitin/lähdön häiriötiedote, pitkä häiriöteksti rivittyy useammalle riville (työn alla)","alertHeaderText":"Reitin häiriötiedote","alertSeverityLevel":"INFO"}]}},{"headsign":"Karjusaari via Yliopisto - Mukkula","realtime":false,"realtimeArrival":53998,"scheduledArrival":53998,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"1K","alerts":[]}},{"headsign":"Hörölä via Paavola - Kiveriö","realtime":false,"realtimeArrival":54376,"scheduledArrival":54376,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"5","alerts":[]}},{"headsign":"Mukkula via Paavola","realtime":false,"realtimeArrival":54676,"scheduledArrival":54676,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"32","alerts":[]}},{"headsign":"Soltti via Yliopisto - Mukkula","realtime":false,"realtimeArrival":54898,"scheduledArrival":54898,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"1","alerts":[]}},{"headsign":"Kytölä via Paavola","realtime":false,"realtimeArrival":55314,"scheduledArrival":55314,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"11","alerts":[]}},{"headsign":"Mukkula via Niemi","realtime":false,"realtimeArrival":55558,"scheduledArrival":55558,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"2","alerts":[]}},{"headsign":"Karjusaari via Yliopisto - Mukkula","realtime":false,"realtimeArrival":55798,"scheduledArrival":55798,"serviceDay":1781470800,"realtimeState":"SCHEDULED","trip":{"routeShortName":"1K","alerts":[]}}]')
 
     // wip: lähtöjen iterointi tässä ja alerttien yms. syöttö joukkoon jolloin rendataan rivit sisällön mukaan
     const displayTimetableRows: RowData[] = [];
     
-    /*data.stop!.stoprows!.forEach(stoptime => {*/
-    fakeTimeTables.forEach(stoptime => {
+    data.stop!.stoprows!.forEach(stoptime => {
+    /* debug with fake data fakeTimeTables.forEach(stoptime => { */
         displayTimetableRows.push({RowType: 'STOPTIME', StopTime: stoptime})
 
         // jos rivillä myös alertteja
@@ -171,10 +130,12 @@ export default function Pysakki()
     {
         const StopAlerts: RowData[] = []
 
+        /*
         // debug 
         fakeAlerts.forEach(fakeAlert => 
             StopAlerts.push(...splitAlertTextToRows(fakeAlert as AlertText, 'STOPALERT'))       
         )
+        */
 
         data.stop!.alerts!.map(alert => 
             StopAlerts.push(...splitAlertTextToRows(alert as AlertText, 'STOPALERT'))

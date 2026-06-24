@@ -52,7 +52,7 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
     if( rowdata.RowType === 'ROUTEALERT' )
     {
         return (
-            <div className={"stopRow"}>
+            <div className="alertRow">
                 <p className="route"></p>
                 <p className="destination alert routealert">
                     {rowdata.Alert!.alertDescriptionText}
@@ -64,7 +64,7 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
     if( rowdata.RowType === 'STOPALERT' )
     {
         return (
-            <div className={"stopRow"}>
+            <div className="alertRow">
                 <p className="destination alert stopalert">
                     {rowdata.Alert!.alertDescriptionText}
                 </p>
@@ -87,7 +87,9 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
     const [hours, minutes] = [arrivalTime.getHours(), arrivalTime.getMinutes()]
     const minutesLeft: number | null = (arrivalTime.getTime() - currentTimeStamp) < minutesVsHHMMThreshold ? Math.floor( ( (arrivalTime.getTime() - currentTimeStamp) / 1000 / 60) - 1) : null
 
-    const timeTxt: string = minutesLeft != null ? `${Math.max(minutesLeft, 0)} min` : `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}` 
+    const timeTxt: string = minutesLeft != null ? 
+        `${Math.max(minutesLeft, 0)}` : 
+        `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}` 
 
     const [destinationTxt, viaTxt]: [destinationTxt: string, viaTxt: string] = [
         rowdata.StopTime.headsign!.split(" via ").slice(0,1).join(),
@@ -122,7 +124,7 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
                     
                 <p className="time">
                     {isRealTime ? "" : <span>~</span>}
-                    {timeTxt}
+                    {timeTxt} {minutesLeft == null ? "" : <span class="min">min</span>}
                 </p>
                 
                 <p className="tulevatajat hidden">{patterns.slice(1,3)}</p>
