@@ -124,7 +124,7 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
                     
                 <p className="time">
                     {isRealTime ? "" : <span>~</span>}
-                    {timeTxt} {minutesLeft == null ? "" : <span class="min">min</span>}
+                    {timeTxt} {minutesLeft == null ? "" : <span className="min">min</span>}
                 </p>
                 
                 <p className="tulevatajat hidden">{patterns.slice(1,3)}</p>

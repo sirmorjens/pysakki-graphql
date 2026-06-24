@@ -40,7 +40,7 @@ export const splitAlertTextToRows = (alertObj: AlertText, RowType: 'STOPALERT' |
         alertDescriptionText: ''
     }
 
-    const descriptionTxtSegments = alertObj.alertDescriptionText!.split(' ').reduce<Array<string>>((segments, word, index): string[] => {
+    const descriptionTxtSegments = alertObj.alertDescriptionText!.split(' ').reduce<Array<string>>(( segments, word ): string[] => {
         if(!segments.length) segments.push('')
 
         /* todo split long words */
@@ -65,6 +65,7 @@ export const splitAlertTextToRows = (alertObj: AlertText, RowType: 'STOPALERT' |
     return alertRows;
 }
 
+// @ts-expect-error // debugging use only
 const debugWordGenerator = (length: number, wordsQty: number): string => {
     const output: string[] = []
     

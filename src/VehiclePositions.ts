@@ -1,4 +1,4 @@
-import mqtt, { type ClientSubscribeCallback, type ISubscriptionMap, type MqttClient } from 'mqtt'
+import mqtt, { type MqttClient } from 'mqtt'
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
 
 const url = "wss://mqtt.digitransit.fi"
@@ -26,7 +26,7 @@ export const VehiclePositionsWS = async (
         // @ts-ignore
     })
 
-    mqttClient.on('message', (topic, message) => {
+    mqttClient.on('message', (_, message) => {
         const decodedMsg = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(message)
         
         if(!mqttCallback)
@@ -97,8 +97,8 @@ export const SubscribeToRoutePositions = (routeShortName: string) => {
 
 export const UnSubscribeAll = () => {
     mqttTopics.subcsribedTopics.forEach((topic) => 
-        mqttClient.unsubscribe(topic, {}, (arm) => {
-
+        mqttClient.unsubscribe(topic, {}, () => {
+            
 
         })
     )
