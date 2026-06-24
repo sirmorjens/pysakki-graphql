@@ -17,6 +17,8 @@ import mapstyle from "./Map/pysakki_mapstyle.json"
 import { useFragment } from 'react-relay';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
+import { clampedToViewArea } from './PysakkiMapUtils'
+
 import {
   SubscribeToRoutePositions,
   UnSubscribeAll,
@@ -46,14 +48,13 @@ import { type ReactElement, useEffect, useState } from 'react';
 
 const VehicleMarkersLayer = ({ vehiclePositions }: { vehiclePositions: VehiclePositionItem[] }) => {
   const { current: map } = useMap();
-  const [zoomLevel, setZoomLevel] = useState(11);
+
   const [mapBearing, setMapBearing] = useState(0);
 
   useEffect(() => {
     if (!map) return;
     
     const updateViewState = () => {
-      setZoomLevel(map.getZoom());
       setMapBearing(map.getBearing());
     };
 
@@ -75,14 +76,14 @@ const VehicleMarkersLayer = ({ vehiclePositions }: { vehiclePositions: VehiclePo
       {vehiclePositions.map((vehicleposition, idx) => (
         <Marker key={`vehicle-${idx}`} latitude={vehicleposition.position[0]} longitude={vehicleposition.position[1]}>
           <div className={PysakkiMapStyle.vehicle}>
-            <div className={PysakkiMapStyle.bussi} style={{width: `${(zoomLevel*zoomLevel*2)*0.04}mm`}}>
+            <div className={PysakkiMapStyle.bussi}>
               <img 
                 src={pieniBussi} 
                 alt="Bussi" 
                 className={vehicleposition.bearing - 180 < mapBearing ? "" : PysakkiMapStyle.flipped}
               />
             </div>
-            <div className={PysakkiMapStyle.vehicleLabel} style={{fontSize: `${(zoomLevel*zoomLevel*2)*0.002}vh`, marginTop: `${(zoomLevel*zoomLevel*2)*0.001}vh`}}>
+            <div className={PysakkiMapStyle.vehicleLabel}>
               {routeIdToShortName.hasOwnProperty( vehicleposition.routeId ) ? routeIdToShortName[vehicleposition.routeId] : "?"}
             </div>
           </div>
@@ -303,10 +304,11 @@ export default function PysakkiMap() {
 
       mapGeoJsonData.features.push(routeGeometry.geojson)
 
-      const [destLng, destLat] = (routeGeometry.geojson.geometry as LineString).coordinates.slice(-1)[0]
+      const [destLng, destLat] = clampedToViewArea ( (routeGeometry.geojson.geometry as LineString).coordinates.slice(-1)[0] )
       
-      const destHash = roundedCoordsAsKey([destLng, destLat])
-        
+      const destHash = roundedCoordsAsKey([destLng.value, destLat.value])
+      
+      // if endpoint exists
       if( endPointCoordinates.has(destHash) )
       {
         const endPoint = endPointCoordinates.get(destHash)!
@@ -318,7 +320,8 @@ export default function PysakkiMap() {
       {
         const endPoint = {
           labels: [routeGeometry.shortName],
-          coords: [destLat, destLng],
+          isOutside: destLng.outside || destLat.outside, // if outside map bounds
+          coords: [destLat.value, destLng.value],
         }
         endPointCoordinates.set(destHash, endPoint)    
       }
@@ -369,7 +372,6 @@ export default function PysakkiMap() {
 
 // update map view to show current stop and end stop
 const updateMap = () => {
-
     /* 
       IMPLEMENT BBOX 
     */
@@ -378,10 +380,12 @@ const updateMap = () => {
 
     if(!routeGeometries.length) return
     
+
+
     const turfCoords = turf.lineString([
         (data.stop!.geometries?.geoJson!.coordinates as Position),
-        data.stop!.geometries?.geoJson!.coordinates.map((c: number) => c-0.002),
-        ...Array.from( endPointCoordinates ).flatMap(([, value]) => [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+0.010]])
+        data.stop!.geometries?.geoJson!.coordinates.map((c: number) => c-0.002), // offset around stop
+        ...Array.from( endPointCoordinates ).flatMap(([, value]) => {return [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+0.010]]})
       ])
 
     // turf
