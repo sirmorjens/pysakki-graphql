@@ -30,7 +30,7 @@ div.routeEndPoint {
 .fillari {
     height: 1vh;
     width: 1vh;
-    background: white;
+    background: #ffffffae;
     border: 1px solid grey;
     border-radius: 50%;
     display: flex;
@@ -40,6 +40,7 @@ div.routeEndPoint {
 }
 .fillari img {
     width: 90%;
+    opacity: 1;
 }
 div.routeEndPoint:after {
     font-family: 'Barlow Semi Condensed';
@@ -144,9 +145,10 @@ div.routeEndPoint:after {
 }
 .label div {
     flex: 1;
-    margin: 0.2vh;
+    margin: 0.35vh;
     font-family: "Inter Variable";
-    font-weight: 700;
+    font-weight: 600;
+    font-size: var(--mm9);
 }
 .label.alt {
     color: black;
