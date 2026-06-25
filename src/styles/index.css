@@ -156,6 +156,13 @@ div.stopRow:nth-child(1) .warning, div.stopRow:nth-child(2) .warning {
   position: absolute;
 }
 
+.alertRow .warning {
+  display: block;
+  position: relative;
+  height: 2.5vh;
+  margin-left: 0.5vh;
+}
+
 div.stopRow.canceled {
   background: var(--canceledbg);
   color: var(--canceledTxt);
@@ -169,6 +176,8 @@ div.stopRow.canceled::after {
   width: 100%;
   height: 1px;
   border-bottom: 2px solid rgba(0, 0, 0, 0.75);
+}
+div.stopRow.alerted {
 }
 
 p {
@@ -240,4 +249,30 @@ p {
   font-family: 'Barlow Semi Condensed';
   margin-left: 0vh;
   font-size: var(--mm12);
+}
+.alertRow.SEVERE {
+  color: white;
+  background: black;
+  border-color: white;
+}
+.stopRow.SEVERE {
+  color: white;
+  background: black;
+  border-color: white;
+}
+.stopRow.canceled.SEVERE {
+  color: white;
+  background: black;
+  border-color: white;
+}
+.stopRow.canceled.SEVERE::after {
+  border-color: white;
+}
+.stopRow.SEVERE span {
+  color: white;
+  background: black;
+}
+.stopRow.SEVERE .viaDests {
+  color: white;
+  background: black;
 }

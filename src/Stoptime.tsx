@@ -1,18 +1,5 @@
-import type { AlertSeverityLevelType } from "./__generated__/AlertsFragment.graphql"
+import { MAX_DESTINATION_LETTERS, type RowData, type PatternStopTime, type AlertData } from "./PysakkiUtils";
 
-type StopTime = any /* generate type with graphql codegen */
-
-type RowData = {
-    RowType: 'STOPTIME' | 'STOPALERT' | 'ROUTEALERT'
-    StopTime?: StopTime /* see above */
-    Alert?: AlertText | null;
-}
-
-type AlertText = {
-        readonly alertSeverityLevel?: AlertSeverityLevelType;
-        readonly alertHeaderText?: string;
-        readonly alertDescriptionText?: string;
-}
 function WarningSign () {
     return (
         <svg className="warning" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
@@ -22,14 +9,7 @@ function WarningSign () {
     )
 }
 
-type PatternStopTime = {
-    serviceDay: number,
-    realtimeArrival: number,
-    headsign: string;
-    trip: {
-        routeShortName: string;
-    }
-}
+
 
     const arrivalTimeToString = (pattern: PatternStopTime): string => {
         const time = new Date( (pattern.serviceDay + pattern.realtimeArrival) * 1000 )
@@ -45,17 +25,17 @@ type Props = {
 };
 
 export default function Stoptime({rowdata, patternsLookUp}: Props) {
-    const MAX_DESTINATION_LETTERS = 16
+    
 
-    // jos alert ruutu, returnataan ajoissa
+    // jos alert ruutu, palautetaan rivi ja lopetetaan ajoissa
 
     if( rowdata.RowType === 'ROUTEALERT' )
     {
         return (
-            <div className="alertRow">
-                <p className="route"></p>
+            <div className={"alertRow " + rowdata.Alert!.alertSeverityLevel}>
+                <p className="route">{/* <WarningSign /> */}</p>
                 <p className="destination alert routealert">
-                    {rowdata.Alert!.alertDescriptionText}
+                    {rowdata.Alert!.displayAlertText}
                 </p>
             </div>
             
@@ -64,9 +44,9 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
     if( rowdata.RowType === 'STOPALERT' )
     {
         return (
-            <div className="alertRow">
+            <div className={"alertRow " + rowdata.Alert!.alertSeverityLevel}>
                 <p className="destination alert stopalert">
-                    {rowdata.Alert!.alertDescriptionText}
+                    {rowdata.Alert!.displayAlertText}
                 </p>
 
             </div>
@@ -99,24 +79,24 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
     const isCanceled = rowdata.StopTime!.realtimeState === 'CANCELED'
 
     return (
-        <div className={"stopRow " + (isCanceled ? "canceled" : "")}>
+        <div className={"stopRow " + (isCanceled ? "canceled " : "") + (rowdata.StopTime.trip?.alerts?.length ? "alerted " : "") + (rowdata.StopTime.trip?.alerts?.length && rowdata.StopTime.trip?.alerts?.some((alert: AlertData) => alert.alertSeverityLevel == 'SEVERE') ? "SEVERE " : "")}>
             
             <p className="route">
 
                 {rowdata.StopTime.trip?.routeShortName}
 
-                { /* milloin näytetään kolmio (poikkeusreitti tai muu reittitiedote) */ rowdata.StopTime.trip.alerts.length ? (
+                { /* näytetään kolmio jos alertteja */ rowdata.StopTime.trip.alerts.length ? (
                     <WarningSign />
                 ) : ""}
             </p>
             
             <div className="destination_time">
                 <p className="destination">
-                    {destinationTxt.slice(0,MAX_DESTINATION_LETTERS)}
-                    {destinationTxt.length > MAX_DESTINATION_LETTERS ? 
+                    {destinationTxt.slice(0,MAX_DESTINATION_LETTERS.destination) /* katkaistaan liian pitkä päämäärän nimi */ }
+                    {destinationTxt.length > MAX_DESTINATION_LETTERS.destination ? // jos pitkä teksti ja katkaistaan, laitetaan pisteet perään
                     "..." : ""} 
-                    {
-                        destinationTxt.length < Math.ceil( MAX_DESTINATION_LETTERS / 1.5 ) &&
+                    { // jos liian pitkä osoite, ei laiteta via tekstiä
+                        destinationTxt.length < Math.ceil( MAX_DESTINATION_LETTERS.viaTxt ) &&
                         viaTxt != null ? 
                         <span>
                             via <span className="viaDests">{viaTxt}</span>
