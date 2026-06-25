@@ -101,8 +101,8 @@ export default function Pysakki()
     // wip: lähtöjen iterointi tässä ja alerttien yms. syöttö joukkoon jolloin rendataan rivit sisällön mukaan
     const displayTimetableRows: RowData[] = [];
     
-   // data.stop!.stoprows!.forEach(stoptime => {
-     /* debug with fake data */ fakeTimeTables.forEach(stoptime => { 
+    data.stop!.stoprows!.forEach(stoptime => {
+     ///* debug with fake data */ fakeTimeTables.forEach(stoptime => { 
         
         displayTimetableRows.push({RowType: 'STOPTIME', StopTime: stoptime})
 
