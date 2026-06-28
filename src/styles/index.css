@@ -76,17 +76,7 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-div.mapContainer {
-  flex: 0 0 30vh;
-  margin: 1vh 0vh 1vh 0vh;
-  border: 1px solid #00000030;
-  width: 95%;
-  border-radius: 5mm;
-  overflow: hidden;
-  display: flex;
-  justify-content: stretch;
-  align-items: stretch;
-}
+
 
 div.stopRows {
   width: 100%;
@@ -275,4 +265,30 @@ p {
 .stopRow.SEVERE .viaDests {
   color: white;
   background: black;
+}
+
+div.mapContainer {
+  flex: 0 0 30vh;
+  margin: 1vh 0vh 1vh 0vh;
+  border: 1px solid #00000030;
+  width: 95%;
+  border-radius: 5mm;
+  overflow: hidden;
+  display: flex;
+  justify-content: stretch;
+  align-items: stretch;
+}
+div.mapContainer.error{
+  display: flex;
+  
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.error h1 {
+  font-family: 'Barlow Semi Condensed';
+  color: black;
+  font-weight: 600;
+  font-size: var(--mm20);
+  text-align: center;
 }

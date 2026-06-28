@@ -2,6 +2,7 @@ import Pysakki from "./Pysakki.tsx";
 import LR_Header from './LR_components/LR_Header.tsx'
 import LR_Footer from './LR_components/LR_Footer.tsx'
 import PysakkiMap from "./PysakkiMap.tsx"
+import { PysakkiSettings } from "./PysakkiSettings.ts";
 
 import { useEffect } from 'react';
 
@@ -27,6 +28,9 @@ import '@fontsource/barlow/800.css';
 import '@fontsource/barlow/900.css';
 
 export default function App() {
+
+  // initiate pysäkkisettings
+  PysakkiSettings.loadSettingsClient();
 
   useEffect(() => {
 

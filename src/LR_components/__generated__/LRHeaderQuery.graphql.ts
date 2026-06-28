@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<79df0af36f10e870dee5f806c364e1ff>>
+ * @generated SignedSource<<da0d3c3e2ba48ce7d70e853fa847482f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,9 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type LRHeaderQuery$variables = Record<PropertyKey, never>;
+export type LRHeaderQuery$variables = {
+  id: string;
+};
 export type LRHeaderQuery$data = {
   readonly stop: {
     readonly name: string;
@@ -23,12 +25,19 @@ export type LRHeaderQuery = {
 const node: ConcreteRequest = (function(){
 var v0 = [
   {
-    "kind": "Literal",
-    "name": "id",
-    "value": "Lahti:104167"
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "id"
   }
 ],
-v1 = {
+v1 = [
+  {
+    "kind": "Variable",
+    "name": "id",
+    "variableName": "id"
+  }
+],
+v2 = {
   "alias": null,
   "args": [
     {
@@ -43,22 +52,22 @@ v1 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "LRHeaderQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "Stop",
         "kind": "LinkedField",
         "name": "stop",
         "plural": false,
         "selections": [
-          (v1/*: any*/)
+          (v2/*: any*/)
         ],
-        "storageKey": "stop(id:\"Lahti:104167\")"
+        "storageKey": null
       }
     ],
     "type": "QueryType",
@@ -66,19 +75,19 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "LRHeaderQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "Stop",
         "kind": "LinkedField",
         "name": "stop",
         "plural": false,
         "selections": [
-          (v1/*: any*/),
+          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -87,21 +96,21 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "stop(id:\"Lahti:104167\")"
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "3e7b87968427e3aca31406fbcb90ffd4",
+    "cacheID": "dae9cb592f8eb520268bf7b989a99fcf",
     "id": null,
     "metadata": {},
     "name": "LRHeaderQuery",
     "operationKind": "query",
-    "text": "query LRHeaderQuery {\n  stop(id: \"Lahti:104167\") {\n    name(language: \"fi\")\n    id\n  }\n}\n"
+    "text": "query LRHeaderQuery(\n  $id: String!\n) {\n  stop(id: $id) {\n    name(language: \"fi\")\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "154a0f987608e526b19aae36f0451768";
+(node as any).hash = "a95955034ca15f791d811f46e41ca169";
 
 export default node;

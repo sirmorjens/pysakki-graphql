@@ -4,8 +4,24 @@ import { useState, useEffect } from 'react'
 import { useLazyLoadQuery } from "react-relay";
 import type { PysakkiQuery } from "./__generated__/PysakkiQuery.graphql"
 import Stoptime from "./Stoptime";
-import { printAlertDataToRows, type AlertData, type RowData, type StopTime, type PatternStopTime } from "./PysakkiUtils";
+import { printAlertDataToRows, type AlertData, type RowData, type StopTime, type PatternStopTime, type AlertRowData } from "./PysakkiUtils";
+import { PysakkiSettings } from "./PysakkiSettings";
 
+const StopNotFound = () => {
+
+    const errorRow: RowData = {
+        RowType: "ROUTEALERT",
+        Alert: {
+            alertSeverityLevel: "SEVERE",
+            displayAlertText: "Stop not found",
+        }
+    } 
+    return ( 
+        <div className="stopRows">
+            <Stoptime rowdata={errorRow} />
+        </div>   
+    )
+}
 
 export default function Pysakki() 
 {
@@ -15,7 +31,8 @@ export default function Pysakki()
     
     const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
  
-    const refreshRateSec = 30 * 1000;
+    const stopId = PysakkiSettings.stopId
+    const refreshRateSec = PysakkiSettings.refreshRateSec
  
     const refresh = () => {
         setRefreshedQueryOptions(prev => ({
@@ -74,7 +91,7 @@ export default function Pysakki()
         }
         `,
         // tähän pysäkin gtfsID (eg. "Lahti:103641", "Lahti:104167") lähtöjen määrä, häiriöiden kieli (fi, en, sv), näytetäänkö perutut vuorot (false = näytetään) ja mistä asti vuorot haetaan (testaamiseen, pitäisi aina olla 0 eli nykyinen)
-        {"id": "Lahti:104167", "departureQty": 12, "omitCanceled": false, "inPatternDeparturesQty": 3, "lang": "fi"},
+        {"id": stopId, "departureQty": 12, "omitCanceled": false, "inPatternDeparturesQty": 3, "lang": "fi"},
         refreshedQueryOptions ?? {}
     );
 
@@ -100,6 +117,8 @@ export default function Pysakki()
     // wip: lähtöjen iterointi tässä ja alerttien yms. syöttö joukkoon jolloin rendataan rivit sisällön mukaan
     const displayTimetableRows: RowData[] = [];
     
+    if(!data || !data.stop ) return StopNotFound();
+
     data.stop!.stoprows!.forEach(stoptime => {
      ///* debug with fake data */ fakeTimeTables.forEach(stoptime => { 
         

@@ -19,7 +19,7 @@ function WarningSign () {
 
 type Props = {
   rowdata: RowData /* run graphql codegen and include other possible types */;
-  patternsLookUp: {
+  patternsLookUp?: {
     [route: string]: PatternStopTime[]
   }
 };

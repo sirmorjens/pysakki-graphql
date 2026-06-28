@@ -19,6 +19,8 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 import { clampedToViewArea } from './PysakkiMapUtils'
 
+import { PysakkiSettings } from './PysakkiSettings';
+
 import {
   SubscribeToRoutePositions,
   UnSubscribeAll,
@@ -45,6 +47,14 @@ import type {
 import type { PysakkiMapQuery } from './__generated__/PysakkiMapQuery.graphql'
 import type { PysakkiMapRentalsFragment$key } from './__generated__/PysakkiMapRentalsFragment.graphql';
 import { type ReactElement, useEffect, useState } from 'react';
+
+const MapUnavailable = () => {
+  return (
+    <div className="mapContainer error">
+      <h1>Stop not found</h1>
+    </div>    
+  )
+}
 
 const VehicleMarkersLayer = ({ vehiclePositions }: { vehiclePositions: VehiclePositionItem[] }) => {
   const { current: map } = useMap();
@@ -155,7 +165,9 @@ export default function PysakkiMap() {
     features: []
   }
 
-  const refreshRateSec = 60 * 1000
+  const refreshRateSec = PysakkiSettings.refreshRateSec
+  const stopId = PysakkiSettings.stopId;
+
   const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
 
   const refresh = () => {
@@ -174,6 +186,8 @@ export default function PysakkiMap() {
 
     return () => clearTimeout(timerId)
   }, [])
+
+  console.log(PysakkiSettings.refreshRateSec)
 
   const data = useLazyLoadQuery<PysakkiMapQuery>(
     graphql`
@@ -235,9 +249,12 @@ export default function PysakkiMap() {
         }
       }
     `,
-    {"id": "Lahti:104167", "departuresQty": 2, "omitCanceled": false},
+    {"id": stopId, "departuresQty": 2, "omitCanceled": false},
     refreshedQueryOptions ?? {}
   );
+
+  // if stop doesn't exist
+  if( !data || !data.stop ) return MapUnavailable()
 
   const rentalsData = useFragment<PysakkiMapRentalsFragment$key>(
     graphql`
@@ -253,7 +270,7 @@ export default function PysakkiMap() {
   // haetaan 2 seuraavaa lähtöä ja kirjataan ne taulukkoon
   const routeDirectionIdsFromThisStop = {} as {[shortName: string]: number}
   
-  data!.stop!.stoptimesWithoutPatterns!.forEach(
+  if(data!.stop!.stoptimesWithoutPatterns) data!.stop!.stoptimesWithoutPatterns!.forEach(
     stop => routeDirectionIdsFromThisStop[(stop!.trip!.routeShortName! as string)] = stop?.trip!.directionId!
   )
   
@@ -283,27 +300,27 @@ export default function PysakkiMap() {
         
       const routePattern = route.patterns!.filter((pattern) => pattern?.directionId == routeDirectionIdsFromThisStop[route.shortName!])
   
+      if(!routePattern.length) return // no routes with applicable direction id 
+      
+      // TODO: apply "geo-clamping" here in order to not show geometry outside specified bbox
+      const routeStops: Position[] = routePattern[0]!.stops!.map(stop => [stop!.lat!, stop!.lon!])
 
-      if(routePattern.length)
-      {
-        const routeStops: Position[] = routePattern[0]!.stops!.map(stop => [stop!.lat!, stop!.lon!])
+      routeGeometries.push( {
+        shortName: (route.shortName as string),
+        geojson: GeoJSONfromPolylines( routePattern[0]!.patternGeometry?.points ),
+        stops: routeStops
+      })
 
-        routeGeometries.push( {
-          shortName: (route.shortName as string),
-          geojson: GeoJSONfromPolylines( routePattern[0]!.patternGeometry?.points ),
-          stops: routeStops
-        })
-
-      }
     })
 
     // clear old endpoints
     endPointCoordinates.clear()
 
     routeGeometries.forEach((routeGeometry) => {
-
+ 
       mapGeoJsonData.features.push(routeGeometry.geojson)
 
+      // TODO do not clamp anything, just set endpoints, address situation where route is clamped inside box
       const [destLng, destLat] = clampedToViewArea ( (routeGeometry.geojson.geometry as LineString).coordinates.slice(-1)[0] )
       
       const destHash = roundedCoordsAsKey([destLng.value, destLat.value])
@@ -447,8 +464,8 @@ const updateMap = () => {
 
     return FeatureObj;
   } 
-
-  const routeNominalColorPalette: string[] = [
+  // @ts-expect-error // unused for bw screen
+  const xx_routeNominalColorPalette: string[] = [
     '#fff7ec',
     '#fee8c8',
     '#fdd49e',
@@ -475,6 +492,11 @@ const updateMap = () => {
     "rgba(255, 237, 111, 0.4)"
   ]
 
+  const routeNominalColorPalette: string[] = [
+    "rgb(0, 0, 0)",
+    "rgba(0, 0, 0, 0.43)",
+  ]
+
   const mapBoundsOffset = 0.055
 
   let nominalColorIndex = 0;
@@ -486,7 +508,7 @@ const updateMap = () => {
     nominalColorIndex = nominalColorIndex == routeNominalColorPalette.length ? 0 : nominalColorIndex + 1;
 
     return {
-      color: "#000000",
+      color: routeNominalColorPalette[nominalColorIndex],
       index: nominalColorIndex
     };
   }
