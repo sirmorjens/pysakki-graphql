@@ -199,8 +199,8 @@ export default function Pysakki()
     return ( 
         <div className="stopRows">
             {displayTimetableRows.map(
-                rowdata => 
-                (<Stoptime rowdata={rowdata!} patternsLookUp={nextDeparturesInPattern}/>)
+                (rowdata, index) => 
+                (<Stoptime key={index} rowdata={rowdata!} patternsLookUp={nextDeparturesInPattern}/>)
             )}
         </div>   
     )
