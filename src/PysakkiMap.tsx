@@ -123,8 +123,8 @@ const layerStyle: LayerProps = {
     },
     paint: {
         'line-color': ["get", "routeColor"],
-        'line-width': 2.5,
-        "line-offset": ["*", ["get", "routeIndex"], 0.2]
+        'line-width': ["get", "routeLineWidth"],
+        "line-offset": ["*", ["get", "routeIndex"], 2]
     }
 
 };
@@ -187,7 +187,6 @@ export default function PysakkiMap() {
     return () => clearTimeout(timerId)
   }, [])
 
-  console.log(PysakkiSettings.refreshRateSec)
 
   const data = useLazyLoadQuery<PysakkiMapQuery>(
     graphql`
@@ -296,7 +295,7 @@ export default function PysakkiMap() {
       UnSubscribeAll();
 
       // only subscribe if included in routes we're showing on map
-      if( Object.keys(routeDirectionIdsFromThisStop).includes(route!.shortName!) )SubscribeToRoutePositions(`/gtfsrt/vp/Lahti/+/+/BUS/${routeId}/#`)
+      if( Object.keys(routeDirectionIdsFromThisStop).includes(route!.shortName!) ) SubscribeToRoutePositions(`/gtfsrt/vp/Lahti/+/+/BUS/${routeId}/#`)
         
       const routePattern = route.patterns!.filter((pattern) => pattern?.directionId == routeDirectionIdsFromThisStop[route.shortName!])
   
@@ -444,7 +443,7 @@ const updateMap = () => {
   const roundedCoordsAsKey = ([lng, lat]: Position): string => `${Math.ceil( lng*100 )}${Math.ceil( lat*100 )}`
 
   const GeoJSONfromPolylines = (polylineString: string): Feature => {
-    const { color, index } = getNextNominalColor()
+    const { color, width, index } = getNextNominalColor()
 
     const FeatureObj: Feature = {
       type: 'Feature',
@@ -459,7 +458,9 @@ const updateMap = () => {
       },
       properties: {
         routeIndex: index,
-        routeColor: color}
+        routeColor: color,
+        routeLineWidth: width,
+      }
     }
 
     return FeatureObj;
@@ -492,24 +493,31 @@ const updateMap = () => {
     "rgba(255, 237, 111, 0.4)"
   ]
 
-  const routeNominalColorPalette: string[] = [
-    "rgb(0, 0, 0)",
-    "rgba(0, 0, 0, 0.43)",
+  const routeNominalStyle: {color: string, width: number}[] = [
+    {
+      color: "rgb(0, 0, 0)",
+      width: 1,
+    },
+    {
+      color: "rgb(139, 139, 139)",
+      width: 3,
+    }
   ]
 
   const mapBoundsOffset = 0.055
 
-  let nominalColorIndex = 0;
+  let nominalStyleIndex = 0;
   const getNextNominalColor = (): {
     color: string,
     index: number,
+    width: number,
   } => {
-    // const color = routeNominalColorPalette[nominalColorIndex]
-    nominalColorIndex = nominalColorIndex == routeNominalColorPalette.length ? 0 : nominalColorIndex + 1;
+    nominalStyleIndex = nominalStyleIndex+1 >= routeNominalStyle.length ? 0 : nominalStyleIndex + 1;
 
     return {
-      color: routeNominalColorPalette[nominalColorIndex],
-      index: nominalColorIndex
+      color: routeNominalStyle[nominalStyleIndex].color,
+      width: routeNominalStyle[nominalStyleIndex].width,
+      index: nominalStyleIndex,
     };
   }
 
