@@ -48,7 +48,7 @@ export default function Pysakki()
         refresh()
         }, refreshRateSec)
     
-        return () => clearTimeout(timerId)
+        return () => clearInterval(timerId)
     }, []);
  
     const data = useLazyLoadQuery<PysakkiQuery>(

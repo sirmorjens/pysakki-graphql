@@ -23,7 +23,7 @@ export default function Timetable() {
       refresh()
     }, refreshRateSec)
 
-    return () => clearTimeout(timerId)
+    return () => clearInterval(timerId)
   }, []);
 
   const data = useLazyLoadQuery<TimetableQuery>(
