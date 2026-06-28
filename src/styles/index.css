@@ -134,6 +134,10 @@ div.stopRow:nth-child(1) p, div.stopRow:nth-child(2) p {
   font-size: var(--mm25);
 }
 
+div.stopRow:nth-child(1) p.longRouteName, div.stopRow:nth-child(2) p.longRouteName {
+  font-size: var(--mm22);
+}
+
 .warning {
   position: absolute;
   height: 2.5vh;

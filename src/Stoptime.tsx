@@ -81,7 +81,7 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
     return (
         <div className={"stopRow " + (isCanceled ? "canceled " : "") + (rowdata.StopTime.trip?.alerts?.length ? "alerted " : "") + (rowdata.StopTime.trip?.alerts?.length && rowdata.StopTime.trip?.alerts?.some((alert: AlertData) => alert.alertSeverityLevel == 'SEVERE') ? "SEVERE " : "")}>
             
-            <p className="route">
+            <p className={"route " + (rowdata.StopTime.trip?.routeShortName.length > 2 ? "longRouteName" : "") /* longer routenames get smaller display size */}>
 
                 {rowdata.StopTime.trip?.routeShortName}
 

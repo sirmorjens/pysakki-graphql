@@ -349,10 +349,7 @@ export default function PysakkiMap() {
     setRouteStopsPosState(routeGeometries.flatMap(routeGeometry => routeGeometry.stops))
 
     setVehiclePositionsState( [...Object.values(VehiclePositionsData)] )
-      // clear markers and endpoints
-    // somehow the way react either doesn't reinitialize
-    // stuff when it should and does when is should not 
-    // drives me up the wall
+
     routeEndStopMarkers = []
 
     // push endpoints into markers
