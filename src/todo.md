@@ -1,5 +1,9 @@
 tänne voi päivitellä todo itemejä
 
+settings
+- pysäkkisettings persistenssi ja useamman samanaikaisen "session" fasilitointi
+- asetusten dokumentaatio / käyttöohje
+
 pysäkki
 - poikkeustiedotteiden näyttäminen riveillä --
 - reittitiedotteiden näyttäminen --
