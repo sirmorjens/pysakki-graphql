@@ -1,9 +1,8 @@
-import Pysakki from "./Pysakki.tsx";
-import LR_Header from './LR_components/LR_Header.tsx'
-import LR_Footer from './LR_components/LR_Footer.tsx'
+import Pysakki from "./Pysakki";
+import LR_Header from './LR_components/LR_Header'
+import LR_Footer from './LR_components/LR_Footer'
 import PysakkiMap from "./PysakkiMap.tsx"
-import { PysakkiSettings } from "./PysakkiSettings.ts";
-
+import { PysakkiSettings } from "./PysakkiSettings";
 import { useEffect } from 'react';
 
 import '@fontsource/barlow-semi-condensed/100.css';
@@ -27,6 +26,54 @@ import '@fontsource/barlow/700.css';
 import '@fontsource/barlow/800.css';
 import '@fontsource/barlow/900.css';
 
+
+import * as React from 'react';
+type Props = {
+  children?: React.ReactNode;
+  fallback?: React.ReactNode;
+}
+type State = {
+  hasError: boolean
+}
+
+function ErrorMsg () {
+  return (
+    <div className="mapContainer error noBorder">
+      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+        <path d="M0 0h24v24H0z" fill="none" />
+        <g fill="none" stroke="currentColor" strokeL  inecap="round">
+          <circle cx="12" cy="12" r="10" strokeWidth="2" />
+          <path strokeWidth="2" d="M7.881 16.244c.493-.427 1.142-.735 1.842-.937A8.3 8.3 0 0 1 12 15c.786 0 1.57.103 2.277.307c.7.202 1.35.51 1.842.937" />
+          <circle cx="9" cy="10" r="1.25" fill="currentColor" strokeWidth=".5" />
+          <circle cx="15" cy="10" r="1.25" fill="currentColor" strokeWidth=".5" />
+        </g>
+      </svg>
+    </div>
+  )
+}
+
+class ErrorBoundary extends React.Component<Props, State> {
+  public state: State = {hasError: false}
+
+  static getDerivedStateFromError(error: any) {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, info: any) {
+    //
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+
+
+
 export default function App() {
 
   // initiate pysäkkisettings
@@ -40,23 +87,27 @@ export default function App() {
       voidaan esim asettaa pieni viive ja refreshata sivu
       niin pitäisi toimia kentällä
     */
-    const onError = (event: Event) => console.log("Error", event);
+    const onError = (event: Event) => console.log("Error listener", event);
       
     window.addEventListener('error', onError);
+    
     
     return () => {
       window.removeEventListener('error', onError);
     }
   }, []);
-
   return (
 
     <div className="LR_mainContainer">
-      <LR_Header />
-      <Pysakki />
-      <PysakkiMap />
+      <ErrorBoundary fallback={<ErrorMsg />}>
+        <LR_Header />
+        <Pysakki />
+        <PysakkiMap />
+      </ErrorBoundary>    
+  
       <LR_Footer />
     </div>
 
   );
+
 }
