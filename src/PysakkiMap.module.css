@@ -140,7 +140,7 @@ div.routeEndPoint:after {
     background: #000000ff;
     color: #ffffff;
     border: 1px solid #000;
-    border-radius: 0.5vh;
+    border-radius: 50%;
     box-sizing: border-box;
     z-index: 999;
 }

@@ -56,7 +56,7 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
 
     // jos aikatauluruutu, tämä koodi ajetaan
 
-    const patterns = patternsLookUp[rowdata.StopTime.trip!.routeShortName!].slice(1).map(ptr => arrivalTimeToString(ptr) );
+    const patterns = patternsLookUp![rowdata.StopTime.trip!.routeShortName!].slice(1).map(ptr => arrivalTimeToString(ptr) );
 
     const minutesVsHHMMThreshold = 1000 * 60 * 10 // arrivals inside ten minutes displayed as minutes
 

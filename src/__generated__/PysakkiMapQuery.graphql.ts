@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0f68f4465fee6f3a390875225fb46f2b>>
+ * @generated SignedSource<<a51ada09a4f887dee66a31feb24dcfa7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -54,7 +54,7 @@ export type PysakkiMapQuery$data = {
     } | null | undefined> | null | undefined;
   } | null | undefined;
   readonly vehicleRentalsByBbox: ReadonlyArray<{
-    readonly " $fragmentSpreads": FragmentRefs<"PysakkiMapRentalsFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"RentalsMarkersRentalsFragment">;
   }>;
 };
 export type PysakkiMapQuery = {
@@ -358,7 +358,7 @@ return {
               {
                 "args": null,
                 "kind": "FragmentSpread",
-                "name": "PysakkiMapRentalsFragment"
+                "name": "RentalsMarkersRentalsFragment"
               }
             ],
             "type": "VehicleRentalStation",
@@ -515,16 +515,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fc5de292dbaa4a4d67ac158cda44b2fc",
+    "cacheID": "922fca28d45ed23269f97685d8318666",
     "id": null,
     "metadata": {},
     "name": "PysakkiMapQuery",
     "operationKind": "query",
-    "text": "query PysakkiMapQuery(\n  $id: String!\n  $omitCanceled: Boolean!\n  $departuresQty: Int!\n) {\n  stop(id: $id) {\n    geometries {\n      geoJson\n    }\n    stoptimesWithoutPatterns(numberOfDepartures: $departuresQty, omitCanceled: $omitCanceled) {\n      headsign\n      realtimeArrival\n      scheduledArrival\n      realtimeState\n      trip {\n        directionId\n        routeShortName\n        id\n      }\n    }\n    routes {\n      stops {\n        name\n        geometries {\n          geoJson\n        }\n        id\n      }\n      shortName\n      gtfsId\n      patterns {\n        name\n        directionId\n        stops {\n          lat\n          lon\n          id\n        }\n        patternGeometry {\n          points\n        }\n        id\n      }\n      id\n    }\n    id\n  }\n  vehicleRentalsByBbox(maximumLongitude: 25.7972, minimumLongitude: 25.5428, maximumLatitude: 61.0374, minimumLatitude: 60.9208) {\n    __typename\n    ... on VehicleRentalStation {\n      ...PysakkiMapRentalsFragment\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n}\n\nfragment PysakkiMapRentalsFragment on VehicleRentalStation {\n  lat\n  lon\n}\n"
+    "text": "query PysakkiMapQuery(\n  $id: String!\n  $omitCanceled: Boolean!\n  $departuresQty: Int!\n) {\n  stop(id: $id) {\n    geometries {\n      geoJson\n    }\n    stoptimesWithoutPatterns(numberOfDepartures: $departuresQty, omitCanceled: $omitCanceled) {\n      headsign\n      realtimeArrival\n      scheduledArrival\n      realtimeState\n      trip {\n        directionId\n        routeShortName\n        id\n      }\n    }\n    routes {\n      stops {\n        name\n        geometries {\n          geoJson\n        }\n        id\n      }\n      shortName\n      gtfsId\n      patterns {\n        name\n        directionId\n        stops {\n          lat\n          lon\n          id\n        }\n        patternGeometry {\n          points\n        }\n        id\n      }\n      id\n    }\n    id\n  }\n  vehicleRentalsByBbox(maximumLongitude: 25.7972, minimumLongitude: 25.5428, maximumLatitude: 61.0374, minimumLatitude: 60.9208) {\n    __typename\n    ... on VehicleRentalStation {\n      ...RentalsMarkersRentalsFragment\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n}\n\nfragment RentalsMarkersRentalsFragment on VehicleRentalStation {\n  lat\n  lon\n}\n"
   }
 };
 })();
 
-(node as any).hash = "eb0a90752651a924e4bf4c16349b97f5";
+(node as any).hash = "bc7d612dd8188aaf0b603e70696896e1";
 
 export default node;

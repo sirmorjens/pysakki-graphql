@@ -9,6 +9,7 @@ pysäkki
 - reittitiedotteiden näyttäminen --
 - pitkien sanojen splittaus --
 
+- poi info asiakkaan kontrolliin
 
 kartta
 - bussit vain oikeaaan suuntaan (directionId)

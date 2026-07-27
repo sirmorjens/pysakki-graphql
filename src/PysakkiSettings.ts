@@ -9,7 +9,7 @@ const defaultSettings = {
     refreshRateSec: 30,
     stopId: "Lahti:104167"
 }
-const settingsFilePath = "/settings.json"
+const settingsFilePath = "/settings.json" // WIP
 
 /*
     UPDATE: mita jos settingit osoiteriviltä, huomattavasti vaivattomampi muuttaa clientsidessä
@@ -45,7 +45,7 @@ export const PysakkiSettings: PysakkiSettingsObj = {
         const refreshRateSec = parseInt ( settingsInPathParams.get("refreshRateSec") ?? "" ); 
         const stopId = settingsInPathParams.get("id") ?? "";
 
-        if(!refreshRateSec || !stopId) {
+        if(!refreshRateSec || !stopId) {
             console.log ("Settings missing, using default values. Apply settings using /?id=<STOP_ID>&refreshRateSec=<REFRESH_RATE_IN_SECONDS>")
             this.refreshRateSec = defaultSettings.refreshRateSec * 1000
             this.stopId = defaultSettings.stopId;

@@ -14,13 +14,12 @@ import * as turf from '@turf/turf'
 
 import 'maplibre-gl/dist/maplibre-gl.css'; // See notes below
 import mapstyle from "./Map/pysakki_mapstyle.json"
-import { useFragment } from 'react-relay';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-import { clampedToViewArea, getNextNominalColor } from './PysakkiMapUtils'
+import { clampedToViewArea, filterOutsideViewArea, getNextNominalColor } from './PysakkiMapUtils'
 
 import { PysakkiSettings } from './PysakkiSettings';
-
+import RentalsMarkers from './RentalsMarkers'
 import {
   SubscribeToRoutePositions,
   UnSubscribeAll,
@@ -31,7 +30,6 @@ import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
 import PysakkiMapStyle from './PysakkiMap.module.css'
 
 import pieniBussi from "./assets/bussi.svg"
-import fillari from "./assets/fillari.svg"
 import phks from './assets/PHKS.svg'
 
 // @ts-expect-error - no types
@@ -45,7 +43,6 @@ import type {
 } from 'geojson';
 
 import type { PysakkiMapQuery } from './__generated__/PysakkiMapQuery.graphql'
-import type { PysakkiMapRentalsFragment$key } from './__generated__/PysakkiMapRentalsFragment.graphql';
 import { type ReactElement, useEffect, useState } from 'react';
 
 const MapUnavailable = () => {
@@ -104,7 +101,7 @@ const VehicleMarkersLayer = ({ vehiclePositions }: { vehiclePositions: VehiclePo
 };
 
 // how often render fresh realtime position
-let realtimeRenderCooldown = 60 * 1000 // 30 seconds
+let realtimeRenderCooldown = PysakkiSettings.refreshRateSec // 30 seconds
 let lastRealtimeRender = 0
 
 type VehiclePositionItem = {
@@ -143,8 +140,6 @@ const layerStyle: LayerProps = {
 
 export default function PysakkiMap() {
 
-
-
   // state definitions 
   const [VehiclePositionsState, setVehiclePositionsState] = useState<VehiclePositionItem[]>([]);
   const [routeStopsPosState, setRouteStopsPosState] = useState<Position[]>([])
@@ -170,7 +165,7 @@ export default function PysakkiMap() {
 
   const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
 
-  const refresh = () => {
+  const refreshMap = () => {
     setRefreshedQueryOptions(prev => ({
       fetchKey: (prev?.fetchKey ?? 0) + 1,
       fetchPolicy: 'network-only',
@@ -181,90 +176,82 @@ export default function PysakkiMap() {
 
     const timerId = setInterval(() => {
       console.log("map refresh")
-      refresh()
+      refreshMap()
     }, refreshRateSec)
 
     return () => clearInterval(timerId)
   }, [])
 
-
   const data = useLazyLoadQuery<PysakkiMapQuery>(
-    graphql`
-      query PysakkiMapQuery($id: String!, $omitCanceled: Boolean!, $departuresQty: Int!) {
-        stop(id: $id)
-        {
-          geometries {
-            geoJson
-          }
+            graphql`
+              query PysakkiMapQuery($id: String!, $omitCanceled: Boolean!, $departuresQty: Int!) {
+                stop(id: $id)
+                {
+                  geometries {
+                    geoJson
+                  }
 
-          stoptimesWithoutPatterns(numberOfDepartures: $departuresQty, omitCanceled: $omitCanceled)
-          {
-            headsign # määränpää
-            realtimeArrival # reaaliaikainen saapumisaika sekunteina
-            scheduledArrival # suunniteltu saapumisaika sekunteina
-            realtimeState # ADDED, CANCELED, MODIFIED, SCHEDULED, UPDATED
+                  stoptimesWithoutPatterns(numberOfDepartures: $departuresQty, omitCanceled: $omitCanceled)
+                  {
+                    headsign # määränpää
+                    realtimeArrival # reaaliaikainen saapumisaika sekunteina
+                    scheduledArrival # suunniteltu saapumisaika sekunteina
+                    realtimeState # ADDED, CANCELED, MODIFIED, SCHEDULED, UPDATED
 
-            trip 
-            {
-              directionId
-              routeShortName # reittikoodi
-            }
-          }
+                    trip 
+                    {
+                      directionId
+                      routeShortName # reittikoodi
+                    }
+                  }
 
-          routes {
-            stops {
-              name
-              geometries {
-                geoJson
+                  routes {
+                    stops {
+                      name
+                      geometries {
+                        geoJson
+                      }
+                    }
+
+                    shortName
+                    gtfsId
+                    patterns {
+                      name
+                      directionId
+                      stops {
+                        lat
+                        lon
+                      }
+                      patternGeometry {
+                        points
+                      }
+                    }
+                  }
+                }
+                vehicleRentalsByBbox (
+                  maximumLongitude: 25.7972,
+                  minimumLongitude: 25.5428,
+                  maximumLatitude: 61.0374,
+                  minimumLatitude: 60.9208
+                )
+                {
+                  ... on VehicleRentalStation{
+                    ...RentalsMarkersRentalsFragment
+                }
+                  
+                }
               }
-            }
-
-            shortName
-            gtfsId
-            patterns {
-              name
-              directionId
-              stops {
-                lat
-                lon
-              }
-              patternGeometry {
-                points
-              }
-            }
-          }
-        }
-        vehicleRentalsByBbox (
-          maximumLongitude: 25.7972,
-          minimumLongitude: 25.5428,
-          maximumLatitude: 61.0374,
-          minimumLatitude: 60.9208
-        )
-        {
-          ... on VehicleRentalStation{
-            ...PysakkiMapRentalsFragment
-          }
-          
-        }
-      }
-    `,
-    {"id": stopId, "departuresQty": 2, "omitCanceled": false},
-    refreshedQueryOptions ?? {}
-  );
+            `,
+            {"id": stopId, "departuresQty": 2, "omitCanceled": false},
+            refreshedQueryOptions ?? {}
+          );
+  
+  
 
   // if stop doesn't exist
   if( !data || !data.stop ) return MapUnavailable()
 
-  const rentalsData = useFragment<PysakkiMapRentalsFragment$key>(
-    graphql`
-      fragment PysakkiMapRentalsFragment on VehicleRentalStation @relay(plural: true)
-      {
-        lat
-        lon
-      }
-    `,
-    data.vehicleRentalsByBbox
-  )
+
 
   // haetaan 2 seuraavaa lähtöä ja kirjataan ne taulukkoon
   const routeDirectionIdsFromThisStop = {} as {[shortName: string]: number}
@@ -289,7 +276,7 @@ export default function PysakkiMap() {
         [routeId]: route.shortName,
       })
 
-      // push routes associated to this stop to topics to listen position
+      // push routes associated to this stop to mqtt topics to listen position
       VehiclePositionsData = {};
       // un-listen other routes (if present)
       UnSubscribeAll();
@@ -302,7 +289,9 @@ export default function PysakkiMap() {
       if(!routePattern.length) return // no routes with applicable direction id 
       
       // TODO: apply "geo-clamping" here in order to not show geometry outside specified bbox
-      const routeStops: Position[] = routePattern[0]!.stops!.map(stop => [stop!.lat!, stop!.lon!])
+      const routeStops: Position[] = routePattern[0]!.stops!
+      .filter(stop => filterOutsideViewArea([stop.lat!, stop!.lon!]))
+      .map(stop => [stop!.lat!, stop!.lon!])
 
       routeGeometries.push( {
         shortName: (route.shortName as string),
@@ -319,7 +308,6 @@ export default function PysakkiMap() {
  
       mapGeoJsonData.features.push(routeGeometry.geojson)
 
-      // TODO do not clamp anything, just set endpoints, address situation where route is clamped inside box
       const [destLng, destLat] = clampedToViewArea ( (routeGeometry.geojson.geometry as LineString).coordinates.slice(-1)[0] )
       
       const destHash = roundedCoordsAsKey([destLng.value, destLat.value])
@@ -336,7 +324,6 @@ export default function PysakkiMap() {
       {
         const endPoint = {
           labels: [routeGeometry.shortName],
-          isOutside: destLng.outside || destLat.outside, // if outside map bounds
           coords: [destLat.value, destLng.value],
         }
         endPointCoordinates.set(destHash, endPoint)    
@@ -385,28 +372,24 @@ export default function PysakkiMap() {
 
 // update map view to show current stop and end stop
 const updateMap = () => {
-    /* 
-      IMPLEMENT BBOX 
-    */
   
-    // gather coords we want to fit
-
     if(!routeGeometries.length) return
-    
-
-
+  
+    // generate one geojson linestring from all relevant coords
+    // including stop position and route endpoints
     const turfCoords = turf.lineString([
         (data.stop!.geometries?.geoJson!.coordinates as Position),
         data.stop!.geometries?.geoJson!.coordinates.map((c: number) => c-0.002), // offset around stop
         ...Array.from( endPointCoordinates ).flatMap(([, value]) => {return [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+0.010]]})
       ])
 
-    // turf
-    const bounds = turf.bbox(turfCoords)
+    // turf.bbox to establish bounds around the linestring, around which the map is zoomed
+    const displayedBounds = turf.bbox(turfCoords)
 
-    mapRefState?.fitBounds(bounds as LngLatBoundsLike, {linear: true, animate: false} )
+    mapRefState?.fitBounds(displayedBounds as LngLatBoundsLike, {linear: true, animate: false} )
   }
 
+  // function to be called anytime there is a mqtt message about vehicle pos
   const PositionMessageCallback =
     ( message: GtfsRealtimeBindings.transit_realtime.FeedMessage ) =>
     {
@@ -435,6 +418,7 @@ const updateMap = () => {
       }
   };
 
+  // deprecated since not likely to show nearby stops but likely not going away soon
   // create an object/map key from rounded coords
   // so overlapping/nearby coords are grouped under same key
   const roundedCoordsAsKey = ([lng, lat]: Position): string => `${Math.ceil( lng*100 )}${Math.ceil( lat*100 )}`
@@ -489,20 +473,16 @@ const updateMap = () => {
    
           <VehicleMarkersLayer vehiclePositions={VehiclePositionsState} />
 
+
           {routeStopsPosState.map((routestop, idx) =>
               <Marker key={idx} latitude={routestop[0]} longitude={routestop[1]} anchor='center'>
                 <div className={PysakkiMapStyle.singleStop}></div>
               </Marker>   
           )}
 
-          {rentalsData.map((rentalStation, idx) => 
-            <Marker key={idx} latitude={rentalStation.lat!} longitude={rentalStation.lon!}>
-              <div className={PysakkiMapStyle.fillari}>
-                <img src={fillari} alt="Fillari" />
-              </div>
-            </Marker>
-          )}        
+          <RentalsMarkers vehicleRentalsByBbox={data.vehicleRentalsByBbox} />    
 
+          {/* POIs into own file */}
           <Marker longitude={25.5681} latitude={60.9923}>
             <div className={PysakkiMapStyle.poi}>
               <img src={phks} alt="PHKS" />

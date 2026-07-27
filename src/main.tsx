@@ -2,36 +2,42 @@ import { createRoot } from 'react-dom/client'
 import './styles/index.css'
 import App from './App.tsx'
 import { RelayEnvironmentProvider } from "react-relay";
-import { Environment, Network } from "relay-runtime";
+import { Environment, Network, Store, RecordSource } from "relay-runtime";
 import type { FetchFunction } from "relay-runtime";
 
 const HTTP_ENDPOINT = "https://api.digitransit.fi/routing/v2/waltti/gtfs/v1";
 
-// TODO automaattinen refresh 30sec välein, tallenna edellinen query siltä varalta että uutta ei tule
-
 const fetchGraphQL: FetchFunction = async (request, variables) => {
-  const resp = await fetch(HTTP_ENDPOINT, {
-    method: "POST",
-    headers: { 
-                "Content-Type": "application/json", 
-                "digitransit-subscription-key": import.meta.env.VITE_DIGITRANSIT_SUBSCRIPTION_KEY
-              },
-    body: JSON.stringify({ query: request.text, variables }),
-  });
-  if (!resp.ok) {
-    throw new Error("Response failed.");
+  try{
+    const resp = await fetch(HTTP_ENDPOINT, {
+      method: "POST",
+      headers: { 
+                  "Content-Type": "application/json", 
+                  "digitransit-subscription-key": import.meta.env.VITE_DIGITRANSIT_SUBSCRIPTION_KEY
+                },
+      body: JSON.stringify({ query: request.text, variables }),
+    })
+    if (!resp.ok) {
+      throw new Error("Response failed.");
+    }
+    return await resp.json();
   }
-  return await resp.json();
+  catch (e: any)
+  {
+    console.error("Fetch failed")
+    return {error: "Error"}
+  }
 };
 
 const environment = new Environment({
   network: Network.create(fetchGraphQL),
+  store: new Store(new RecordSource())
 });
 
 createRoot(document.getElementById("root")!).render(
 
     <RelayEnvironmentProvider environment={environment}>
-      <App />
+        <App />
     </RelayEnvironmentProvider>
 
 );

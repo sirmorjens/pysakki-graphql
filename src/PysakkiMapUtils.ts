@@ -1,14 +1,20 @@
 import type { Position } from 'geojson';
+import * as turf from '@turf/turf'
 
-// @ts-ignore // wip
-const viewAreaBounds = []
+const viewAreaoffset = -35.366
+const viewAreaBounds = turf.bboxPolygon([25.6612+viewAreaoffset, 60.9827+viewAreaoffset, 25.6612-viewAreaoffset, 60.9827-viewAreaoffset]);
+
+export const filterOutsideViewArea = (coords: Position): Boolean => {
+    const stop = turf.point([coords[0], coords[1]])
+    
+    return turf.booleanContains(viewAreaBounds, stop)
+}
 
 export const clampedToViewArea = (coords: Position): {
     value: number;
     outside?: boolean;
 }[] => {
     
-
     return [{value: coords[0]}, {value: coords[1]}]
 } 
 

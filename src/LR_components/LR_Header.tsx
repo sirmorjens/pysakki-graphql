@@ -4,7 +4,7 @@ import type { LRHeaderQuery } from "./__generated__/LRHeaderQuery.graphql";
 import { PysakkiSettings } from "../PysakkiSettings";
 import { useState, useEffect } from "react";
 
-const currentTimeString = (): string => {
+const returnCurrentTimeAsString = (): string => {
     const date = new Date();
     return `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`
 }
@@ -14,28 +14,31 @@ export default function LR_Header () {
     const stopId = PysakkiSettings.stopId;
     const refreshRateSec = PysakkiSettings.refreshRateSec
 
+    // wrapped inside IIFE for even some error handling in case of network error, one which
+    // react relay apparently doesn't offer a sensible solution to
     const data = useLazyLoadQuery<LRHeaderQuery>(
-        graphql`
-        query LRHeaderQuery ($id: String!) {
-            stop(id: $id) # tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030"
-            # täytyy compilaa uudestaan id:n vaihdon jälkeen - npx relay-compiler
-            {
-                name(language: "fi")
-            }
-        }
-        `,
-        {"id": stopId,},
-        {}
-    );
+                graphql`
+                query LRHeaderQuery ($id: String!) {
+                    stop(id: $id) # tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030" 
+                    # täytyy compilaa uudestaan id:n vaihdon jälkeen - npx relay-compiler
+                    {
+                        name(language: "fi")
+                    }
+                }
+                `,
+                {"id": stopId,},
+                {},
+            );
 
-    const nimi = (!data || !data.stop) ? "Stop not found" : data.stop!.name
 
-    const [currentTime, setCurrentTime] = useState(currentTimeString());
+    const nimi: string = (!data || !data.stop) ? "Stop not found" : data.stop!.name
+
+    const [currentTime, setCurrentTime] = useState(returnCurrentTimeAsString());
 
     useEffect(() => {
 
         const intervalId = setInterval(() => {
-            setCurrentTime(currentTimeString())
+            setCurrentTime(returnCurrentTimeAsString())
             
         }, refreshRateSec)
 

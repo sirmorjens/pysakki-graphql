@@ -41,7 +41,7 @@ function ErrorMsg () {
     <div className="mapContainer error noBorder">
       <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
         <path d="M0 0h24v24H0z" fill="none" />
-        <g fill="none" stroke="currentColor" strokeL  inecap="round">
+        <g fill="none" stroke="currentColor" strokeLinecap="round">
           <circle cx="12" cy="12" r="10" strokeWidth="2" />
           <path strokeWidth="2" d="M7.881 16.244c.493-.427 1.142-.735 1.842-.937A8.3 8.3 0 0 1 12 15c.786 0 1.57.103 2.277.307c.7.202 1.35.51 1.842.937" />
           <circle cx="9" cy="10" r="1.25" fill="currentColor" strokeWidth=".5" />
@@ -55,11 +55,12 @@ function ErrorMsg () {
 class ErrorBoundary extends React.Component<Props, State> {
   public state: State = {hasError: false}
 
-  static getDerivedStateFromError(error: any) {
+  static getDerivedStateFromError() {
     // Update state so the next render will show the fallback UI.
     return { hasError: true };
   }
 
+  // @ts-ignore
   componentDidCatch(error: any, info: any) {
     //
   }
