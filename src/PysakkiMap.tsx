@@ -16,7 +16,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'; // See notes below
 import mapstyle from "./Map/pysakki_mapstyle.json"
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-import { clampedToViewArea, filterOutsideViewArea, getNextNominalColor } from './PysakkiMapUtils'
+import { clampedToViewArea, filterOutsideViewArea, getNextNominalColor, clampCoordsFromStop } from './PysakkiMapUtils'
 
 import { PysakkiSettings } from './PysakkiSettings';
 import RentalsMarkers from './RentalsMarkers'
@@ -39,11 +39,13 @@ import type {
   Feature,
   FeatureCollection,
   LineString,
-  Position 
+  Position,
+  Point
 } from 'geojson';
 
 import type { PysakkiMapQuery } from './__generated__/PysakkiMapQuery.graphql'
 import { type ReactElement, useEffect, useState } from 'react';
+import type { Coordinates } from 'maplibre-gl';
 
 const MapUnavailable = () => {
   return (
@@ -138,6 +140,11 @@ const layerStyle: LayerProps = {
     [routeId: string]: string
   } = {} 
 
+  type RouteGeometry = {
+    shortName: string, 
+    geojson: Feature,
+    stops: Position[]  
+  }
 export default function PysakkiMap() {
 
   // state definitions 
@@ -149,11 +156,7 @@ export default function PysakkiMap() {
     features: []
   })
 
-  const routeGeometries: Array<{
-    shortName: string, 
-    geojson: Feature,
-    stops: Position[]
-  }> = []
+  const routeGeometries: RouteGeometry[] = []
 
   const mapGeoJsonData: FeatureCollection = {
     type: 'FeatureCollection',
@@ -181,6 +184,7 @@ export default function PysakkiMap() {
 
     return () => clearInterval(timerId)
   }, [])
+  // debug
 
   const data = useLazyLoadQuery<PysakkiMapQuery>(
             graphql`
@@ -194,20 +198,22 @@ export default function PysakkiMap() {
                   stoptimesWithoutPatterns(numberOfDepartures: $departuresQty, omitCanceled: $omitCanceled)
                   {
                     headsign # määränpää
-                    realtimeArrival # reaaliaikainen saapumisaika sekunteina
-                    scheduledArrival # suunniteltu saapumisaika sekunteina
-                    realtimeState # ADDED, CANCELED, MODIFIED, SCHEDULED, UPDATED
 
                     trip 
                     {
                       directionId
+                      geometry
                       routeShortName # reittikoodi
+                      stops {
+                        geometries {
+                          geoJson
+                        }
+                      }
                     }
                   }
 
                   routes {
                     stops {
-                      name
                       geometries {
                         geoJson
                       }
@@ -216,7 +222,6 @@ export default function PysakkiMap() {
                     shortName
                     gtfsId
                     patterns {
-                      name
                       directionId
                       stops {
                         lat
@@ -251,7 +256,7 @@ export default function PysakkiMap() {
   // if stop doesn't exist
   if( !data || !data.stop ) return MapUnavailable()
 
-
+  console.log(data.stop.stoptimesWithoutPatterns)
 
   // haetaan 2 seuraavaa lähtöä ja kirjataan ne taulukkoon
   const routeDirectionIdsFromThisStop = {} as {[shortName: string]: number}
@@ -267,6 +272,38 @@ export default function PysakkiMap() {
   }, [])
 
   useEffect(() => {
+    
+    if(data!.stop!.stoptimesWithoutPatterns) data.stop?.stoptimesWithoutPatterns.forEach(route => 
+      {
+        console.log(route)
+        const { color, width, index } = getNextNominalColor()
+
+        const routeStops: Position[] = route?.trip!.stops!
+        .filter(stop => filterOutsideViewArea([(stop!.geometries!.geoJson as Point).coordinates[0], (stop!.geometries!.geoJson as Point).coordinates[1]]))
+        .map(stop => [...stop.geometries?.geoJson.coordinates])
+
+        const routeCoords: Position[] = 
+
+        routeGeometries.push( {
+          shortName: (route!.trip?.routeShortName as string),
+          geojson: clampCoordsFromStop({
+            type: 'Feature',
+            geometry: { 
+              type: 'LineString',
+              coordinates: [...route!.trip!.geometry!],
+            },
+            properties: {
+              routeIndex: index,
+              routeColor: color,
+              routeLineWidth: width,
+            }
+          }, data.stop!.geometries?.geoJson.coordinates),
+          stops: routeStops
+        })
+      }
+    )
+    console.log(routeGeometries)
+
     if (data!.stop!.routes) data!.stop!.routes.forEach(route => {
 
       const routeId: string = route.gtfsId.split(":")[1]
@@ -289,16 +326,17 @@ export default function PysakkiMap() {
       if(!routePattern.length) return // no routes with applicable direction id 
       
       // TODO: apply "geo-clamping" here in order to not show geometry outside specified bbox
+
+    /*
       const routeStops: Position[] = routePattern[0]!.stops!
       .filter(stop => filterOutsideViewArea([stop.lat!, stop!.lon!]))
       .map(stop => [stop!.lat!, stop!.lon!])
-
       routeGeometries.push( {
         shortName: (route.shortName as string),
-        geojson: GeoJSONfromPolylines( routePattern[0]!.patternGeometry?.points ),
+        geojson: clampCoordsFromStop( (GeoJSONfromPolylines( routePattern[0]!.patternGeometry?.points ) as Feature<LineString>), data.stop!.geometries?.geoJson.coordinates),
         stops: routeStops
       })
-
+    */
     })
 
     // clear old endpoints
@@ -374,15 +412,17 @@ export default function PysakkiMap() {
 const updateMap = () => {
   
     if(!routeGeometries.length) return
-  
+
     // generate one geojson linestring from all relevant coords
     // including stop position and route endpoints
     const turfCoords = turf.lineString([
         (data.stop!.geometries?.geoJson!.coordinates as Position),
         data.stop!.geometries?.geoJson!.coordinates.map((c: number) => c-0.002), // offset around stop
+        ...routeGeometries.reduce<Position[]>((rglist, rg) => {rglist.push(...(rg.geojson.geometry as LineString).coordinates);return rglist}, []),
         ...Array.from( endPointCoordinates ).flatMap(([, value]) => {return [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+0.010]]})
       ])
-
+    
+    
     // turf.bbox to establish bounds around the linestring, around which the map is zoomed
     const displayedBounds = turf.bbox(turfCoords)
 
@@ -423,6 +463,7 @@ const updateMap = () => {
   // so overlapping/nearby coords are grouped under same key
   const roundedCoordsAsKey = ([lng, lat]: Position): string => `${Math.ceil( lng*100 )}${Math.ceil( lat*100 )}`
 
+  // @ts-ignore -- unused at the moment
   const GeoJSONfromPolylines = (polylineString: string): Feature => {
     const { color, width, index } = getNextNominalColor()
 
@@ -488,6 +529,7 @@ const updateMap = () => {
               <img src={phks} alt="PHKS" />
             </div>
           </Marker>
+
 
           {routeEndStopMarkers}
           <Marker latitude={data.stop!.geometries?.geoJson.coordinates[1]} longitude={data.stop!.geometries?.geoJson.coordinates[0]} color={"black"} />

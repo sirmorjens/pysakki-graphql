@@ -39,13 +39,13 @@ type State = {
 function ErrorMsg () {
   return (
     <div className="mapContainer error noBorder">
-      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30%" viewBox="0 0 24 24">
         <path d="M0 0h24v24H0z" fill="none" />
-        <g fill="none" stroke="currentColor" strokeLinecap="round">
-          <circle cx="12" cy="12" r="10" strokeWidth="2" />
-          <path strokeWidth="2" d="M7.881 16.244c.493-.427 1.142-.735 1.842-.937A8.3 8.3 0 0 1 12 15c.786 0 1.57.103 2.277.307c.7.202 1.35.51 1.842.937" />
-          <circle cx="9" cy="10" r="1.25" fill="currentColor" strokeWidth=".5" />
-          <circle cx="15" cy="10" r="1.25" fill="currentColor" strokeWidth=".5" />
+        <g fill="none" stroke="black" strokeLinecap="round">
+          <circle cx="12" cy="12" r="10" strokeWidth="1" />
+          <path strokeWidth="1" d="M7.881 16.244c.493-.427 1.142-.735 1.842-.937A8.3 8.3 0 0 1 12 15c.786 0 1.57.103 2.277.307c.7.202 1.35.51 1.842.937" />
+          <circle cx="9" cy="10" r="1.25" fill="black" strokeWidth=".1" />
+          <circle cx="15" cy="10" r="1.25" fill="black" strokeWidth=".1" />
         </g>
       </svg>
     </div>

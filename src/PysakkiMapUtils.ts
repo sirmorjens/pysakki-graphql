@@ -1,4 +1,4 @@
-import type { Position } from 'geojson';
+import type { Position, Feature, Geometry, GeoJsonProperties, LineString } from 'geojson';
 import * as turf from '@turf/turf'
 
 const viewAreaoffset = -35.366
@@ -14,11 +14,35 @@ export const clampedToViewArea = (coords: Position): {
     value: number;
     outside?: boolean;
 }[] => {
-    
+    if(!coords) return [{value: 0,}, {value: 0}]
     return [{value: coords[0]}, {value: coords[1]}]
 } 
 
+const proximityOfPoints = (p1: Position, p2: Position, threshold: number): Boolean => {
+    return Math.floor( p1[0]*threshold ) == Math.floor( p2[0]*threshold ) && Math.floor( p1[1]*threshold ) == Math.floor( p2[1]*threshold )
+} 
 
+export const clampCoordsFromStop = (route: Feature<LineString, GeoJsonProperties>, startingPoint: Position): Feature<LineString, GeoJsonProperties> => {
+
+    // travel on geojson linestring route until stop coords are reached
+    // i seriously couldn't figure out a better way
+    const routeFromStop: Position[] = []
+
+    for(const point of route.geometry.coordinates.toReversed())
+    {
+        routeFromStop.push(point)
+        if(proximityOfPoints(point, startingPoint, 490)) break;
+    }
+    /// ////
+
+    return {
+        ...route,
+        geometry: {      
+            ...route.geometry!,
+            coordinates: routeFromStop.toReversed(),
+        },
+    };
+}
 let nominalStyleIndex = 0;
 
 // @ts-expect-error // unused for bw screen
