@@ -4,7 +4,7 @@ import { PysakkiSettings } from "../PysakkiSettings";
 import { useState, useEffect } from "react";
 import type { AppQuery$data } from "../__generated__/AppQuery.graphql";
 
-const returnCurrentTimeAsString = (): string => {
+export const returnCurrentTimeAsString = (): string => {
     const date = new Date();
     return `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`
 }
@@ -25,8 +25,7 @@ export default function LR_Header ({queryData}: Props) {
     useEffect(() => {
 
         const intervalId = setInterval(() => {
-            setCurrentTime(returnCurrentTimeAsString())
-            
+            setCurrentTime(returnCurrentTimeAsString()) 
         }, refreshRateSec)
 
         return () => {
