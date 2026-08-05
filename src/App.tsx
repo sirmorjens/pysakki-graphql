@@ -183,7 +183,7 @@ export default function App() {
       voidaan esim asettaa pieni viive ja refreshata sivu
       niin pitäisi toimia kentällä
     */
-    const onError = (event: Event) => { setTimeout(() => location.reload(), 30 * 1000)};
+    const onError = (_: Event) => { setTimeout(() => location.reload(), 30 * 1000)};
       
     window.addEventListener('error', onError);
     

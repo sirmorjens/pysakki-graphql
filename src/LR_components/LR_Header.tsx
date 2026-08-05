@@ -1,6 +1,5 @@
-import { graphql, useLazyLoadQuery } from "react-relay";
+
 import LRstyle from './Styles/LRstyle.module.css'
-import type { LRHeaderQuery } from "./__generated__/LRHeaderQuery.graphql";
 import { PysakkiSettings } from "../PysakkiSettings";
 import { useState, useEffect } from "react";
 import type { AppQuery$data } from "../__generated__/AppQuery.graphql";
