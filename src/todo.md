@@ -5,14 +5,15 @@ settings
 - asetusten dokumentaatio / käyttöohje
 
 pysäkki
-- poikkeustiedotteiden näyttäminen riveillä --
-- reittitiedotteiden näyttäminen --
-- pitkien sanojen splittaus --
+- poikkeustiedotteiden näyttäminen riveillä -- done
+- reittitiedotteiden näyttäminen -- done
+- pitkien sanojen splittaus -- done
 
-- poi info asiakkaan kontrolliin
+- poi info asiakkaan kontrolliin -- 
+- poit ja paikannimet jsoniin tms
 
 kartta
-- bussit vain oikeaaan suuntaan (directionId)
-- reitin katkaisu pysäkin kohdalta
-- numeron koko
-- kaukaisten päämäärien katkaisu -- aloitettu
+- bussit vain oikeaaan suuntaan (directionId) -- done
+- reitin katkaisu pysäkin kohdalta -- done
+- numeron koko -- ??
+- kaukaisten päämäärien katkaisu -- done
