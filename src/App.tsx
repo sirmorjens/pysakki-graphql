@@ -37,6 +37,9 @@ type State = {
 }
 
 function ErrorMsg () {
+  // error, let's give up and refresh after 30 sec
+  setTimeout(() => {location.reload()}, 30 * 1000);
+
   return (
     <div className="mapContainer error noBorder">
       <svg xmlns="http://www.w3.org/2000/svg" width="30%" viewBox="0 0 24 24">
