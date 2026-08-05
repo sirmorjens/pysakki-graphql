@@ -40,12 +40,12 @@ import type {
   FeatureCollection,
   LineString,
   Position,
-  Point
+  Point,
+  GeoJsonProperties
 } from 'geojson';
 
 import type { PysakkiMapQuery } from './__generated__/PysakkiMapQuery.graphql'
 import { type ReactElement, useEffect, useState } from 'react';
-import type { Coordinates } from 'maplibre-gl';
 
 const MapUnavailable = () => {
   return (
@@ -131,7 +131,7 @@ const layerStyle: LayerProps = {
   let routeEndStopMarkers: ReactElement[] = []
 
   // rounded coords as a key to group overlapping/nearby coords
-  let endPointCoordinates = new Map<string, {labels: string[], coords: Position}>()
+  let endPointCoordinates = new Map<string, {labels: string[], coords: Position, properties?: GeoJsonProperties}>()
   let VehiclePositionsData = {} as {[vId: number]: VehiclePositionItem}
 
   // no "shortName" (eg. '1K', '23' etc) available in position data
@@ -198,9 +198,12 @@ export default function PysakkiMap() {
                   stoptimesWithoutPatterns(numberOfDepartures: $departuresQty, omitCanceled: $omitCanceled)
                   {
                     headsign # määränpää
-
+                    
                     trip 
                     {
+                      route {
+                        gtfsId
+                      }
                       directionId
                       geometry
                       routeShortName # reittikoodi
@@ -208,27 +211,6 @@ export default function PysakkiMap() {
                         geometries {
                           geoJson
                         }
-                      }
-                    }
-                  }
-
-                  routes {
-                    stops {
-                      geometries {
-                        geoJson
-                      }
-                    }
-
-                    shortName
-                    gtfsId
-                    patterns {
-                      directionId
-                      stops {
-                        lat
-                        lon
-                      }
-                      patternGeometry {
-                        points
                       }
                     }
                   }
@@ -256,8 +238,6 @@ export default function PysakkiMap() {
   // if stop doesn't exist
   if( !data || !data.stop ) return MapUnavailable()
 
-  console.log(data.stop.stoptimesWithoutPatterns)
-
   // haetaan 2 seuraavaa lähtöä ja kirjataan ne taulukkoon
   const routeDirectionIdsFromThisStop = {} as {[shortName: string]: number}
   
@@ -274,15 +254,13 @@ export default function PysakkiMap() {
   useEffect(() => {
     
     if(data!.stop!.stoptimesWithoutPatterns) data.stop?.stoptimesWithoutPatterns.forEach(route => 
-      {
-        console.log(route)
+    {
+        
         const { color, width, index } = getNextNominalColor()
 
-        const routeStops: Position[] = route?.trip!.stops!
+        const routeStops: Position[] = route!.trip!.stops!
         .filter(stop => filterOutsideViewArea([(stop!.geometries!.geoJson as Point).coordinates[0], (stop!.geometries!.geoJson as Point).coordinates[1]]))
-        .map(stop => [...stop.geometries?.geoJson.coordinates])
-
-        const routeCoords: Position[] = 
+        .map(stop => [stop.geometries?.geoJson.coordinates[1], stop.geometries?.geoJson.coordinates[0]]) // flip lat/lng, otherwise stops exist somewhere over Pakistan
 
         routeGeometries.push( {
           shortName: (route!.trip?.routeShortName as string),
@@ -290,7 +268,7 @@ export default function PysakkiMap() {
             type: 'Feature',
             geometry: { 
               type: 'LineString',
-              coordinates: [...route!.trip!.geometry!],
+              coordinates: [...(route!.trip!.geometry! as Position[])],
             },
             properties: {
               routeIndex: index,
@@ -300,74 +278,52 @@ export default function PysakkiMap() {
           }, data.stop!.geometries?.geoJson.coordinates),
           stops: routeStops
         })
+
+        const routeId: string = route!.trip!.route!.gtfsId.split(":")[1]
+        // lookup for position data to get shortname (eg. "1K", not available in pos. data) via route id
+        Object.assign(routeIdToShortName, {
+          [routeId]: route!.trip!.routeShortName,
+        })
+
+        // push routes associated to this stop to mqtt topics to listen position
+        VehiclePositionsData = {};
+        // un-listen other routes (if present)
+        UnSubscribeAll();
+
+        // only subscribe if included in routes we're showing on map
+        if( Object.keys(routeDirectionIdsFromThisStop).includes(route!.trip!.routeShortName!) ) SubscribeToRoutePositions(`/gtfsrt/vp/Lahti/+/+/BUS/${routeId}/#`)
+
+        // clear old endpoints
+        endPointCoordinates.clear()
+
+        routeGeometries.forEach((routeGeometry) => {
+ 
+        mapGeoJsonData.features.push(routeGeometry.geojson)
+
+        const [destLng, destLat] = clampedToViewArea ( (routeGeometry.geojson.geometry as LineString).coordinates.slice(-1)[0] )
+      
+        const destHash = roundedCoordsAsKey([destLng.value, destLat.value])
+      
+        // if endpoint exists
+        if( endPointCoordinates.has(destHash) )
+        {
+          const endPoint = endPointCoordinates.get(destHash)!
+          
+          if(!(endPoint.labels.includes(routeGeometry.shortName))) endPoint.labels.push( routeGeometry.shortName )
+          endPointCoordinates.set(destHash, endPoint)  
+        }
+        else
+        {
+          const endPoint = {
+            labels: [routeGeometry.shortName],
+            coords: [destLat.value, destLng.value],
+            properties: routeGeometry.geojson.properties,
+          }
+          endPointCoordinates.set(destHash, endPoint)    
+        }
+        })
       }
     )
-    console.log(routeGeometries)
-
-    if (data!.stop!.routes) data!.stop!.routes.forEach(route => {
-
-      const routeId: string = route.gtfsId.split(":")[1]
-
-      // lookup for position data to get shortname (eg. "1K", not available in pos. data) via route id
-      Object.assign(routeIdToShortName, {
-        [routeId]: route.shortName,
-      })
-
-      // push routes associated to this stop to mqtt topics to listen position
-      VehiclePositionsData = {};
-      // un-listen other routes (if present)
-      UnSubscribeAll();
-
-      // only subscribe if included in routes we're showing on map
-      if( Object.keys(routeDirectionIdsFromThisStop).includes(route!.shortName!) ) SubscribeToRoutePositions(`/gtfsrt/vp/Lahti/+/+/BUS/${routeId}/#`)
-        
-      const routePattern = route.patterns!.filter((pattern) => pattern?.directionId == routeDirectionIdsFromThisStop[route.shortName!])
-  
-      if(!routePattern.length) return // no routes with applicable direction id 
-      
-      // TODO: apply "geo-clamping" here in order to not show geometry outside specified bbox
-
-    /*
-      const routeStops: Position[] = routePattern[0]!.stops!
-      .filter(stop => filterOutsideViewArea([stop.lat!, stop!.lon!]))
-      .map(stop => [stop!.lat!, stop!.lon!])
-      routeGeometries.push( {
-        shortName: (route.shortName as string),
-        geojson: clampCoordsFromStop( (GeoJSONfromPolylines( routePattern[0]!.patternGeometry?.points ) as Feature<LineString>), data.stop!.geometries?.geoJson.coordinates),
-        stops: routeStops
-      })
-    */
-    })
-
-    // clear old endpoints
-    endPointCoordinates.clear()
-
-    routeGeometries.forEach((routeGeometry) => {
- 
-      mapGeoJsonData.features.push(routeGeometry.geojson)
-
-      const [destLng, destLat] = clampedToViewArea ( (routeGeometry.geojson.geometry as LineString).coordinates.slice(-1)[0] )
-      
-      const destHash = roundedCoordsAsKey([destLng.value, destLat.value])
-      
-      // if endpoint exists
-      if( endPointCoordinates.has(destHash) )
-      {
-        const endPoint = endPointCoordinates.get(destHash)!
-        
-        if(!(endPoint.labels.includes(routeGeometry.shortName))) endPoint.labels.push( routeGeometry.shortName )
-        endPointCoordinates.set(destHash, endPoint)  
-      }
-      else
-      {
-        const endPoint = {
-          labels: [routeGeometry.shortName],
-          coords: [destLat.value, destLng.value],
-        }
-        endPointCoordinates.set(destHash, endPoint)    
-      }
-    })
-    console.log("Map Refresh")
 
     setMapGeoJsonDataState(mapGeoJsonData);
 
@@ -386,7 +342,7 @@ export default function PysakkiMap() {
         anchor='bottom'
         offset={[0,0]}>
           <div className={[PysakkiMapStyle.routeEndPoint, false  /* kesken */  ? "" : PysakkiMapStyle.destination].join(" ")}>
-            <div className={PysakkiMapStyle.label + " " + PysakkiMapStyle.alt}>
+            <div className={PysakkiMapStyle.label + " " + PysakkiMapStyle.alt + " " + (endPoint.properties?.isCropped && PysakkiMapStyle.isCropped)}>
               {endPoint.labels.map((label) => 
                 <div>{label}</div>
               )}
@@ -417,7 +373,7 @@ const updateMap = () => {
     // including stop position and route endpoints
     const turfCoords = turf.lineString([
         (data.stop!.geometries?.geoJson!.coordinates as Position),
-        data.stop!.geometries?.geoJson!.coordinates.map((c: number) => c-0.002), // offset around stop
+        data.stop!.geometries?.geoJson!.coordinates.map((c: number) => c-0.006), // offset around stop
         ...routeGeometries.reduce<Position[]>((rglist, rg) => {rglist.push(...(rg.geojson.geometry as LineString).coordinates);return rglist}, []),
         ...Array.from( endPointCoordinates ).flatMap(([, value]) => {return [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+0.010]]})
       ])

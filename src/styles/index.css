@@ -109,6 +109,7 @@ div.stopRow {
 div.alertRow {
   width: 95%;
   display: flex;
+  font-family:;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
@@ -158,7 +159,7 @@ div.stopRow:nth-child(1) .warning, div.stopRow:nth-child(2) .warning {
   display: block;
   position: relative;
   height: 2.5vh;
-  margin-left: 0.5vh;
+  margin-left: 0.1vh;
 }
 
 div.stopRow.canceled {
@@ -239,16 +240,17 @@ p {
 }
 .destination.alert {
   font-weight: 500;
-  font-family: 'Barlow Semi Condensed';
+  font-family: 'Inter Variable';
   font-size: var(--mm12);
   margin-left: 0.5vh;
 }
 .alert.routealert {
   font-weight: 500;
-  font-family: 'Barlow Semi Condensed';
+  font-family: 'Inter Variable';
   margin-left: 0vh;
   font-size: var(--mm12);
 }
+
 .alertRow.SEVERE {
   color: white;
   background: black;
@@ -286,6 +288,10 @@ div.mapContainer {
   display: flex;
   justify-content: stretch;
   align-items: stretch;
+}
+.alertRow p.alertHeading {
+  margin-left: 0;
+  font-weight: 800;
 }
 div.mapContainer.error{
   display: flex;

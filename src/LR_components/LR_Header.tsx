@@ -3,33 +3,21 @@ import LRstyle from './Styles/LRstyle.module.css'
 import type { LRHeaderQuery } from "./__generated__/LRHeaderQuery.graphql";
 import { PysakkiSettings } from "../PysakkiSettings";
 import { useState, useEffect } from "react";
+import type { AppQuery$data } from "../__generated__/AppQuery.graphql";
 
 const returnCurrentTimeAsString = (): string => {
     const date = new Date();
     return `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`
 }
 
-export default function LR_Header () {
+type Props = {
+    queryData: AppQuery$data | null;
+}
 
-    const stopId = PysakkiSettings.stopId;
+export default function LR_Header ({queryData}: Props) {
+
+    const data = queryData
     const refreshRateSec = PysakkiSettings.refreshRateSec
-
-    // wrapped inside IIFE for even some error handling in case of network error, one which
-    // react relay apparently doesn't offer a sensible solution to
-    const data = useLazyLoadQuery<LRHeaderQuery>(
-                graphql`
-                query LRHeaderQuery ($id: String!) {
-                    stop(id: $id) # tähän pysäkin gtfsID eg. "Lahti:103653", "Lahti:104030" 
-                    # täytyy compilaa uudestaan id:n vaihdon jälkeen - npx relay-compiler
-                    {
-                        name(language: "fi")
-                    }
-                }
-                `,
-                {"id": stopId,},
-                {},
-            );
-
 
     const nimi: string = (!data || !data.stop) ? "Stop not found" : data.stop!.name
 

@@ -116,22 +116,28 @@ div.routeEndPoint:after {
     font-family: "Inter Variable", sans-serif;
     font-size: 1.5vh;
     font-weight: 700;
+    line-height: 1.2vh;
     padding: none;
     text-shadow: 2px 2px 6px #00000020;
 }
-.label div:after {
+.label div:before {
     flex:1;
-    content: " / ";
+    content: " ";
     color: #727272;
     padding: none;
     margin: none;
 }
-.label div:last-child:after {
-    content: "";
+.label .isCropped div:before {
+    flex:1;
+    content: "->";
+    color: #727272;
+    padding: none;
+    margin: none;
 }
 
 .label {
     margin: 0;
+    padding: 0;
     display: flex;
     aspect-ratio: 1/1;
     flex-direction: column;
@@ -142,11 +148,13 @@ div.routeEndPoint:after {
     border: 1px solid #000;
     border-radius: 50%;
     box-sizing: border-box;
+
     z-index: 999;
 }
 .label div {
     flex: 1;
-    margin: 0.35vh;
+    margin: 0.0vh;
+    align-self: center;
     font-family: "Inter Variable";
     font-weight: 600;
     font-size: var(--mm9);
@@ -154,4 +162,12 @@ div.routeEndPoint:after {
 .label.alt {
     color: black;
     background: #ffffffaf;
+    margin: 0;
+}
+.label.alt.isCropped div:before {
+    flex: 1;
+    content: " -> ";
+    color: #727272;
+    padding: none;
+    margin: none;
 }

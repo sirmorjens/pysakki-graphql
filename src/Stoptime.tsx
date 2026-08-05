@@ -45,7 +45,10 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
     {
         return (
             <div className={"alertRow " + rowdata.Alert!.alertSeverityLevel}>
-                <p className="destination alert stopalert">
+                {rowdata!.Alert!.isHeading && 
+                    <p className="route"><WarningSign /></p>
+                }
+                <p className={"destination alert red stopalert " + (rowdata.Alert!.isHeading ? "alertHeading" : "")}>
                     {rowdata.Alert!.displayAlertText}
                 </p>
 

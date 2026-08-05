@@ -26,6 +26,7 @@ export type AlertData = {
 export type AlertRowData = {
     readonly alertSeverityLevel?: AlertSeverityLevelType;
     readonly displayAlertText?: string;
+    readonly isHeading?: boolean;
 }
 
 export type StopTime = any /* generate type with graphql codegen */
@@ -35,10 +36,11 @@ export const MAX_DESTINATION_LETTERS = {
     destination: 36,
     viaTxt: 16,
 }
+
 // max letters before line split
 const ALERT_MAX_LETTERS_PER_ROW = {
-    'STOPALERT': 60,
-    'ROUTEALERT': 54,
+    'STOPALERT': 65,
+    'ROUTEALERT': 48,
 };
 
 export const printAlertDataToRows = (alertObj: AlertData, RowType: 'STOPALERT' | 'ROUTEALERT'): RowData[] => {
@@ -53,8 +55,14 @@ export const printAlertDataToRows = (alertObj: AlertData, RowType: 'STOPALERT' |
 
     // tässä formatoidaan ehdollisesti alertHeaderText -> alertDescriptionText
     const displayAlertText: string = (() => {
-        if ( alertObj!.alertHeaderText && alertObj!.alertDescriptionText ) return `${alertObj!.alertHeaderText}: ${alertObj!.alertDescriptionText}`
-        if ( alertObj!.alertHeaderText && alertObj!.alertHeaderText.length ) return `${alertObj!.alertHeaderText}`
+        /*
+            Aluksi formatoitiin otsikko ja description yhdeksi tekstiblokiksi,
+            nyt tällä hetkellä lisätään otsikko (jos on) omaksi rivikseen alkuun,
+            jolloin se erottuu selkeämmin
+        */
+        // if ( alertObj!.alertHeaderText && alertObj!.alertDescriptionText ) return `${alertObj!.alertHeaderText} ${alertObj!.alertDescriptionText}`
+        // if ( alertObj!.alertHeaderText && alertObj!.alertHeaderText.length ) return `${alertObj!.alertHeaderText}`
+        
         if ( alertObj!.alertDescriptionText && alertObj!.alertDescriptionText.length ) return `${alertObj!.alertDescriptionText}`
         return ""
     })()
@@ -62,34 +70,56 @@ export const printAlertDataToRows = (alertObj: AlertData, RowType: 'STOPALERT' |
     // jos alert on alle rivin max pituus, palautetaan se suoraan sitä muuttamatta
     if( displayAlertText.length < ALERT_MAX_LETTERS_PER_ROW[RowType] ) return [{RowType: RowType, Alert: {...alertObj, displayAlertText: displayAlertText}}]
 
-    // luodaan uusi alert objectk
+    // luodaan uusi alert objecti
     const BaseAlertRowData: AlertRowData = {
         alertSeverityLevel: alertObj.alertSeverityLevel,
         displayAlertText: '',
     }
+    const splitLongWord = (word: string): string[] => {
+        const longWordSegments = ['']
+        const longWordLetters = word.split("")
+        while(longWordLetters.length > ALERT_MAX_LETTERS_PER_ROW[RowType])
+        {
+            longWordSegments[longWordSegments.length-1] += longWordLetters.shift();
+            if(longWordSegments[longWordSegments.length-1].length >= ALERT_MAX_LETTERS_PER_ROW[RowType]) longWordSegments.push("")
+        }
+        
+        return [...longWordSegments, /* loput kirjaimet */ longWordLetters.join(""), " "]
+    }
 
-    const descriptionTxtSegments = displayAlertText.split(' ').reduce<Array<string>>(( segments, word ): string[] => {
+    const splitIntoSegments = ( segments: string[], word: string ): string[] => {
         if(!segments.length) segments.push('')
 
-        /* todo split long words */
+        /* split long words */
+        if(word.length > ALERT_MAX_LETTERS_PER_ROW[RowType]) {
+            const longWordSegments = splitLongWord(word);
+            
+            segments.push(...longWordSegments)
+            return segments
+        }
 
         if( ( segments[segments.length - 1].length + word.length ) > ALERT_MAX_LETTERS_PER_ROW[RowType]) segments.push('')
         
-        /*  WIP epätodennäköinen tilanne jos yksi sana on yli ~70 merkkiä
-            jaetaan sana monelle riville */
-        /*
-        if(word.length > ALERT_MAX_LETTERS_PER_ROW[RowType])
-        {
-            // split word and store multiple rows
-        }
-        */
 
-        segments[segments.length? segments.length - 1 : 0] += word + " "
+        segments[segments.length - 1] += word + " "
         return segments
-    }, [])
+    }
 
+    const descriptionTxtSegments = displayAlertText.split(' ').reduce<Array<string>>(splitIntoSegments, [])
+    
     const alertRows = descriptionTxtSegments.map(segment => ({RowType: RowType, Alert: {...BaseAlertRowData, displayAlertText: segment}}))
-    return alertRows;
+    
+    // jos ei heading-tekstiä saatavilla, palautetaan pelkät alertrowit
+    if (!(alertObj!.alertHeaderText)) return alertRows
+
+    // jos header on saataville, lisätään se omana rivinään (omina riveinään) ensimmäiseksi
+    // pätkitään riveille jos liian pitkä
+
+    const headingTxtSegments = alertObj.alertHeaderText.split(' ').reduce<Array<string>>(splitIntoSegments, [])
+    
+    const alertHeadingRows = headingTxtSegments.map(headingSegment => ({RowType: RowType, Alert: {...BaseAlertRowData, isHeading: true, displayAlertText: headingSegment}}))
+    
+    return [...alertHeadingRows, ...alertRows]
 }
 
 // @ts-expect-error // debugging use only

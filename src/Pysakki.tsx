@@ -1,11 +1,9 @@
 import { graphql, useFragment } from "react-relay";
 import type { PysakkiTimesInPatternFragment$key } from "./__generated__/PysakkiTimesInPatternFragment.graphql"
-import { useState, useEffect } from 'react'
-import { useLazyLoadQuery } from "react-relay";
-import type { PysakkiQuery } from "./__generated__/PysakkiQuery.graphql"
 import Stoptime from "./Stoptime";
 import { printAlertDataToRows, type AlertData, type RowData, type StopTime, type PatternStopTime } from "./PysakkiUtils";
-import { PysakkiSettings } from "./PysakkiSettings";
+import type { AppQuery$data } from "./__generated__/AppQuery.graphql";
+
 const StopNotFound = () => {
 
     const errorRow: RowData = {
@@ -22,78 +20,20 @@ const StopNotFound = () => {
     )
 }
 
-export default function Pysakki() 
+type Props = {
+    queryData: AppQuery$data | null;
+}
+
+export default function Pysakki( {queryData}: Props ) 
 {
+    if(!queryData) return StopNotFound()
+
+    const data = queryData
+
     const nextDeparturesInPattern: {
         [routename: string]: PatternStopTime[]
     } = {}
     
-    const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
- 
-    const stopId = PysakkiSettings.stopId
-    const refreshRateSec = PysakkiSettings.refreshRateSec
- 
-    const refresh = () => {
-        setRefreshedQueryOptions(prev => ({
-        fetchKey: (prev?.fetchKey ?? 0) + 1,
-        fetchPolicy: 'network-only',
-        }));
-    };
- 
-    useEffect(() => {
- 
-        const timerId = setInterval(() => {
-        console.log("pysakki refresh")
-        refresh()
-        }, refreshRateSec)
-    
-        return () => clearInterval(timerId)
-    }, []);
-    
-    const data = useLazyLoadQuery<PysakkiQuery>(
-            graphql`
-            query PysakkiQuery($id: String!, $departureQty: Int!, $lang: String!, $omitCanceled: Boolean!, $inPatternDeparturesQty: Int!) {
-                stop(id: $id) 
-                {
-                    stoptimesForPatterns (numberOfDepartures: $inPatternDeparturesQty)
-                    {
-                        ...PysakkiTimesInPatternFragment
-                    }
-
-                    # WIP: noudetaan stoprowit tässä ja iteroidaan
-
-                    alerts {
-                        alertSeverityLevel
-                        alertHeaderText(language: $lang)
-                        alertDescriptionText(language: $lang)
-                    }
-                
-                    stoprows: stoptimesWithoutPatterns(numberOfDepartures:  $departureQty, omitCanceled: $omitCanceled)
-                    {
-                        headsign # määränpää
-                        realtime
-                        realtimeArrival # reaaliaikainen saapumisaika sekunneissa
-                        scheduledArrival # suunniteltu saapumisaika sekunneissa
-                        serviceDay # helpompi mätsätä timestamppeja kun on päivä
-                        realtimeState
-                        trip {
-                            routeShortName # reittikoodi
-                            alerts
-                            {
-                                alertSeverityLevel
-                                alertHeaderText(language: $lang)
-                                alertDescriptionText(language: $lang)
-                            }
-                        }
-                    }
-                }
-            }
-            `,
-            // tähän pysäkin gtfsID (eg. "Lahti:103641", "Lahti:104167") lähtöjen määrä, häiriöiden kieli (fi, en, sv), näytetäänkö perutut vuorot (false = näytetään) ja mistä asti vuorot haetaan (testaamiseen, pitäisi aina olla 0 eli nykyinen)
-            {"id": stopId, "departureQty": 12, "omitCanceled": false, "inPatternDeparturesQty": 3, "lang": "fi"},
-            refreshedQueryOptions ?? {}
-        );
-
     /*
     // fake alerts for debugging
     const fakeAlerts = [
