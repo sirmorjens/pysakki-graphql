@@ -1,11 +1,6 @@
-import Pysakki from "./Pysakki";
-import LR_Header from './LR_components/LR_Header'
-import LR_Footer from './LR_components/LR_Footer'
-import PysakkiMap from "./PysakkiMap.tsx"
-import { PysakkiSettings } from "./PysakkiSettings";
-import { useEffect, useState } from 'react';
-import type { AppQuery } from "./__generated__/AppQuery.graphql.ts";
-
+import { useEffect } from 'react';
+import QueryParent from './QueryParent'
+import LR_Footer from './LR_components/LR_Footer';
 import '@fontsource/barlow-semi-condensed/100.css';
 import '@fontsource/barlow-semi-condensed/200.css';
 import '@fontsource/barlow-semi-condensed/300.css';
@@ -27,10 +22,7 @@ import '@fontsource/barlow/700.css';
 import '@fontsource/barlow/800.css';
 import '@fontsource/barlow/900.css';
 
-
 import * as React from 'react';
-import { graphql, useLazyLoadQuery } from "react-relay";
-import type { AppQuery$data } from "./__generated__/AppQuery.graphql.ts";
 
 type Props = {
   children?: React.ReactNode;
@@ -41,6 +33,7 @@ type State = {
 }
 
 function ErrorMsg () {
+  console.log("Trying to reload")
   // error, let's give up and refresh after 30 sec
   setTimeout(() => {location.reload()}, 30 * 1000);
 
@@ -70,6 +63,7 @@ class ErrorBoundary extends React.Component<Props, State> {
   // @ts-ignore
   componentDidCatch(error: any, info: any) {
     //
+  
   }
 
   render() {
@@ -80,106 +74,7 @@ class ErrorBoundary extends React.Component<Props, State> {
   }
 }
 
-const queryData: {
-  data?: AppQuery$data | null
-} = {
-  data: null,
-}
-
-
 export default function App() {
-
-  // initiate pysäkkisettings
-  PysakkiSettings.loadSettingsClient();
-
-  const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
-
-  const refreshRate = PysakkiSettings.refreshRateSec;
-
-  const refresh = () => {
-    setRefreshedQueryOptions(prev => ({
-      fetchKey: (prev?.fetchKey ?? 0) + 1,
-      fetchPolicy: 'network-only',
-    }));
-  };
-
-  useEffect(() => {
-
-    const timerId = setInterval(() => {
-      console.log("refresh")
-      refresh()
-    }, refreshRate)
-
-    return () => clearTimeout(timerId)
-  }, []);
-
-  try {
-    queryData.data = useLazyLoadQuery<AppQuery>(
-      graphql`
-        query AppQuery($id: String!, $departuresQty: Int!, $lang: String!, $omitCanceled: Boolean!, $inPatternDeparturesQty: Int!) {
-          stop(id: $id) 
-          {
-            name(language: $lang)
-            stoptimesForPatterns (numberOfDepartures: $inPatternDeparturesQty)
-            {
-                ...PysakkiTimesInPatternFragment
-            }
-
-            # WIP: noudetaan stoprowit tässä ja iteroidaan
-
-            alerts {
-                alertSeverityLevel
-                alertHeaderText(language: $lang)
-                alertDescriptionText(language: $lang)
-            }
-        
-            stoprows: stoptimesWithoutPatterns(numberOfDepartures:  $departuresQty, omitCanceled: $omitCanceled)
-            {
-                headsign # määränpää
-                realtime
-                realtimeArrival # reaaliaikainen saapumisaika sekunneissa
-                scheduledArrival # suunniteltu saapumisaika sekunneissa
-                serviceDay # helpompi mätsätä timestamppeja kun on päivä
-                realtimeState
-                trip {
-                    routeShortName # reittikoodi
-                    alerts
-                    {
-                        alertSeverityLevel
-                        alertHeaderText(language: $lang)
-                        alertDescriptionText(language: $lang)
-                    }
-                }
-            }
-
-            geometries {
-              geoJson
-            }
-
-                  
-                  }
-                  vehicleRentalsByBbox (
-                    maximumLongitude: 25.7972,
-                    minimumLongitude: 25.5428,
-                    maximumLatitude: 61.0374,
-                    minimumLatitude: 60.9208
-                  )
-                  {
-                    ... on VehicleRentalStation{
-                      ...RentalsMarkersRentalsFragment
-                  }
-                    
-                  }
-                }
-      `,
-      // tähän pysäkin gtfsID (eg. "Lahti:103641", "Lahti:104167") lähtöjen määrä, häiriöiden kieli (fi, en, sv), näytetäänkö perutut vuorot (false = näytetään) ja mistä asti vuorot haetaan (testaamiseen, pitäisi aina olla 0 eli nykyinen)
-      {"id": PysakkiSettings.stopId, "departuresQty": 13, "omitCanceled": false, "inPatternDeparturesQty": 3, "lang": "fi"},
-      refreshedQueryOptions ?? {}
-    );
-  }
-  catch (error: any) {
-    queryData.data = null;
-  }
 
   useEffect(() => {
 
@@ -202,11 +97,8 @@ export default function App() {
 
     <div className="LR_mainContainer">
       <ErrorBoundary fallback={<ErrorMsg />}>
-        <LR_Header queryData={queryData.data}/>
-        <Pysakki queryData={queryData.data} />
-        <PysakkiMap />
-      </ErrorBoundary>    
-  
+        <QueryParent />
+      </ErrorBoundary>  
       <LR_Footer />
     </div>
 

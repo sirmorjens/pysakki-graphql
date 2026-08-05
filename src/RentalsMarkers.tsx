@@ -11,6 +11,8 @@ type Props = {
 }
 
 export default function RentalsMarkers ({vehicleRentalsByBbox}: Props) {
+  if (!vehicleRentalsByBbox) return <></>
+
   const rentalsData = useFragment<RentalsMarkersRentalsFragment$key>(
     graphql`
       fragment RentalsMarkersRentalsFragment on VehicleRentalStation @relay(plural: true)
