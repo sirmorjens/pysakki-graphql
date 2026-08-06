@@ -5,6 +5,9 @@ settings
 - asetusten dokumentaatio / käyttöohje
 
 
+osoiteriviasetukset
+- delayCompMinutes
+- apiKey?
 
 globals.json
 - error reporting endpoint
