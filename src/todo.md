@@ -13,6 +13,7 @@ globals.json
 - error reporting endpoint
 - build check period
 - pysäkin "laatikon" koko jonka sisällä näytetään reitit ja loput katkotaan
+- POIs & kaupunginosat tms
 
 pysäkki
 - error reporting / telemetry
