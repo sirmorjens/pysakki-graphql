@@ -9,6 +9,8 @@ osoiteriviasetukset
 - delayCompMinutes
 - apiKey?
 
+build path query (for map etc)
+
 globals.json
 - error reporting endpoint
 - build check period
