@@ -1,4 +1,8 @@
-import currentBuild from '../public/build.json'
+// import build-time build number to be set as initial build number
+// this import will not run again in production so it will be 
+// a hard coded value to compare future version/build numbers against
+import currentBuild from '../public/build.json' 
+
 
 export type PysakkiSettingsObj = {
     refreshRateSec: number;
