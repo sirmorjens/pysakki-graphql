@@ -14,7 +14,6 @@ import * as turf from '@turf/turf'
 
 import 'maplibre-gl/dist/maplibre-gl.css'; // See notes below
 import mapstyle from "./Map/pysakki_mapstyle.json"
-import { graphql, useLazyLoadQuery } from 'react-relay';
 
 import { clampedToViewArea, filterOutsideViewArea, getNextNominalColor, clampCoordsFromStop } from './PysakkiMapUtils'
 
@@ -41,10 +40,10 @@ import type {
   LineString,
   Position,
   Point,
-  GeoJsonProperties
+  GeoJsonProperties,
+  Geometry
 } from 'geojson';
 
-import type { PysakkiMapQuery } from './__generated__/PysakkiMapQuery.graphql'
 import { type ReactElement, useEffect, useState } from 'react';
 
 import type { QueryParentQuery$data } from './__generated__/QueryParentQuery.graphql';
@@ -104,6 +103,15 @@ const VehicleMarkersLayer = ({ vehiclePositions }: { vehiclePositions: VehiclePo
   );
 };
 
+const poisGeoJson: FeatureCollection<Geometry, GeoJsonProperties> = {
+      type: 'FeatureCollection',
+      features: [{
+        type: 'Feature',
+        properties: { title: 'Hello MapLibre' },
+        geometry: { type: 'Point', coordinates: [25,50] },
+      }]
+}
+
 // how often render fresh realtime position
 let realtimeRenderCooldown = PysakkiSettings.refreshRateSec // 30 seconds
 let lastRealtimeRender = 0
@@ -127,8 +135,19 @@ const layerStyle: LayerProps = {
         'line-width': ["get", "routeLineWidth"],
         "line-offset": ["*", ["get", "routeIndex"], 2]
     }
-
 };
+const PoiLayerStyle: LayerProps = {
+    id: 'pois',
+    type: 'symbol',
+    source: 'pois',
+    layout: {
+      'text-field': ['get', 'title'],
+      'text-font': ["Barlow Semi Condensed"]
+    }
+
+    
+};
+
 
   let routeEndStopMarkers: ReactElement[] = []
 
@@ -168,28 +187,6 @@ export default function PysakkiMap({queryData}: Props) {
     type: 'FeatureCollection',
     features: []
   }
-
-  const refreshRateSec = PysakkiSettings.refreshRateSec
-  const stopId = PysakkiSettings.stopId;
-
-  const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
-
-  const refreshMap = () => {
-    setRefreshedQueryOptions(prev => ({
-      fetchKey: (prev?.fetchKey ?? 0) + 1,
-      fetchPolicy: 'network-only',
-    }));
-  };
-
-  useEffect(() => {
-
-    const timerId = setInterval(() => {
-      console.log("map refresh")
-      refreshMap()
-    }, refreshRateSec)
-
-    return () => clearInterval(timerId)
-  }, [])
   
   if(!queryData) return <MapUnavailable />
 
@@ -204,7 +201,6 @@ export default function PysakkiMap({queryData}: Props) {
   if(data!.stop!.maprows!) data!.stop!.maprows.forEach(
     stop => routeDirectionIdsFromThisStop[(stop!.trip!.routeShortName! as string)] = stop?.trip!.directionId!
   )
-  
   useEffect(() => {
     VehiclePositionsWS(
       PositionMessageCallback
@@ -219,7 +215,7 @@ export default function PysakkiMap({queryData}: Props) {
         const { color, width, index } = getNextNominalColor()
 
         const routeStops: Position[] = route!.trip!.stops!
-        .filter(stop => filterOutsideViewArea([(stop!.geometries!.geoJson as Point).coordinates[0], (stop!.geometries!.geoJson as Point).coordinates[1]]))
+        .filter(stop => filterOutsideViewArea([(stop!.geometries!.geoJson as Point).coordinates[0], (stop!.geometries!.geoJson as Point).coordinates[1]], data!.stop!.geometries?.geoJson.coordinates))
         .map(stop => [stop.geometries?.geoJson.coordinates[1], stop.geometries?.geoJson.coordinates[0]]) // flip lat/lng, otherwise stops exist somewhere over Pakistan
 
         routeGeometries.push( {
@@ -317,7 +313,7 @@ export default function PysakkiMap({queryData}: Props) {
     return () => {
 
     }
-  }, [mapRefState, refreshedQueryOptions])
+  }, [mapRefState, queryData])
 
   useEffect(() => {
     if(mapRefState) mapRefState.resize();
@@ -426,7 +422,9 @@ const updateMap = () => {
           <Source id="route"  type="geojson" data={mapGeoJsonDataState}>
             <Layer {...layerStyle} />
           </Source>
-
+          <Source id="pois"  type="geojson" data={poisGeoJson}>
+            <Layer {...PoiLayerStyle} />
+          </Source>
    
           <VehicleMarkersLayer vehiclePositions={VehiclePositionsState} />
 
@@ -448,7 +446,7 @@ const updateMap = () => {
 
 
           {routeEndStopMarkers}
-          <Marker scale={.5} latitude={data.stop!.geometries?.geoJson.coordinates[1]} longitude={data.stop!.geometries?.geoJson.coordinates[0]} color={"black"} />
+          <Marker opacity={0.8} latitude={data.stop!.geometries?.geoJson.coordinates[1]} longitude={data.stop!.geometries?.geoJson.coordinates[0]} color={"black"} />
 
 
       </MapLibreMap>

@@ -2,9 +2,11 @@ import type { Position, Feature, GeoJsonProperties, LineString } from 'geojson';
 import * as turf from '@turf/turf'
 
 const viewAreaoffset = 0.06
-const viewAreaBounds = turf.bboxPolygon([25.6612+viewAreaoffset, 60.9827+viewAreaoffset, 25.6612-viewAreaoffset, 60.9827-viewAreaoffset]);
 
-export const filterOutsideViewArea = (coords: Position): Boolean => {
+export const filterOutsideViewArea = (coords: Position, startingPoint: Position): Boolean => {
+
+    const viewAreaBounds = turf.bboxPolygon([startingPoint[0]+viewAreaoffset, startingPoint[1]+viewAreaoffset, startingPoint[0]-viewAreaoffset, startingPoint[1]-viewAreaoffset]);
+
     const stop = turf.point([coords[0], coords[1]])
     
     return turf.booleanContains(viewAreaBounds, stop)
@@ -32,7 +34,7 @@ export const clampCoordsFromStop = (route: Feature<LineString, GeoJsonProperties
     for(const point of route.geometry.coordinates.toReversed())
     {
         // if outside specific area, discard and mark geometry as cropped
-        if(!filterOutsideViewArea(point)) {
+        if(!filterOutsideViewArea(point, startingPoint)) {
             isCropped = true;
             continue;
         }
