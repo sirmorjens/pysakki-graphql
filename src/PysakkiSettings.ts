@@ -16,7 +16,7 @@ const defaultSettings = {
 }
 const settingsFilePath = "./settings.json" // WIP
 const versionIdPath = "./build.json" // WIP
-const versionCheckIntervalSeconds = 10 // 5 * 60 // how often check for new build version
+const versionCheckIntervalSeconds = 10 * 60 // how often check for new build version
 
 /*
     UPDATE: mita jos settingit osoiteriviltä, huomattavasti vaivattomampi muuttaa clientsidessä
@@ -68,7 +68,6 @@ export const PysakkiSettings: PysakkiSettingsObj = {
             {   
                 return location.reload()
             }
-            console.log("Versions match")
         }
         catch (e: any)
         {
