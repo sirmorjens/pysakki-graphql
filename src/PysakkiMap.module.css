@@ -153,8 +153,7 @@ div.routeEndPoint:after {
 }
 .label div {
     flex: 1;
-    margin: 0.0vh;
-    align-self: center;
+    margin: 0.4vh;
     font-family: "Inter Variable";
     font-weight: 600;
     font-size: var(--mm9);
