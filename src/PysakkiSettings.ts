@@ -1,6 +1,11 @@
+import currentBuild from '../public/build.json'
+
 export type PysakkiSettingsObj = {
     refreshRateSec: number;
     stopId: string;
+    lastBuildNo: number;
+    versionLoadIntervalId: number;
+    loadVersionInfo: () => Promise<void>;
     loadSettingsFromJSON: () => object,
     loadSettingsClient: () => void,
 }
@@ -9,7 +14,9 @@ const defaultSettings = {
     refreshRateSec: 30,
     stopId: "Lahti:104167"
 }
-const settingsFilePath = "/settings.json" // WIP
+const settingsFilePath = "./settings.json" // WIP
+const versionIdPath = "./build.json" // WIP
+const versionCheckIntervalSeconds = 10 // 5 * 60 // how often check for new build version
 
 /*
     UPDATE: mita jos settingit osoiteriviltä, huomattavasti vaivattomampi muuttaa clientsidessä
@@ -27,6 +34,8 @@ const settingsFilePath = "/settings.json" // WIP
 export const PysakkiSettings: PysakkiSettingsObj = {
     refreshRateSec: 30,
     stopId: "",
+    lastBuildNo: currentBuild.build,
+    versionLoadIntervalId: 0,
     loadSettingsFromJSON: async (): Promise<PysakkiSettingsObj> => {
         const response = await fetch( settingsFilePath )
 
@@ -37,6 +46,34 @@ export const PysakkiSettings: PysakkiSettingsObj = {
 
         // todo... wip...
         return await response.json();
+    },
+    loadVersionInfo: async function loadVersionInfo () {
+        const response = await fetch( versionIdPath )
+
+        if(!response.ok)
+        {
+            throw new Error ("Unable to get build number")
+            return
+            // error, todo...
+        }
+
+        // todo... wip...
+        try {
+            const versionInfo = await response.json();
+
+            if(!versionInfo || !versionInfo.build) throw new Error("Unable to get build number")
+            
+            // mismatch, newer version available, reload app
+            if(versionInfo.build !== this.lastBuildNo)
+            {   
+                return location.reload()
+            }
+            console.log("Versions match")
+        }
+        catch (e: any)
+        {
+            console.log(e)
+        }
     },
 
     loadSettingsClient: function (): void {
@@ -57,3 +94,5 @@ export const PysakkiSettings: PysakkiSettingsObj = {
 
     } 
 }
+
+PysakkiSettings.versionLoadIntervalId = window.setInterval(() => PysakkiSettings.loadVersionInfo(), versionCheckIntervalSeconds * 1000)
