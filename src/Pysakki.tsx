@@ -2,7 +2,7 @@ import { graphql, useFragment } from "react-relay";
 import type { PysakkiTimesInPatternFragment$key } from "./__generated__/PysakkiTimesInPatternFragment.graphql"
 import Stoptime from "./Stoptime";
 import { printAlertDataToRows, type AlertData, type RowData, type StopTime, type PatternStopTime } from "./PysakkiUtils";
-import type { AppQuery$data } from "./__generated__/AppQuery.graphql";
+import type { QueryParentQuery$data } from "./__generated__/QueryParentQuery.graphql";
 
 const StopNotFound = () => {
 
@@ -21,7 +21,7 @@ const StopNotFound = () => {
 }
 
 type Props = {
-    queryData: AppQuery$data | null;
+    queryData: QueryParentQuery$data | null | undefined;
 }
 
 export default function Pysakki( {queryData}: Props ) 

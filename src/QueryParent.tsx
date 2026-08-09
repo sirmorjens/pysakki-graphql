@@ -1,14 +1,13 @@
 import Pysakki from "./Pysakki";
 import LR_Header from './LR_components/LR_Header'
 import { PysakkiSettings } from "./PysakkiSettings";
-import type { AppQuery } from "./__generated__/AppQuery.graphql.ts";
 import PysakkiMap from "./PysakkiMap.tsx"
 import { graphql, useLazyLoadQuery } from "react-relay";
-import type { AppQuery$data } from "./__generated__/AppQuery.graphql.ts";
 import { useEffect, useState } from "react";
+import type { QueryParentQuery, QueryParentQuery$data } from "./__generated__/QueryParentQuery.graphql.ts";
 
 const queryData: {
-  data?: AppQuery$data | null
+  data?: QueryParentQuery$data | null
 } = {
   data: null,
 }
@@ -40,9 +39,10 @@ export default function QueryParent () {
   }, []);
 
 
-  queryData.data = useLazyLoadQuery<AppQuery>(
+  queryData.data = useLazyLoadQuery<QueryParentQuery>(
     graphql`
-      query AppQuery($id: String!, $departuresQty: Int!, $lang: String!, $omitCanceled: Boolean!, $inPatternDeparturesQty: Int!) {
+      query QueryParentQuery($id: String!, $mapDeparturesQty: Int!, $departuresQty: Int!, $lang: String!, $omitCanceled: Boolean!, $inPatternDeparturesQty: Int!) 
+      {
         stop(id: $id) 
         {
           name(language: $lang)
@@ -51,9 +51,8 @@ export default function QueryParent () {
               ...PysakkiTimesInPatternFragment
           }
 
-          # WIP: noudetaan stoprowit tässä ja iteroidaan
-
-          alerts {
+          alerts 
+          {
               alertSeverityLevel
               alertHeaderText(language: $lang)
               alertDescriptionText(language: $lang)
@@ -61,45 +60,66 @@ export default function QueryParent () {
       
           stoprows: stoptimesWithoutPatterns(numberOfDepartures:  $departuresQty, omitCanceled: $omitCanceled)
           {
-              headsign # määränpää
-              realtime
-              realtimeArrival # reaaliaikainen saapumisaika sekunneissa
-              scheduledArrival # suunniteltu saapumisaika sekunneissa
-              serviceDay # helpompi mätsätä timestamppeja kun on päivä
-              realtimeState
-              trip {
-                  routeShortName # reittikoodi
-                  alerts
-                  {
-                      alertSeverityLevel
-                      alertHeaderText(language: $lang)
-                      alertDescriptionText(language: $lang)
-                  }
+            headsign # määränpää
+            realtime
+            realtimeArrival # reaaliaikainen saapumisaika sekunneissa
+            scheduledArrival # suunniteltu saapumisaika sekunneissa
+            serviceDay # helpompi mätsätä timestamppeja kun on päivä
+            realtimeState
+            trip 
+            {
+              routeShortName # reittikoodi
+              alerts
+              {
+                alertSeverityLevel
+                alertHeaderText(language: $lang)
+                alertDescriptionText(language: $lang)
               }
+            }
           }
-
-          geometries {
-            geoJson
-          }
-
-                
-                }
-                vehicleRentalsByBbox (
-                  maximumLongitude: 25.7972,
-                  minimumLongitude: 25.5428,
-                  maximumLatitude: 61.0374,
-                  minimumLatitude: 60.9208
-                )
+          maprows: stoptimesWithoutPatterns(numberOfDepartures: $mapDeparturesQty, omitCanceled: $omitCanceled)
+          {
+            headsign # määränpää
+                    
+            trip 
+            {
+              route
+              {
+                gtfsId
+              }
+              directionId
+              geometry
+              routeShortName # reittikoodi
+              stops 
+              {
+                geometries
                 {
-                  ... on VehicleRentalStation{
-                    ...RentalsMarkersRentalsFragment
-                }
-                  
+                  geoJson
                 }
               }
+            }
+          }
+          geometries 
+          {
+            geoJson
+          }       
+        }
+        vehicleRentalsByBbox (
+          maximumLongitude: 25.7972,
+          minimumLongitude: 25.5428,
+          maximumLatitude: 61.0374,
+          minimumLatitude: 60.9208
+        )
+        {
+          ... on VehicleRentalStation
+          {
+            ...RentalsMarkersRentalsFragment
+          }      
+        }
+      }
     `,
     // tähän pysäkin gtfsID (eg. "Lahti:103641", "Lahti:104167") lähtöjen määrä, häiriöiden kieli (fi, en, sv), näytetäänkö perutut vuorot (false = näytetään) ja mistä asti vuorot haetaan (testaamiseen, pitäisi aina olla 0 eli nykyinen)
-    {"id": PysakkiSettings.stopId, "departuresQty": 13, "omitCanceled": false, "inPatternDeparturesQty": 3, "lang": "fi"},
+    {"id": PysakkiSettings.stopId, "departuresQty": 13, "mapDeparturesQty": 2, "omitCanceled": false, "inPatternDeparturesQty": 3, "lang": "fi"},
     refreshedQueryOptions ?? {}
   );
 
@@ -107,7 +127,7 @@ return (
     <>
         <LR_Header queryData={queryData.data}/>
         <Pysakki queryData={queryData.data} />
-        <PysakkiMap />
+        <PysakkiMap queryData={queryData.data}/>
     </>
 );
 

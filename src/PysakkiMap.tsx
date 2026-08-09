@@ -47,6 +47,8 @@ import type {
 import type { PysakkiMapQuery } from './__generated__/PysakkiMapQuery.graphql'
 import { type ReactElement, useEffect, useState } from 'react';
 
+import type { QueryParentQuery$data } from './__generated__/QueryParentQuery.graphql';
+
 const MapUnavailable = () => {
   return (
     <div className="mapContainer error">
@@ -145,7 +147,11 @@ const layerStyle: LayerProps = {
     geojson: Feature,
     stops: Position[]  
   }
-export default function PysakkiMap() {
+
+  type Props = {
+    queryData: QueryParentQuery$data | null | undefined;
+  }
+export default function PysakkiMap({queryData}: Props) {
 
   // state definitions 
   const [VehiclePositionsState, setVehiclePositionsState] = useState<VehiclePositionItem[]>([]);
@@ -184,56 +190,10 @@ export default function PysakkiMap() {
 
     return () => clearInterval(timerId)
   }, [])
-  // debug
-
-  const data = useLazyLoadQuery<PysakkiMapQuery>(
-            graphql`
-              query PysakkiMapQuery($id: String!, $omitCanceled: Boolean!, $departuresQty: Int!) {
-                stop(id: $id)
-                {
-                  geometries {
-                    geoJson
-                  }
-
-                  stoptimesWithoutPatterns(numberOfDepartures: $departuresQty, omitCanceled: $omitCanceled)
-                  {
-                    headsign # määränpää
-                    
-                    trip 
-                    {
-                      route {
-                        gtfsId
-                      }
-                      directionId
-                      geometry
-                      routeShortName # reittikoodi
-                      stops {
-                        geometries {
-                          geoJson
-                        }
-                      }
-                    }
-                  }
-                }
-                vehicleRentalsByBbox (
-                  maximumLongitude: 25.7972,
-                  minimumLongitude: 25.5428,
-                  maximumLatitude: 61.0374,
-                  minimumLatitude: 60.9208
-                )
-                {
-                  ... on VehicleRentalStation{
-                    ...RentalsMarkersRentalsFragment
-                }
-                  
-                }
-              }
-            `,
-            {"id": stopId, "departuresQty": 2, "omitCanceled": false},
-            refreshedQueryOptions ?? {}
-          );
   
-  
+  if(!queryData) return <MapUnavailable />
+
+  const data = queryData
 
   // if stop doesn't exist
   if( !data || !data.stop ) return MapUnavailable()
@@ -241,7 +201,7 @@ export default function PysakkiMap() {
   // haetaan 2 seuraavaa lähtöä ja kirjataan ne taulukkoon
   const routeDirectionIdsFromThisStop = {} as {[shortName: string]: number}
   
-  if(data!.stop!.stoptimesWithoutPatterns) data!.stop!.stoptimesWithoutPatterns!.forEach(
+  if(data!.stop!.maprows!) data!.stop!.maprows.forEach(
     stop => routeDirectionIdsFromThisStop[(stop!.trip!.routeShortName! as string)] = stop?.trip!.directionId!
   )
   
@@ -253,7 +213,7 @@ export default function PysakkiMap() {
 
   useEffect(() => {
     
-    if(data!.stop!.stoptimesWithoutPatterns) data.stop?.stoptimesWithoutPatterns.forEach(route => 
+    if(data!.stop!.maprows) data.stop?.maprows.forEach(route => 
     {
         
         const { color, width, index } = getNextNominalColor()
@@ -477,7 +437,7 @@ const updateMap = () => {
               </Marker>   
           )}
 
-          <RentalsMarkers vehicleRentalsByBbox={data.vehicleRentalsByBbox} />    
+          <RentalsMarkers vehicleRentalsByBbox={queryData!.vehicleRentalsByBbox} />    
 
           {/* POIs into own file */}
           <Marker longitude={25.5681} latitude={60.9923}>
@@ -488,7 +448,7 @@ const updateMap = () => {
 
 
           {routeEndStopMarkers}
-          <Marker latitude={data.stop!.geometries?.geoJson.coordinates[1]} longitude={data.stop!.geometries?.geoJson.coordinates[0]} color={"black"} />
+          <Marker scale={.5} latitude={data.stop!.geometries?.geoJson.coordinates[1]} longitude={data.stop!.geometries?.geoJson.coordinates[0]} color={"black"} />
 
 
       </MapLibreMap>
