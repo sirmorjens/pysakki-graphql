@@ -39,10 +39,8 @@ import type {
   FeatureCollection,
   LineString,
   Position,
-  Point,
   GeoJsonProperties,
   Geometry,
-  Polygon
 } from 'geojson';
 
 import { type ReactElement, useEffect, useState } from 'react';

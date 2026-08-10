@@ -1,4 +1,4 @@
-import type { Position, Feature, GeoJsonProperties, LineString, Point } from 'geojson';
+import type { Position, Feature, GeoJsonProperties, LineString } from 'geojson';
 import * as turf from '@turf/turf'
 import { PysakkiSettings } from './PysakkiSettings';
 
@@ -40,13 +40,11 @@ export const clampRouteStopsFromStop = (stops: Stop[], startingPoint: Position):
     // i seriously couldn't figure out a better way
 
     const routeStopsFromStop: Stop[] = []
-    let isCropped = false;
 
     for(const stop of stops.toReversed())
     {
         // if outside specific area, discard and mark geometry as cropped
         if(!filterOutsideViewArea(stop.geometries.geoJson.coordinates, startingPoint)) {
-            isCropped = true;
             continue;
         }
         routeStopsFromStop.push(stop)

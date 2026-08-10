@@ -37,7 +37,7 @@ type DebugProps = {
 }
 
 let index = 0;
-
+// @ts-expect-error
 function DebugOptions ({setDebugState}: DebugProps) {
 
   const stopIds = [
@@ -107,7 +107,7 @@ class ErrorBoundary extends React.Component<Props, State> {
 }
 
 export default function App() {
-
+  // @ts-expect-error
   const [debugState, setDebugState] = useState(0);
   useEffect(() => {
 
