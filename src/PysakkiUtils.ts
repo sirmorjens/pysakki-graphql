@@ -33,8 +33,9 @@ export type StopTime = any /* generate type with graphql codegen */
 
 // max letters limit for destination
 export const MAX_DESTINATION_LETTERS = {
-    destination: 36,
-    viaTxt: 16,
+    destination: 30,
+    withViaTxt: 10,
+    viaTxt: 24,
 }
 
 // max letters before line split

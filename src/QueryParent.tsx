@@ -19,8 +19,6 @@ export default function QueryParent () {
 
   const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
 
-  const refreshRate = PysakkiSettings.refreshRateSec;
-
   const refresh = () => {
     setRefreshedQueryOptions(prev => ({
       fetchKey: (prev?.fetchKey ?? 0) + 1,
@@ -31,9 +29,8 @@ export default function QueryParent () {
   useEffect(() => {
 
     const timerId = setInterval(() => {
-      console.log("refresh")
       refresh()
-    }, refreshRate)
+    }, PysakkiSettings.refreshRateSec)
 
     return () => clearTimeout(timerId)
   }, []);

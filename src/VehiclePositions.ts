@@ -2,7 +2,7 @@ import mqtt, { type MqttClient } from 'mqtt'
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
 
 const url = "wss://mqtt.digitransit.fi"
-let mqttClient = mqtt.connect(url)
+const mqttClient = mqtt.connect(url)
 
 let mqttCallback: (message: GtfsRealtimeBindings.transit_realtime.FeedMessage) => void
 

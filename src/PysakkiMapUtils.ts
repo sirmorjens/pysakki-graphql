@@ -1,11 +1,13 @@
-import type { Position, Feature, GeoJsonProperties, LineString } from 'geojson';
+import type { Position, Feature, GeoJsonProperties, LineString, Point } from 'geojson';
 import * as turf from '@turf/turf'
+import { PysakkiSettings } from './PysakkiSettings';
 
-const viewAreaoffset = 0.06
+const viewAreaoffsetInKms = PysakkiSettings.distanceFromStop // arbitrary number in kilometers to clamp longer routes into
 
 export const filterOutsideViewArea = (coords: Position, startingPoint: Position): Boolean => {
 
-    const viewAreaBounds = turf.bboxPolygon([startingPoint[0]+viewAreaoffset, startingPoint[1]+viewAreaoffset, startingPoint[0]-viewAreaoffset, startingPoint[1]-viewAreaoffset]);
+    const bbox = turf.bbox( turf.buffer( turf.point( startingPoint ), viewAreaoffsetInKms)! )
+    const viewAreaBounds = turf.bboxPolygon( bbox );
 
     const stop = turf.point([coords[0], coords[1]])
     
@@ -23,6 +25,35 @@ export const clampedToViewArea = (coords: Position): {
 const proximityOfPoints = (p1: Position, p2: Position, threshold: number): Boolean => {
     return Math.floor( p1[0]*threshold ) == Math.floor( p2[0]*threshold ) && Math.floor( p1[1]*threshold ) == Math.floor( p2[1]*threshold )
 } 
+export type Stop = {
+    readonly geometries: {
+        readonly geoJson: {
+            readonly type: "Point",
+            readonly coordinates: Position
+        }
+    }
+}
+// same kind of function declared twice for two different applications,
+// maybe some day abstract into one core function with different overloads
+// other one deals with a singe geojson feature, other one with array of points
+export const clampRouteStopsFromStop = (stops: Stop[], startingPoint: Position): Stop[] => {
+    // i seriously couldn't figure out a better way
+
+    const routeStopsFromStop: Stop[] = []
+    let isCropped = false;
+
+    for(const stop of stops.toReversed())
+    {
+        // if outside specific area, discard and mark geometry as cropped
+        if(!filterOutsideViewArea(stop.geometries.geoJson.coordinates, startingPoint)) {
+            isCropped = true;
+            continue;
+        }
+        routeStopsFromStop.push(stop)
+        if(proximityOfPoints(stop.geometries.geoJson.coordinates, startingPoint, 490 /* completely arbitrary number but only this really does the thing*/)) break;
+    }
+    return routeStopsFromStop.toReversed()
+}
 
 export const clampCoordsFromStop = (route: Feature<LineString, GeoJsonProperties>, startingPoint: Position): Feature<LineString, GeoJsonProperties> => {
 
@@ -39,9 +70,10 @@ export const clampCoordsFromStop = (route: Feature<LineString, GeoJsonProperties
             continue;
         }
         routeFromStop.push(point)
-        if(proximityOfPoints(point, startingPoint, 490)) break;
+        if(proximityOfPoints(point, startingPoint, 490 /* completely arbitrary number but only this really does the thing*/)) break;
     }
     /// ////
+
 
     return {
         ...route,

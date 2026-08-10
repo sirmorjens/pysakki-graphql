@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import QueryParent from './QueryParent'
 import LR_Footer from './LR_components/LR_Footer';
 import '@fontsource/barlow-semi-condensed/100.css';
@@ -23,6 +23,7 @@ import '@fontsource/barlow/800.css';
 import '@fontsource/barlow/900.css';
 
 import * as React from 'react';
+import { PysakkiSettings } from './PysakkiSettings';
 
 type Props = {
   children?: React.ReactNode;
@@ -30,6 +31,37 @@ type Props = {
 }
 type State = {
   hasError: boolean
+}
+type DebugProps = {
+  setDebugState: (value: number) => void;
+}
+
+let index = 0;
+
+function DebugOptions ({setDebugState}: DebugProps) {
+
+  const stopIds = [
+    "Lahti:504826",
+    "Lahti:505823",
+    "Lahti:504126",
+    "Lahti:505725",
+    "Lahti:505821",
+    "Lahti:505822"
+  ]
+
+  const nextStop = () => {
+    index = stopIds.findIndex((index) => index == PysakkiSettings.stopId)
+    console.log("found index: " + index.toString())
+    index = (index + 1) >= stopIds.length ? 0 : (index+1);
+    location.search = `id=${stopIds[index]}`
+  }
+
+  return (
+    <div style={{position: "absolute", top: "1em", left:"1em"}}>
+      <button onClick={nextStop}>Next</button>
+    </div>
+  )
+
 }
 
 function ErrorMsg () {
@@ -76,6 +108,7 @@ class ErrorBoundary extends React.Component<Props, State> {
 
 export default function App() {
 
+  const [debugState, setDebugState] = useState(0);
   useEffect(() => {
 
     // error handleri
@@ -100,6 +133,7 @@ export default function App() {
         <QueryParent />
       </ErrorBoundary>  
       <LR_Footer />
+      {/* <DebugOptions setDebugState={setDebugState} /> */}
     </div>
 
   );

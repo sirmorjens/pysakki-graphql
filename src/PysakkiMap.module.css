@@ -1,17 +1,4 @@
-div.routeEndPoint {
-    font-size: 1vh;
-    color: #ffffff;
-    padding: none;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    margin: 0mm;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
+
 
 .poi {
     height: 2vh;
@@ -42,23 +29,8 @@ div.routeEndPoint {
     width: 90%;
     opacity: 1;
 }
-div.routeEndPoint:after {
-    font-family: 'Barlow Semi Condensed';
-    display: block;
-    content: '';
-    position: absolute;
-    bottom: 0mm;
-    left: 50%;
-    left: calc(50% - 1mm);
-    background: #000000;
-    width: 0.3vh;
-    height: 0.3vh;
-    border: none;
-    border-radius: 50%;
-    opacity: 0;
-}
 .stem {
-    height: 2vh;
+    height: 1vh;
     width: 0;
     border: none;
     border-left: 2px solid #585858;
@@ -111,36 +83,21 @@ div.routeEndPoint:after {
 .flipped {
     transform: scale(-1,1);
 }
-.label div {
-    margin: 0.2vh 0.2vh 0.2vh 0.2vh;
-    font-family: "Inter Variable", sans-serif;
-    font-size: 1.5vh;
-    font-weight: 700;
-    line-height: 1.2vh;
+div.routeEndPoint {
+    font-size: 1vh;
+    color: #ffffff;
     padding: none;
-    text-shadow: 2px 2px 6px #00000020;
-}
-.label div:before {
-    flex:1;
-    content: " ";
-    color: #727272;
-    padding: none;
-    margin: none;
-}
-.label .isCropped div:before {
-    flex:1;
-    content: "->";
-    color: #727272;
-    padding: none;
-    margin: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .label {
     margin: 0;
     padding: 0;
     display: flex;
-    aspect-ratio: 1/1;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     background: #000000ff;
@@ -148,25 +105,23 @@ div.routeEndPoint:after {
     border: 1px solid #000;
     border-radius: 50%;
     box-sizing: border-box;
-
     z-index: 999;
+    aspect-ratio: 1/1;
 }
+
 .label div {
-    flex: 1;
-    margin: 0.4vh;
+    margin: 0em 0.1vh 0em 0.1vh;
+    padding: none;
+    text-shadow: 2px 2px 6px #00000020;
     font-family: "Inter Variable";
     font-weight: 600;
     font-size: var(--mm9);
+    line-height: var(--mm15);
 }
+
 .label.alt {
     color: black;
     background: #ffffffaf;
-    margin: 0;
-}
-.label.alt.isCropped div:before {
-    flex: 1;
-    content: " -> ";
-    color: #727272;
-    padding: none;
-    margin: none;
+   
+    padding: 0;
 }

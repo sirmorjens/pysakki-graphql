@@ -15,7 +15,7 @@ import * as turf from '@turf/turf'
 import 'maplibre-gl/dist/maplibre-gl.css'; // See notes below
 import mapstyle from "./Map/pysakki_mapstyle.json"
 
-import { clampedToViewArea, filterOutsideViewArea, getNextNominalColor, clampCoordsFromStop } from './PysakkiMapUtils'
+import { clampedToViewArea, getNextNominalColor, clampCoordsFromStop, clampRouteStopsFromStop, type Stop } from './PysakkiMapUtils'
 
 import { PysakkiSettings } from './PysakkiSettings';
 import RentalsMarkers from './RentalsMarkers'
@@ -41,7 +41,8 @@ import type {
   Position,
   Point,
   GeoJsonProperties,
-  Geometry
+  Geometry,
+  Polygon
 } from 'geojson';
 
 import { type ReactElement, useEffect, useState } from 'react';
@@ -148,7 +149,6 @@ const PoiLayerStyle: LayerProps = {
     
 };
 
-
   let routeEndStopMarkers: ReactElement[] = []
 
   // rounded coords as a key to group overlapping/nearby coords
@@ -214,8 +214,7 @@ export default function PysakkiMap({queryData}: Props) {
         
         const { color, width, index } = getNextNominalColor()
 
-        const routeStops: Position[] = route!.trip!.stops!
-        .filter(stop => filterOutsideViewArea([(stop!.geometries!.geoJson as Point).coordinates[0], (stop!.geometries!.geoJson as Point).coordinates[1]], data!.stop!.geometries?.geoJson.coordinates))
+        const routeStops: Position[] = clampRouteStopsFromStop((route!.trip!.stops! as Stop[]), data.stop!.geometries?.geoJson.coordinates)
         .map(stop => [stop.geometries?.geoJson.coordinates[1], stop.geometries?.geoJson.coordinates[0]]) // flip lat/lng, otherwise stops exist somewhere over Pakistan
 
         routeGeometries.push( {
@@ -291,6 +290,7 @@ export default function PysakkiMap({queryData}: Props) {
 
     // push endpoints into markers
     endPointCoordinates.forEach((endPoint) => 
+      endPoint.properties!.isCropped ? null /* don't output endpoint marker for route that is cropped */ :  
       routeEndStopMarkers.push(
         <Marker
         latitude={endPoint.coords[0]}
@@ -299,7 +299,7 @@ export default function PysakkiMap({queryData}: Props) {
         offset={[0,0]}>
           <div className={[PysakkiMapStyle.routeEndPoint, false  /* kesken */  ? "" : PysakkiMapStyle.destination].join(" ")}>
             <div className={PysakkiMapStyle.label + " " + PysakkiMapStyle.alt + " " + (endPoint.properties?.isCropped && PysakkiMapStyle.isCropped)}>
-              {endPoint.labels.map((label) => 
+              {endPoint.labels.map((label) =>   
                 <div>{label}</div>
               )}
             </div>
@@ -325,18 +325,17 @@ const updateMap = () => {
   
     if(!routeGeometries.length) return
 
-    // generate one geojson linestring from all relevant coords
-    // including stop position and route endpoints
-    const turfCoords = turf.lineString([
-        (data.stop!.geometries?.geoJson!.coordinates as Position),
-        data.stop!.geometries?.geoJson!.coordinates.map((c: number) => c-0.006), // offset around stop
-        ...routeGeometries.reduce<Position[]>((rglist, rg) => {rglist.push(...(rg.geojson.geometry as LineString).coordinates);return rglist}, []),
-        ...Array.from( endPointCoordinates ).flatMap(([, value]) => {return [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+0.010]]})
-      ])
-    
-    
-    // turf.bbox to establish bounds around the linestring, around which the map is zoomed
-    const displayedBounds = turf.bbox(turfCoords)
+    const marginAroundFeature = 0.015 // arbitrary number to create space around the outmost end stop marker so it won't be cropped
+    // bbox object from routes
+    const routeBounds = turf.bbox(turf.lineString([
+      ...routeGeometries.reduce<Position[]>((rglist, rg) => {rglist.push(...(rg.geojson.geometry as LineString).coordinates);return rglist}, []),
+      ...Array.from( endPointCoordinates ).flatMap(([, value]) => {return value.properties!.isCropped ? [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]]] : [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+marginAroundFeature]]}),
+    ]))
+    // bbox from stop coords with 2km buffer around it
+    const stopBounds = turf.bbox(turf.buffer((data!.stop!.geometries!.geoJson!), 2, {steps: 8, units: "kilometers"})!)
+
+    /// combine these into one bbox to which map will be zoomed
+    const displayedBounds = turf.bbox(turf.combine(turf.featureCollection([turf.bboxPolygon(stopBounds), turf.bboxPolygon(routeBounds)])))
 
     mapRefState?.fitBounds(displayedBounds as LngLatBoundsLike, {linear: true, animate: false} )
   }

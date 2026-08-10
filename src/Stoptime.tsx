@@ -9,6 +9,15 @@ function WarningSign () {
     )
 }
 
+function InfoSign () {
+    return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+        <path d="M0 0h24v24H0z" fill="none" />
+        <path fill="#000" d="M12.713 16.713Q13 16.425 13 16v-4q0-.425-.288-.712T12 11t-.712.288T11 12v4q0 .425.288.713T12 17t.713-.288m0-8Q13 8.425 13 8t-.288-.712T12 7t-.712.288T11 8t.288.713T12 9t.713-.288M12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22" />
+    </svg>
+
+    )
+}
 
 
     const arrivalTimeToString = (pattern: PatternStopTime): string => {
@@ -45,8 +54,11 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
     {
         return (
             <div className={"alertRow " + rowdata.Alert!.alertSeverityLevel}>
-                {rowdata!.Alert!.isHeading && 
+                {rowdata!.Alert!.isHeading && rowdata!.Alert!.alertSeverityLevel !== 'INFO' && 
                     <p className="route"><WarningSign /></p>
+                }
+                {rowdata!.Alert!.isHeading && rowdata!.Alert!.alertSeverityLevel == 'INFO' && 
+                    <p className="route"><InfoSign /></p>
                 }
                 <p className={"destination alert red stopalert " + (rowdata.Alert!.isHeading ? "alertHeading" : "")}>
                     {rowdata.Alert!.displayAlertText}
@@ -99,10 +111,10 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
                     {destinationTxt.length > MAX_DESTINATION_LETTERS.destination ? // jos pitkä teksti ja katkaistaan, laitetaan pisteet perään
                     "..." : ""} 
                     { // jos liian pitkä osoite, ei laiteta via tekstiä
-                        destinationTxt.length < Math.ceil( MAX_DESTINATION_LETTERS.viaTxt ) &&
+                        destinationTxt.length < Math.ceil( MAX_DESTINATION_LETTERS.withViaTxt ) &&
                         viaTxt != null ? 
                         <span>
-                            via <span className="viaDests">{viaTxt}</span>
+                            via <span className="viaDests">{viaTxt.slice(0, MAX_DESTINATION_LETTERS.viaTxt)}</span>
                         </span>
                         : ""
                     }   

@@ -8,6 +8,7 @@ export type PysakkiSettingsObj = {
     refreshRateSec: number;
     stopId: string;
     lastBuildNo: number;
+    distanceFromStop: number;
     versionLoadIntervalId: number;
     loadVersionInfo: () => Promise<void>;
     loadSettingsFromJSON: () => object,
@@ -16,7 +17,8 @@ export type PysakkiSettingsObj = {
 
 const defaultSettings = {
     refreshRateSec: 30,
-    stopId: "Lahti:104167"
+    stopId: "Lahti:504826",
+    distanceFromStop: 8.5,
 }
 const settingsFilePath = "./settings.json" // WIP
 const versionIdPath = "./build.json" // WIP
@@ -40,6 +42,7 @@ export const PysakkiSettings: PysakkiSettingsObj = {
     stopId: "",
     lastBuildNo: currentBuild.build,
     versionLoadIntervalId: 0,
+    distanceFromStop: 8.5,
     loadSettingsFromJSON: async (): Promise<PysakkiSettingsObj> => {
         const response = await fetch( settingsFilePath )
 
@@ -73,7 +76,7 @@ export const PysakkiSettings: PysakkiSettingsObj = {
                 return location.reload()
             }
         }
-        catch (e: any)
+        catch (e)
         {
             console.log(e)
         }
@@ -84,17 +87,19 @@ export const PysakkiSettings: PysakkiSettingsObj = {
 
         const refreshRateSec = parseInt ( settingsInPathParams.get("refreshRateSec") ?? "" ); 
         const stopId = settingsInPathParams.get("id") ?? "";
+        const distanceFromStop = Number( settingsInPathParams.get("distanceFromStop")) ?? "";
+        this.stopId = stopId ? stopId : defaultSettings.stopId;
+        this.refreshRateSec = refreshRateSec ? refreshRateSec*1000 : defaultSettings.refreshRateSec*1000
+        this.distanceFromStop = distanceFromStop ? distanceFromStop : defaultSettings.distanceFromStop
 
-        if(!refreshRateSec || !stopId) {
+        console.log(refreshRateSec ? true: false)
+
+        if(!refreshRateSec && !stopId) {
             console.log ("Settings missing, using default values. Apply settings using /?id=<STOP_ID>&refreshRateSec=<REFRESH_RATE_IN_SECONDS>")
             this.refreshRateSec = defaultSettings.refreshRateSec * 1000
             this.stopId = defaultSettings.stopId;
             return;
         }
-
-        this.refreshRateSec = refreshRateSec * 1000;
-        this.stopId = stopId;
-
     } 
 }
 
