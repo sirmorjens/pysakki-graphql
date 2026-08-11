@@ -49,6 +49,7 @@
 }
 
 #root {
+  flex: 0 0 58.82vh;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -59,7 +60,7 @@
   background: #fff;
   color: black;
   height: 100vh;
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 9/16;
   overflow: hidden;
 }
 body {
