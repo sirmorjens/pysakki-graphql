@@ -78,7 +78,7 @@ export const printAlertDataToRows = (alertObj: AlertData, RowType: 'STOPALERT' |
     const splitLongWord = (word: string, segmentMaxLength: number): string[] => {
         const longWordSegments = ['']
         const longWordLetters = word.split("")
-        console.log(longWordLetters)
+
         while(longWordLetters.length > segmentMaxLength)
         {
             longWordSegments[longWordSegments.length-1] += longWordLetters.shift();
@@ -89,8 +89,6 @@ export const printAlertDataToRows = (alertObj: AlertData, RowType: 'STOPALERT' |
     }
 
     const splitIntoSegments = ( segments: string[], word: string, segmentMaxLength: number ): string[] => {
-        console.log(word)
-        console.log(segmentMaxLength)
         if(!segments.length) segments.push('')
 
         /* split long words */
