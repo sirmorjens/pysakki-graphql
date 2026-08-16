@@ -7,7 +7,7 @@
     "openmaptiles": {
       "type": "vector",
       "_URL_for_openfreemapTiles": "https://tiles.openfreemap.org/planet",
-      "url": "/dev/pysakki/Map/LahtiMapTiles.json"
+      "url": "/dev/pysakki/Map/MapTiles.json"
     }
   },
   "sprite": "",

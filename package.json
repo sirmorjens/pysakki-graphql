@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && node buildVersionNumbering.js && vite build",
+    "dev": "node build_scripts/dynamicMapTilesUrl.js dev && vite",
+    "build": "tsc -b && node build_scripts/dynamicMapTilesUrl.js prod && node build_scripts/buildVersionNumbering.js && vite build",
     "quickbuild:-}": "tsc --noCheck && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

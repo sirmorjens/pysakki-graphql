@@ -8,7 +8,7 @@
 import fs from 'fs'
 import path from 'node:path'
 
-const dirPath = path.join(import.meta.dirname, 'public');
+const dirPath = path.join('public');
 const filePath = path.join(dirPath, 'build.json');
 
 // Ensure the public directory exists
@@ -16,7 +16,7 @@ if (!fs.existsSync(dirPath)) {
   fs.mkdirSync(dirPath, { recursive: true });
 }
 
-let buildData = { build: 1 };
+const buildData = { build: 1 };
 
 if (fs.existsSync(filePath)) {
   try {
