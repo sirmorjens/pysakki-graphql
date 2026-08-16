@@ -3,8 +3,7 @@ import { MAX_DESTINATION_LETTERS, type RowData, type PatternStopTime, type Alert
 function WarningSign () {
     return (
         <svg className="warning" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-            <path d="M0 0h24v24H0z" fill="none" />
-            <path fill="currentColor" d="M2.725 21q-.275 0-.5-.137t-.35-.363t-.137-.488t.137-.512l9.25-16q.15-.25.388-.375T12 3t.488.125t.387.375l9.25 16q.15.25.138.513t-.138.487t-.35.363t-.5.137zm9.988-3.287Q13 17.425 13 17t-.288-.712T12 16t-.712.288T11 17t.288.713T12 18t.713-.288m0-3Q13 14.425 13 14v-3q0-.425-.288-.712T12 10t-.712.288T11 11v3q0 .425.288.713T12 15t.713-.288" />
+            <path fill="black" d="M2.725 21q-.275 0-.5-.137t-.35-.363t-.137-.488t.137-.512l9.25-16q.15-.25.388-.375T12 3t.488.125t.387.375l9.25 16q.15.25.138.513t-.138.487t-.35.363t-.5.137zm9.988-3.287Q13 17.425 13 17t-.288-.712T12 16t-.712.288T11 17t.288.713T12 18t.713-.288m0-3Q13 14.425 13 14v-3q0-.425-.288-.712T12 10t-.712.288T11 11v3q0 .425.288.713T12 15t.713-.288" />
         </svg>
     )
 }
@@ -43,7 +42,7 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
     {
         return (
             <div className={"alertRow " + rowdata.Alert!.alertSeverityLevel}>
-                <p className="route">{/* <WarningSign /> */}</p>
+                <p className="route"><WarningSign /></p>
                 <p className="destination alert routealert">
                     {rowdata.Alert!.displayAlertText}
                 </p>
@@ -55,11 +54,11 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
     {
         return (
             <div className={"alertRow " + rowdata.Alert!.alertSeverityLevel}>
-                {rowdata!.Alert!.isHeading && rowdata!.Alert!.alertSeverityLevel !== 'INFO' && 
-                    <p className="route"><WarningSign /></p>
+                {rowdata!.Alert!.isHeading  && rowdata!.Alert!.alertSeverityLevel !== 'INFO' && 
+                    <p className="route">{!rowdata!.Alert!.headingContinued /* jos otsikko monella rivillä, varoitusmerkki vain ensimmäiselle riville */  && <WarningSign />}</p>
                 }
-                {rowdata!.Alert!.isHeading && rowdata!.Alert!.alertSeverityLevel == 'INFO' && 
-                    <p className="route"><InfoSign /></p>
+                {rowdata!.Alert!.isHeading  && rowdata!.Alert!.alertSeverityLevel == 'INFO' && 
+                    <p className="route">{!rowdata!.Alert!.headingContinued && <InfoSign />}</p>
                 }
                 <p className={"destination alert red stopalert " + (rowdata.Alert!.isHeading ? "alertHeading" : "")}>
                     {rowdata.Alert!.displayAlertText}

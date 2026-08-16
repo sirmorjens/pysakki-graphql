@@ -143,11 +143,7 @@ div.stopRow:nth-child(1) p.longRouteName, div.stopRow:nth-child(2) p.longRouteNa
   font-size: var(--mm22);
 }
 
-.warning {
-  position: absolute;
-  height: 2.5vh;
-  margin-left: 0.55vh;
-}
+
 div.stopRow:nth-child(1) .warning, div.stopRow:nth-child(2) .warning {
   height: 3vh;
   margin-top: 0.5vh;
@@ -160,6 +156,12 @@ div.stopRow:nth-child(1) .warning, div.stopRow:nth-child(2) .warning {
   position: relative;
   height: 2.5vh;
   margin-left: 0.1vh;
+}
+.alertRow.SEVERE .warning {
+  display: block;
+  position: relative;
+  height: 2.5vh;
+  margin-left: 0.2vh; /* idk why but it seems visually offset on black background */
 }
 
 div.stopRow.canceled {
@@ -253,11 +255,15 @@ p {
   background: black;
   border-color: white;
 }
+.alertRow.SEVERE svg path  {
+  fill: white;
+}
 .stopRow.SEVERE {
   color: white;
   background: black;
   border-color: white;
 }
+
 .stopRow.canceled.SEVERE {
   color: white;
   background: black;

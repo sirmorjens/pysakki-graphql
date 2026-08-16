@@ -27,6 +27,7 @@ export type AlertRowData = {
     readonly alertSeverityLevel?: AlertSeverityLevelType;
     readonly displayAlertText?: string;
     readonly isHeading?: boolean;
+    readonly headingContinued?: boolean; // if split into multiple rows
 }
 
 export type StopTime = any /* generate type with graphql codegen */
@@ -34,13 +35,14 @@ export type StopTime = any /* generate type with graphql codegen */
 // max letters limit for destination
 export const MAX_DESTINATION_LETTERS = {
     destination: 30,
-    withViaTxt: 10,
-    viaTxt: 24,
+    withViaTxt: 12,
+    viaTxt: 18,
 }
 
 // max letters before line split
 const ALERT_MAX_LETTERS_PER_ROW = {
-    'STOPALERT': 65,
+    'STOPALERT': 60,
+    'STOPALERT_HEADING': 54,
     'ROUTEALERT': 48,
 };
 
@@ -68,58 +70,69 @@ export const printAlertDataToRows = (alertObj: AlertData, RowType: 'STOPALERT' |
         return ""
     })()
 
-    // jos alert on alle rivin max pituus, palautetaan se suoraan sitä muuttamatta
-    if( displayAlertText.length < ALERT_MAX_LETTERS_PER_ROW[RowType] ) return [{RowType: RowType, Alert: {...alertObj, displayAlertText: displayAlertText}}]
-
     // luodaan uusi alert objecti
     const BaseAlertRowData: AlertRowData = {
         alertSeverityLevel: alertObj.alertSeverityLevel,
         displayAlertText: '',
     }
-    const splitLongWord = (word: string): string[] => {
+    const splitLongWord = (word: string, segmentMaxLength: number): string[] => {
         const longWordSegments = ['']
         const longWordLetters = word.split("")
-        while(longWordLetters.length > ALERT_MAX_LETTERS_PER_ROW[RowType])
+        console.log(longWordLetters)
+        while(longWordLetters.length > segmentMaxLength)
         {
             longWordSegments[longWordSegments.length-1] += longWordLetters.shift();
-            if(longWordSegments[longWordSegments.length-1].length >= ALERT_MAX_LETTERS_PER_ROW[RowType]) longWordSegments.push("")
+            if(longWordSegments[longWordSegments.length-1].length >= segmentMaxLength) longWordSegments.push("")
         }
         
         return [...longWordSegments, /* loput kirjaimet */ longWordLetters.join(""), " "]
     }
 
-    const splitIntoSegments = ( segments: string[], word: string ): string[] => {
+    const splitIntoSegments = ( segments: string[], word: string, segmentMaxLength: number ): string[] => {
+        console.log(word)
+        console.log(segmentMaxLength)
         if(!segments.length) segments.push('')
 
         /* split long words */
-        if(word.length > ALERT_MAX_LETTERS_PER_ROW[RowType]) {
-            const longWordSegments = splitLongWord(word);
+        if(word.length > segmentMaxLength) {
+            const longWordSegments = splitLongWord(word, segmentMaxLength);
             
             segments.push(...longWordSegments)
             return segments
         }
 
-        if( ( segments[segments.length - 1].length + word.length ) > ALERT_MAX_LETTERS_PER_ROW[RowType]) segments.push('')
+        if( ( segments[segments.length - 1].length + word.length ) > segmentMaxLength) segments.push('')
         
 
         segments[segments.length - 1] += word + " "
         return segments
     }
 
-    const descriptionTxtSegments = displayAlertText.split(' ').reduce<Array<string>>(splitIntoSegments, [])
+    const splitDescriptionTextIntoSegments = ( segments: string[], word: string ) => {
+        return splitIntoSegments(segments, word, ALERT_MAX_LETTERS_PER_ROW['STOPALERT'])
+    }
+
+    const splitHeaderIntoSegments = ( segments: string[], word: string ) => {
+        return splitIntoSegments(segments, word, ALERT_MAX_LETTERS_PER_ROW['STOPALERT_HEADING'])
+    }
+
+    const descriptionTxtSegments = displayAlertText.split(' ').reduce<Array<string>>(splitDescriptionTextIntoSegments, [])
     
-    const alertRows = descriptionTxtSegments.map(segment => ({RowType: RowType, Alert: {...BaseAlertRowData, displayAlertText: segment}}))
+    // jos kuvausteksti on, lisätään se, jos ei, ei lisätä (nerokasta)
+    const alertRows = displayAlertText.length ? descriptionTxtSegments.map(segment => ({RowType: RowType, Alert: {...BaseAlertRowData, displayAlertText: segment}})) : []
     
     // jos ei heading-tekstiä saatavilla, palautetaan pelkät alertrowit
     if (!(alertObj!.alertHeaderText)) return alertRows
 
     // jos header on saataville, lisätään se omana rivinään (omina riveinään) ensimmäiseksi
     // pätkitään riveille jos liian pitkä
+    const headingTxtSegments = alertObj.alertHeaderText.split(' ').reduce<Array<string>>(splitHeaderIntoSegments, [])
+    
+    const alertHeadingRows = headingTxtSegments.map(headingSegment => ({RowType: RowType, Alert: {...BaseAlertRowData, isHeading: true, headingContinued: true, displayAlertText: headingSegment}}))
 
-    const headingTxtSegments = alertObj.alertHeaderText.split(' ').reduce<Array<string>>(splitIntoSegments, [])
-    
-    const alertHeadingRows = headingTxtSegments.map(headingSegment => ({RowType: RowType, Alert: {...BaseAlertRowData, isHeading: true, displayAlertText: headingSegment}}))
-    
+    // ekalle riville headingContinued = false, jotta symboli näytetään
+    alertHeadingRows[0].Alert.headingContinued = false;
+
     return [...alertHeadingRows, ...alertRows]
 }
 
