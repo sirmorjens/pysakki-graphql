@@ -413,7 +413,6 @@ const updateMap = () => {
           pitch: 0,
         }}
         onResize={updateMap}
-        attributionControl={true}
         style={{width: "100%", height: "100%"}}
         mapStyle={mapstyle as StyleSpecification}>
           <Source id="route"  type="geojson" data={mapGeoJsonDataState}>
