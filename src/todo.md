@@ -4,6 +4,8 @@ settings
 - pysäkkisettings persistenssi ja useamman samanaikaisen "session" fasilitointi
 - asetusten dokumentaatio / käyttöohje
 
+run build & run dev
+skripteihin automaattinen karttatiilien vaihto
 
 osoiteriviasetukset
 - delayCompMinutes
