@@ -117,8 +117,14 @@ div.routeEndPoint {
     font-weight: 600;
     font-size: var(--mm9);
     line-height: var(--mm15);
+    margin-left: 0.2rem;
 }
-
+.label div:before {
+    content:", "
+}
+.label div:first-of-type:before {
+    content: "";
+}
 .label.alt {
     color: black;
     background: #ffffffaf;
