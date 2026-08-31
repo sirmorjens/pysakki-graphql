@@ -5,12 +5,13 @@ import { Marker } from "@vis.gl/react-maplibre";
 import { useFragment, graphql } from "react-relay";
 import PysakkiMapStyle from './PysakkiMap.module.css'
 import fillari from "./assets/fillari.svg"
+import type { ReactElement } from "react";
 
 type Props = {
     vehicleRentalsByBbox: RentalsMarkersRentalsFragment$key;
 }
 
-export default function RentalsMarkers ({vehicleRentalsByBbox}: Props) {
+export default function RentalsMarkers ({vehicleRentalsByBbox}: Props): ReactElement {
   if (!vehicleRentalsByBbox) return <></>
 
   const rentalsData = useFragment<RentalsMarkersRentalsFragment$key>(
@@ -23,17 +24,18 @@ export default function RentalsMarkers ({vehicleRentalsByBbox}: Props) {
     `,
     vehicleRentalsByBbox
   )
-    return (
-        <>
-          {rentalsData.map((rentalStation, idx) => 
-            <Marker key={idx} latitude={rentalStation.lat!} longitude={rentalStation.lon!}>
-              <div className={PysakkiMapStyle.fillari}>
-                <img src={fillari} alt="Fillari" />
-              </div>
-            </Marker>
-          )}    
-        </>
-    )
 
-
+  return (
+    <>
+      {rentalsData.map ((rentalStation, idx) => 
+      
+        <Marker key={idx} latitude={rentalStation.lat!} longitude={rentalStation.lon!}>
+          <div className={PysakkiMapStyle.fillari}>
+            <img src={fillari} alt="Fillari" />
+          </div>
+        </Marker>
+        
+      )}
+    </>
+  )
 }

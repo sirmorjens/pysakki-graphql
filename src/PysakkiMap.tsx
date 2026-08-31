@@ -6,19 +6,23 @@ import {
   useMap,
   type MapRef,
   type LayerProps,
-  type StyleSpecification,
-  type LngLatBoundsLike
+  type StyleSpecification
 } from '@vis.gl/react-maplibre';
-
-import * as turf from '@turf/turf'
 
 import 'maplibre-gl/dist/maplibre-gl.css'; // See notes below
 import mapstyle from "./Map/pysakki_mapstyle.json"
 
-import { clampedToViewArea, getNextNominalColor, clampCoordsFromStop, clampRouteStopsFromStop, type Stop } from './PysakkiMapUtils'
+import {
+  clampedToViewArea,
+  roundedCoordsAsKey,
+  updateMapBounds,
+  useRouteData,
+  type EndPointCoordinate,
+} from './PysakkiMapUtils'
 
 import { PysakkiSettings } from './PysakkiSettings';
-import RentalsMarkers from './RentalsMarkers'
+import MapRoutes from './MapRoutes'
+import RentalsMarkers from './MapRentalsMarkers'
 import {
   SubscribeToRoutePositions,
   UnSubscribeAll,
@@ -35,10 +39,8 @@ import phks from './assets/PHKS.svg'
 import polyline from '@mapbox/polyline'
 
 import type {
-  Feature,
   FeatureCollection,
   LineString,
-  Position,
   GeoJsonProperties,
   Geometry,
 } from 'geojson';
@@ -67,10 +69,8 @@ const VehicleMarkersLayer = ({ vehiclePositions }: { vehiclePositions: VehiclePo
       setMapBearing(map.getBearing());
     };
 
-    // Initialize
     updateViewState();
 
-    // Only this tiny component updates on map movement
     map.on('zoom', updateViewState);
     map.on('rotate', updateViewState);
 
@@ -102,17 +102,19 @@ const VehicleMarkersLayer = ({ vehiclePositions }: { vehiclePositions: VehiclePo
   );
 };
 
+// WIP: map points of interest
+// need to figure out how to make these user editable
 const poisGeoJson: FeatureCollection<Geometry, GeoJsonProperties> = {
       type: 'FeatureCollection',
       features: [{
         type: 'Feature',
-        properties: { title: 'Hello MapLibre' },
+        properties: { title: '' },
         geometry: { type: 'Point', coordinates: [25,50] },
       }]
 }
 
 // how often render fresh realtime position
-let realtimeRenderCooldown = PysakkiSettings.refreshRateSec // 30 seconds
+const realtimeRenderCooldown = PysakkiSettings.refreshRateSec // 30 seconds
 let lastRealtimeRender = 0
 
 type VehiclePositionItem = {
@@ -121,20 +123,6 @@ type VehiclePositionItem = {
     routeId: string;
 }
 
-const layerStyle: LayerProps = {
-    id: 'route',
-    type: 'line',
-    source: 'route',
-    layout: {
-        'line-join': 'round',
-        'line-cap': 'round'
-    },
-    paint: {
-        'line-color': ["get", "routeColor"],
-        'line-width': ["get", "routeLineWidth"],
-        "line-offset": ["*", ["get", "routeIndex"], 2]
-    }
-};
 const PoiLayerStyle: LayerProps = {
     id: 'pois',
     type: 'symbol',
@@ -150,7 +138,7 @@ const PoiLayerStyle: LayerProps = {
   let routeEndStopMarkers: ReactElement[] = []
 
   // rounded coords as a key to group overlapping/nearby coords
-  let endPointCoordinates = new Map<string, {labels: string[], coords: Position, properties?: GeoJsonProperties}>()
+  let endPointCoordinates = new Map<string, EndPointCoordinate>()
   let VehiclePositionsData = {} as {[vId: number]: VehiclePositionItem}
 
   // no "shortName" (eg. '1K', '23' etc) available in position data
@@ -159,47 +147,31 @@ const PoiLayerStyle: LayerProps = {
     [routeId: string]: string
   } = {} 
 
-  type RouteGeometry = {
-    shortName: string, 
-    geojson: Feature,
-    stops: Position[]  
-  }
-
   type Props = {
     queryData: QueryParentQuery$data | null | undefined;
   }
+
 export default function PysakkiMap({queryData}: Props) {
 
   // state definitions 
   const [VehiclePositionsState, setVehiclePositionsState] = useState<VehiclePositionItem[]>([]);
-  const [routeStopsPosState, setRouteStopsPosState] = useState<Position[]>([])
   const [mapRefState, setMapRef] = useState<MapRef | null>();
-  const [mapGeoJsonDataState, setMapGeoJsonDataState] = useState<FeatureCollection>({  
-    type: 'FeatureCollection',
-    features: []
-  })
 
-  const routeGeometries: RouteGeometry[] = []
-
-  const mapGeoJsonData: FeatureCollection = {
-    type: 'FeatureCollection',
-    features: []
-  }
-  
   if(!queryData) return <MapUnavailable />
 
-  const data = queryData
-
   // if stop doesn't exist
-  if( !data || !data.stop ) return MapUnavailable()
+  if( !queryData || !queryData.stop ) return MapUnavailable()
 
-  // haetaan 2 seuraavaa lähtöä ja kirjataan ne taulukkoon
+  const {routeDataState, routeGeometriesState} = useRouteData(queryData);
+
   const routeDirectionIdsFromThisStop = {} as {[shortName: string]: number}
   
-  if(data!.stop!.maprows!) data!.stop!.maprows.forEach(
+  if(queryData!.stop!.maprows!) queryData!.stop!.maprows.forEach(
     stop => routeDirectionIdsFromThisStop[(stop!.trip!.routeShortName! as string)] = stop?.trip!.directionId!
   )
+
   useEffect(() => {
+    // open ws connection to positions and assign callback
     VehiclePositionsWS(
       PositionMessageCallback
     )
@@ -207,31 +179,8 @@ export default function PysakkiMap({queryData}: Props) {
 
   useEffect(() => {
     
-    if(data!.stop!.maprows) data.stop?.maprows.forEach(route => 
+    if(queryData!.stop!.maprows) queryData.stop?.maprows.forEach(route => 
     {
-        
-        const { color, width, index } = getNextNominalColor()
-
-        const routeStops: Position[] = clampRouteStopsFromStop((route!.trip!.stops! as Stop[]), data.stop!.geometries?.geoJson.coordinates)
-        .map(stop => [stop.geometries?.geoJson.coordinates[1], stop.geometries?.geoJson.coordinates[0]]) // flip lat/lng, otherwise stops exist somewhere over Pakistan
-
-        routeGeometries.push( {
-          shortName: (route!.trip?.routeShortName as string),
-          geojson: clampCoordsFromStop({
-            type: 'Feature',
-            geometry: { 
-              type: 'LineString',
-              coordinates: [...(route!.trip!.geometry! as Position[])],
-            },
-            properties: {
-              routeIndex: index,
-              routeColor: color,
-              routeLineWidth: width,
-            }
-          }, data.stop!.geometries?.geoJson.coordinates),
-          stops: routeStops
-        })
-
         const routeId: string = route!.trip!.route!.gtfsId.split(":")[1]
         // lookup for position data to get shortname (eg. "1K", not available in pos. data) via route id
         Object.assign(routeIdToShortName, {
@@ -249,38 +198,33 @@ export default function PysakkiMap({queryData}: Props) {
         // clear old endpoints
         endPointCoordinates.clear()
 
-        routeGeometries.forEach((routeGeometry) => {
- 
-        mapGeoJsonData.features.push(routeGeometry.geojson)
-
-        const [destLng, destLat] = clampedToViewArea ( (routeGeometry.geojson.geometry as LineString).coordinates.slice(-1)[0] )
-      
-        const destHash = roundedCoordsAsKey([destLng.value, destLat.value])
-      
-        // if endpoint exists
-        if( endPointCoordinates.has(destHash) )
-        {
-          const endPoint = endPointCoordinates.get(destHash)!
-          
-          if(!(endPoint.labels.includes(routeGeometry.shortName))) endPoint.labels.push( routeGeometry.shortName )
-          endPointCoordinates.set(destHash, endPoint)  
-        }
-        else
-        {
-          const endPoint = {
-            labels: [routeGeometry.shortName],
-            coords: [destLat.value, destLng.value],
-            properties: routeGeometry.geojson.properties,
+        if(!routeGeometriesState) return 
+        routeGeometriesState.forEach((routeGeometry) => {
+  
+          const [destLng, destLat] = clampedToViewArea ( (routeGeometry.geojson.geometry as LineString).coordinates.slice(-1)[0] )
+        
+          const destHash = roundedCoordsAsKey([destLng.value, destLat.value])
+        
+          // if endpoint exists
+          if( endPointCoordinates.has(destHash) )
+          {
+            const endPoint = endPointCoordinates.get(destHash)!
+            
+            if(!(endPoint.labels.includes(routeGeometry.shortName))) endPoint.labels.push( routeGeometry.shortName )
+            endPointCoordinates.set(destHash, endPoint)  
           }
-          endPointCoordinates.set(destHash, endPoint)    
-        }
+          else
+          {
+            const endPoint = {
+              labels: [routeGeometry.shortName],
+              coords: [destLat.value, destLng.value],
+              properties: routeGeometry.geojson.properties,
+            }
+            endPointCoordinates.set(destHash, endPoint)    
+          }
         })
       }
     )
-
-    setMapGeoJsonDataState(mapGeoJsonData);
-
-    setRouteStopsPosState(routeGeometries.flatMap(routeGeometry => routeGeometry.stops))
 
     setVehiclePositionsState( [...Object.values(VehiclePositionsData)] )
 
@@ -306,37 +250,18 @@ export default function PysakkiMap({queryData}: Props) {
         </Marker>
     ))
   
-    updateMap()
+    updateMapBounds(mapRefState!, routeGeometriesState!, endPointCoordinates, queryData!.stop!.geometries!.geoJson)
 
     return () => {
 
     }
-  }, [mapRefState, queryData])
+  }, [mapRefState, queryData, routeGeometriesState])
 
   useEffect(() => {
     if(mapRefState) mapRefState.resize();
 
   }, [mapRefState])
 
-// update map view to show current stop and end stop
-const updateMap = () => {
-  
-    if(!routeGeometries.length) return
-
-    const marginAroundFeature = 0.015 // arbitrary number to create space around the outmost end stop marker so it won't be cropped
-    // bbox object from routes
-    const routeBounds = turf.bbox(turf.lineString([
-      ...routeGeometries.reduce<Position[]>((rglist, rg) => {rglist.push(...(rg.geojson.geometry as LineString).coordinates);return rglist}, []),
-      ...Array.from( endPointCoordinates ).flatMap(([, value]) => {return value.properties!.isCropped ? [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]]] : [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+marginAroundFeature]]}),
-    ]))
-    // bbox from stop coords with 2km buffer around it
-    const stopBounds = turf.bbox(turf.buffer((data!.stop!.geometries!.geoJson!), 2, {steps: 8, units: "kilometers"})!)
-
-    /// combine these into one bbox to which map will be zoomed
-    const displayedBounds = turf.bbox(turf.combine(turf.featureCollection([turf.bboxPolygon(stopBounds), turf.bboxPolygon(routeBounds)])))
-
-    mapRefState?.fitBounds(displayedBounds as LngLatBoundsLike, {linear: true, animate: false} )
-  }
 
   // function to be called anytime there is a mqtt message about vehicle pos
   const PositionMessageCallback =
@@ -367,37 +292,6 @@ const updateMap = () => {
       }
   };
 
-  // deprecated since not likely to show nearby stops but likely not going away soon
-  // create an object/map key from rounded coords
-  // so overlapping/nearby coords are grouped under same key
-  const roundedCoordsAsKey = ([lng, lat]: Position): string => `${Math.ceil( lng*100 )}${Math.ceil( lat*100 )}`
-
-  // @ts-ignore -- unused at the moment
-  const GeoJSONfromPolylines = (polylineString: string): Feature => {
-    const { color, width, index } = getNextNominalColor()
-
-    const FeatureObj: Feature = {
-      type: 'Feature',
-        geometry: {
-          type: 'LineString',
-          coordinates: [
-            ...polyline
-            .decode(polylineString)
-            .map((( [lat, lon]: [number,number] ) => ( [lon, lat] ) 
-            /* lat/lng needs to be flipped or LSL will be driving around Pakistan*/)) 
-          ],
-      },
-      properties: {
-        routeIndex: index,
-        routeColor: color,
-        routeLineWidth: width,
-      }
-    }
-
-    return FeatureObj;
-  } 
-
-
   const mapBoundsOffset = 0.055
 
   return (
@@ -412,20 +306,18 @@ const updateMap = () => {
           bounds: [25.6612-mapBoundsOffset, 60.9827-mapBoundsOffset, 25.6612+mapBoundsOffset, 60.9827+mapBoundsOffset,],
           pitch: 0,
         }}
-        onResize={updateMap}
+        onResize={() => updateMapBounds(mapRefState!, routeGeometriesState!, endPointCoordinates, queryData!.stop!.geometries!.geoJson)}
         style={{width: "100%", height: "100%"}}
         mapStyle={mapstyle as StyleSpecification}>
-          <Source id="route"  type="geojson" data={mapGeoJsonDataState}>
-            <Layer {...layerStyle} />
-          </Source>
+
+          <MapRoutes mapRoutesDataState={routeDataState!}/>
           <Source id="pois"  type="geojson" data={poisGeoJson}>
             <Layer {...PoiLayerStyle} />
           </Source>
    
           <VehicleMarkersLayer vehiclePositions={VehiclePositionsState} />
 
-
-          {routeStopsPosState.map((routestop, idx) =>
+          {routeGeometriesState?.flatMap(routeGeometry => routeGeometry.stops).map((routestop, idx) =>
               <Marker key={idx} latitude={routestop[0]} longitude={routestop[1]} anchor='center'>
                 <div className={PysakkiMapStyle.singleStop}></div>
               </Marker>   
@@ -440,9 +332,10 @@ const updateMap = () => {
             </div>
           </Marker>
 
-
           {routeEndStopMarkers}
-          <Marker opacity={0.8} latitude={data.stop!.geometries?.geoJson.coordinates[1]} longitude={data.stop!.geometries?.geoJson.coordinates[0]} color={"black"} />
+
+          {/* stop marker */}
+          <Marker opacity={0.8} latitude={queryData.stop!.geometries?.geoJson.coordinates[1]} longitude={queryData.stop!.geometries?.geoJson.coordinates[0]} color={"black"} />
 
 
       </MapLibreMap>

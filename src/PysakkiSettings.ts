@@ -92,8 +92,6 @@ export const PysakkiSettings: PysakkiSettingsObj = {
         this.refreshRateSec = refreshRateSec ? refreshRateSec*1000 : defaultSettings.refreshRateSec*1000
         this.distanceFromStop = distanceFromStop ? distanceFromStop : defaultSettings.distanceFromStop
 
-        console.log(refreshRateSec ? true: false)
-
         if(!refreshRateSec && !stopId) {
             console.log ("Settings missing, using default values. Apply settings using /?id=<STOP_ID>&refreshRateSec=<REFRESH_RATE_IN_SECONDS>")
             this.refreshRateSec = defaultSettings.refreshRateSec * 1000
