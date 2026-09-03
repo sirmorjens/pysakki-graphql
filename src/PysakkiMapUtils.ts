@@ -165,6 +165,11 @@ export const updateMapBounds = (mapRef: MapRef, routeGeometries: RouteGeometry[]
     if(!routeGeometries) return
     if(!mapRef) return
 
+    /*
+        todo implement distance calculation that
+        will optimize map zooming when end stops are all nearby
+    */
+
     const marginAroundFeature = 0.015 // arbitrary number to create space around the outmost end stop marker so it won't be cropped
     // bbox object from routes
     const routeBounds = turf.bbox(turf.lineString([
@@ -172,7 +177,7 @@ export const updateMapBounds = (mapRef: MapRef, routeGeometries: RouteGeometry[]
       ...Array.from( endPointCoordinates ).flatMap(([, value]) => {return value.properties!.isCropped ? [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]]] : [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+marginAroundFeature]]}),
     ]))
     // bbox from stop coords with 2km buffer around it
-    const stopBounds = turf.bbox(turf.buffer(( stopPosition /*data!.stop!.geometries!.geoJson!*/), 2, {steps: 8, units: "kilometers"})!)
+    const stopBounds = turf.bbox(turf.buffer(( stopPosition /*data!.stop!.geometries!.geoJson!*/), 0.5, {steps: 8, units: "kilometers"})!)
 
     /// combine these into one bbox to which map will be zoomed
     const displayedBounds = turf.bbox(turf.combine(turf.featureCollection([turf.bboxPolygon(stopBounds), turf.bboxPolygon(routeBounds)])))
