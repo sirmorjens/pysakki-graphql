@@ -138,10 +138,10 @@ const x_routeNominalColorPalette: string[] = [
 const routeNominalStyle: {color: string, width: number}[] = [
 {
     color: "rgb(0, 0, 0)",
-    width: 1,
+    width: 2,
 },
 {
-    color: "rgb(139, 139, 139)",
+    color: "rgb(102, 102, 102)",
     width: 3,
 }
 ]
