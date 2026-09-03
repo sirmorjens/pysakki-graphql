@@ -12,7 +12,7 @@ if(!modeParam || !(modeParam == "dev" || modeParam == "prod")) throw("This is no
 
 import fs from 'fs'
 import path from 'node:path'
-import { exit, loadEnvFile } from 'node:process';
+import { loadEnvFile } from 'node:process';
 
 const tilesFilename = "MapTiles.json"
 const tilesDirPath = 'public/Map';
@@ -21,13 +21,6 @@ const tilesFilePath = path.join(tilesDirPath, tilesFilename);
 const styleFilename = "pysakki_mapstyle.json"
 const styleDirPath = 'src/Map';
 const styleFilePath = path.join(styleDirPath, styleFilename);
-
-loadEnvFile(".env.deploymentUrl")
-
-const {DEPLOY_PATH, DEPLOY_URL} = process.env
-const tilesFolderPath = "Tiles/20260520_001001_pt/{z}/{x}/{y}.pbf"
-const deployTilesUrl = path.join(DEPLOY_URL, "Map", tilesFolderPath)
-const deployStyleUrl = path.join(DEPLOY_PATH, "Map", tilesFilename)
 
 // Ensure the public directory exists
 if (!fs.existsSync(tilesDirPath) || !fs.existsSync(styleDirPath)) {
@@ -42,8 +35,8 @@ if (fs.existsSync(tilesFilePath) && fs.existsSync(styleFilePath)) {
     const styleData = fs.readFileSync(styleFilePath, 'utf8');
     const MapStyleData = JSON.parse(styleData);
     
-    const {devTiles, prodTiles} = MapTilesData;
-    const {devUrl, prodUrl} = MapStyleData.sources.openmaptiles;
+    const {devTiles} = MapTilesData;
+    const {devUrl} = MapStyleData.sources.openmaptiles;
 
     switch(modeParam) {
       case "dev": 
@@ -52,6 +45,20 @@ if (fs.existsSync(tilesFilePath) && fs.existsSync(styleFilePath)) {
         break;
 
       case "prod":
+
+        try {
+          loadEnvFile(".env.deploymentUrl")
+        }
+        catch (e) {
+          console.log("Try running ./upload.sh to build")
+          process.exit(-1)
+        }
+        
+        const {DEPLOY_PATH, DEPLOY_URL} = process.env
+        const tilesFolderPath = "Tiles/20260520_001001_pt/{z}/{x}/{y}.pbf"
+        const deployTilesUrl = path.join(DEPLOY_URL, "Map", tilesFolderPath)
+        const deployStyleUrl = path.join(DEPLOY_PATH, "Map", tilesFilename)
+        
         MapStyleData.sources.openmaptiles.prodUrl = deployStyleUrl;
         MapStyleData.sources.openmaptiles.url = deployStyleUrl;
         MapTilesData.prodTiles = deployTilesUrl
