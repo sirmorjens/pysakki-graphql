@@ -34,9 +34,10 @@ type Props = {
   patternsLookUp?: {
     [route: string]: PatternStopTime[]
   }
+  rowNo?: number;
 };
 
-export default function Stoptime({rowdata, patternsLookUp}: Props) {
+export default function Stoptime({rowdata, patternsLookUp, rowNo}: Props) {
     
     // jos tyhjä ruutu, ei tehdä juuri mitän
 
@@ -135,7 +136,7 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
                     {destinationTxt.length > MAX_DESTINATION_LETTERS.destination ? // jos pitkä teksti ja katkaistaan, laitetaan pisteet perään
                     "..." : ""} 
                     { // jos liian pitkä osoite, ei laiteta via tekstiä
-                        destinationTxt.length < Math.ceil( MAX_DESTINATION_LETTERS.withViaTxt ) &&
+                        destinationTxt.length < Math.ceil(  /* when is defined but 0 :-( */ typeof(rowNo) === 'number' && (rowNo == 0 || rowNo < 2) ? MAX_DESTINATION_LETTERS.withLargeViaTxt : MAX_DESTINATION_LETTERS.withViaTxt ) &&
                         viaTxt != null ? 
                         <span>
                             via <span className="viaDests">{viaTxt.slice(0, MAX_DESTINATION_LETTERS.viaTxt)}</span>

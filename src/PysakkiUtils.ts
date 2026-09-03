@@ -1,5 +1,7 @@
 import type { AlertSeverityLevelType } from "./__generated__/AlertsFragment.graphql";
+import { PysakkiSettings } from "./PysakkiSettings";
 
+PysakkiSettings.loadSettingsClient()
 // rowdata voi olla joko alertrivi 
 // tai stoptime rivi
 export type RowData = {
@@ -34,15 +36,16 @@ export type StopTime = any /* generate type with graphql codegen */
 
 // max letters limit for destination
 export const MAX_DESTINATION_LETTERS = {
-    destination: 30,
-    withViaTxt: 12,
-    viaTxt: 18,
+    destination: PysakkiSettings.aspect ? 40 : 30,
+    withLargeViaTxt: PysakkiSettings.aspect ? 15 : 10,
+    withViaTxt: PysakkiSettings.aspect ? 20 : 14,
+    viaTxt: 20,
 }
 
 // max letters before line split
 const ALERT_MAX_LETTERS_PER_ROW = {
-    'STOPALERT': 60,
-    'STOPALERT_HEADING': 54,
+    'STOPALERT': PysakkiSettings.aspect ? 80 : 55,
+    'STOPALERT_HEADING': PysakkiSettings.aspect ? 58 : 54,
     'ROUTEALERT': 48,
 };
 
