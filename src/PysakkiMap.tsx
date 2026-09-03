@@ -231,18 +231,18 @@ export default function PysakkiMap({queryData}: Props) {
     routeEndStopMarkers = []
 
     // push endpoints into markers
-    endPointCoordinates.forEach((endPoint) => 
+    endPointCoordinates.forEach((endPoint, index) => 
       endPoint.properties!.isCropped ? null /* don't output endpoint marker for route that is cropped */ :  
       routeEndStopMarkers.push(
-        <Marker
+        <Marker key={index}
         latitude={endPoint.coords[0]}
         longitude={endPoint.coords[1]}
         anchor='bottom'
         offset={[0,0]}>
-          <div className={[PysakkiMapStyle.routeEndPoint, false  /* kesken */  ? "" : PysakkiMapStyle.destination].join(" ")}>
+          <div key={index} className={[PysakkiMapStyle.routeEndPoint, false  /* kesken */  ? "" : PysakkiMapStyle.destination].join(" ")}>
             <div className={PysakkiMapStyle.label + " " + PysakkiMapStyle.alt + " " + (endPoint.properties?.isCropped && PysakkiMapStyle.isCropped)}>
-              {endPoint.labels.map((label) =>   
-                <div>{label}</div>
+              {endPoint.labels.map((label, index) =>   
+                <div key={index}>{label}</div>
               )}
             </div>
             <div className={PysakkiMapStyle.stem}></div>
