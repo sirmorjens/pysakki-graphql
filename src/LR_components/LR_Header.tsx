@@ -3,9 +3,10 @@ import LRstyle from './Styles/LRstyle.module.css'
 import { PysakkiSettings } from "../PysakkiSettings";
 import { useState, useEffect } from "react";
 import type { AppQuery$data } from "../__generated__/AppQuery.graphql";
+import { nowInLahti } from '../PysakkiUtils';
 
 export const returnCurrentTimeAsString = (): string => {
-    const date = new Date();
+    const date = nowInLahti();
     return `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`
 }
 
