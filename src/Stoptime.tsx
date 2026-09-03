@@ -23,8 +23,7 @@ function InfoSign () {
 
     const arrivalTimeToString = (pattern: PatternStopTime): string => {
         const time = new Date( (pattern.serviceDay + pattern.realtimeArrival) * 1000 )
-        console.log("Arrivaltime")
-        console.log(time.getTime())
+
         return `${time.getHours().toString().padStart(2,"0")}:${time.getMinutes().toString().padStart(2,"0")} `
     }
 
@@ -88,8 +87,6 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
     // nowInLahti is an utility function to get timezone specific time
     const currentTimeStamp = nowInLahti().getTime();
 
-    console.log("Current:")
-    console.log(currentTimeStamp)
     const isRealTime: boolean = rowdata.StopTime.realtime ? true : false
     const arrivalTime = nowInLahti( ( (rowdata.StopTime.serviceDay ?? 0) + (isRealTime ? rowdata.StopTime.realtimeArrival : rowdata.StopTime.scheduledArrival)) * 1000 )
 
