@@ -152,7 +152,6 @@ export default function Pysakki( {queryData}: Props )
     }
 
 
-    console.log(displayTimetableRows)
 
     // iteroidaan patternit lookup-taulukkoon josta haku linjan nimellä tms
     data.stop!.stoptimesForPatterns?.forEach(stoptimeForPattern => {
