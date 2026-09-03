@@ -7,6 +7,7 @@ import currentBuild from '../public/build.json'
 export type PysakkiSettingsObj = {
     refreshRateSec: number;
     stopId: string;
+    offsetMinutes: number;
     lastBuildNo: number;
     distanceFromStop: number;
     versionLoadIntervalId: number;
@@ -19,6 +20,7 @@ const defaultSettings = {
     refreshRateSec: 30,
     stopId: "Lahti:504826",
     distanceFromStop: 8.5,
+    offsetMinutes: 1,
 }
 const settingsFilePath = "./settings.json" // WIP
 const versionIdPath = "./build.json" // WIP
@@ -41,6 +43,7 @@ export const PysakkiSettings: PysakkiSettingsObj = {
     refreshRateSec: 30,
     stopId: "",
     lastBuildNo: currentBuild.build,
+    offsetMinutes: 1,
     versionLoadIntervalId: 0,
     distanceFromStop: 8.5,
     loadSettingsFromJSON: async (): Promise<PysakkiSettingsObj> => {
@@ -88,9 +91,13 @@ export const PysakkiSettings: PysakkiSettingsObj = {
         const refreshRateSec = parseInt ( settingsInPathParams.get("refreshRateSec") ?? "" ); 
         const stopId = settingsInPathParams.get("id") ?? "";
         const distanceFromStop = Number( settingsInPathParams.get("distanceFromStop")) ?? "";
+        const offsetMinutes = Number( settingsInPathParams.get("offsetMinutes")) ?? "";
+               
+        
         this.stopId = stopId ? stopId : defaultSettings.stopId;
         this.refreshRateSec = refreshRateSec ? refreshRateSec*1000 : defaultSettings.refreshRateSec*1000
         this.distanceFromStop = distanceFromStop ? distanceFromStop : defaultSettings.distanceFromStop
+        this.offsetMinutes = offsetMinutes ? offsetMinutes : defaultSettings.offsetMinutes
 
         if(!refreshRateSec && !stopId) {
             console.log ("Settings missing, using default values. Apply settings using /?id=<STOP_ID>&refreshRateSec=<REFRESH_RATE_IN_SECONDS>")
