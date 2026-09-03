@@ -1,4 +1,5 @@
-import { MAX_DESTINATION_LETTERS, type RowData, type PatternStopTime, type AlertData } from "./PysakkiUtils";
+import { PysakkiSettings } from "./PysakkiSettings";
+import { MAX_DESTINATION_LETTERS, nowInLahti, type RowData, type PatternStopTime, type AlertData } from "./PysakkiUtils";
 
 function WarningSign () {
     return (
@@ -22,9 +23,12 @@ function InfoSign () {
 
     const arrivalTimeToString = (pattern: PatternStopTime): string => {
         const time = new Date( (pattern.serviceDay + pattern.realtimeArrival) * 1000 )
-
+        console.log("Arrivaltime")
+        console.log(time.getTime())
         return `${time.getHours().toString().padStart(2,"0")}:${time.getMinutes().toString().padStart(2,"0")} `
     }
+
+
 
 type Props = {
   rowdata: RowData /* run graphql codegen and include other possible types */;
@@ -69,18 +73,28 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
         )
     }
 
+
+
     // jos aikatauluruutu, tämä koodi ajetaan
+
+    // adjust minutes offset (say bus leaves when display still shows 1 min remaining)
+    // negative numbers 1->5 = time is 5 mins less (5 minutes earlier than data)
+    const offsetMinutes = PysakkiSettings.offsetMinutes
 
     const patterns = patternsLookUp![rowdata.StopTime.trip!.routeShortName!].slice(1).map(ptr => arrivalTimeToString(ptr) );
 
     const minutesVsHHMMThreshold = 1000 * 60 * 10 // arrivals inside ten minutes displayed as minutes
 
-    const currentTimeStamp = Date.now();
+    // nowInLahti is an utility function to get timezone specific time
+    const currentTimeStamp = nowInLahti().getTime();
+
+    console.log("Current:")
+    console.log(currentTimeStamp)
     const isRealTime: boolean = rowdata.StopTime.realtime ? true : false
-    const arrivalTime = new Date( ( (rowdata.StopTime.serviceDay ?? 0) + (isRealTime ? rowdata.StopTime.realtimeArrival : rowdata.StopTime.scheduledArrival)) * 1000 )
+    const arrivalTime = nowInLahti( ( (rowdata.StopTime.serviceDay ?? 0) + (isRealTime ? rowdata.StopTime.realtimeArrival : rowdata.StopTime.scheduledArrival)) * 1000 )
 
     const [hours, minutes] = [arrivalTime.getHours(), arrivalTime.getMinutes()]
-    const minutesLeft: number | null = (arrivalTime.getTime() - currentTimeStamp) < minutesVsHHMMThreshold ? Math.floor( ( (arrivalTime.getTime() - currentTimeStamp) / 1000 / 60) - 1) : null
+    const minutesLeft: number | null = (arrivalTime.getTime() - currentTimeStamp) < minutesVsHHMMThreshold ? Math.floor( ( (arrivalTime.getTime() - currentTimeStamp) / 1000 / 60) - offsetMinutes) : null
 
     const timeTxt: string = minutesLeft != null ? 
         `${Math.max(minutesLeft, 0)}` : 

@@ -46,6 +46,14 @@ const ALERT_MAX_LETTERS_PER_ROW = {
     'ROUTEALERT': 48,
 };
 
+// wacky timezones make this a lot of fun
+export const nowInLahti = (timestamp?: number): Date => {
+    if (timestamp) {
+        return new Date( new Date(timestamp).toLocaleString("en-US", {timeZone: "Europe/Helsinki"}) )
+    }
+    return new Date( new Date().toLocaleString("en-US", {timeZone: "Europe/Helsinki"}) )
+}
+
 export const printAlertDataToRows = (alertObj: AlertData, RowType: 'STOPALERT' | 'ROUTEALERT'): RowData[] => {
 
     // Inject test words to test row length
