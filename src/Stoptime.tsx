@@ -91,6 +91,7 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
         rowdata.StopTime.headsign!.split(" via ").length > 1 ? rowdata.StopTime.headsign!.split(" via ").slice(-1).join().split(" - ").join(", ") : null
     ]
 
+
     const isCanceled = rowdata.StopTime!.realtimeState === 'CANCELED'
 
     return (
@@ -122,6 +123,7 @@ export default function Stoptime({rowdata, patternsLookUp}: Props) {
                     
                 <p className="time">
                     {isRealTime ? "" : <span>~</span>}
+                    {rowdata.StopTime.timezone}
                     {timeTxt} {minutesLeft == null ? "" : <span className="min">min</span>}
                 </p>
                 

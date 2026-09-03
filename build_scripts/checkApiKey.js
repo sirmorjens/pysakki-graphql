@@ -1,5 +1,3 @@
-import fs from 'fs'
-import path from 'node:path'
 import { loadEnvFile } from 'node:process'
 
 const apiKeyCheckFail = () => {
