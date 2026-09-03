@@ -77,6 +77,18 @@ export default function Pysakki( {queryData}: Props )
         }
     })
 
+    // jos pysäkillä alle 13 lähtöä (tyypillistä kaukaisilla pysäkeillä) täytetään tyhjillä riveillä
+    
+    // nyt hard coded numbers, muista joskus tehdä asialle jotain
+    if(displayTimetableRows.length < 13)
+    {
+        const rowsToAddQty = 13-displayTimetableRows.length
+        
+        for(let i = 0; i<rowsToAddQty; i++)
+        {
+            displayTimetableRows.push({RowType: "EMPTY"})
+        }
+    }
 
     // pysäkin häiriöt
     if(data.stop?.alerts) 
@@ -139,6 +151,8 @@ export default function Pysakki( {queryData}: Props )
             nextDeparturesInPattern[routeName].push( stoptime as PatternStopTime )
         })
     })
+
+
 
     return ( 
         <div className="stopRows">

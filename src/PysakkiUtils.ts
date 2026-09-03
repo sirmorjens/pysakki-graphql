@@ -3,7 +3,7 @@ import type { AlertSeverityLevelType } from "./__generated__/AlertsFragment.grap
 // rowdata voi olla joko alertrivi 
 // tai stoptime rivi
 export type RowData = {
-    RowType: 'STOPALERT' | 'ROUTEALERT' | 'STOPTIME'
+    RowType: 'STOPALERT' | 'ROUTEALERT' | 'STOPTIME' | 'EMPTY';
     Alert?: AlertRowData | null;
     StopTime?: StopTime
 }

@@ -38,6 +38,18 @@ type Props = {
 
 export default function Stoptime({rowdata, patternsLookUp}: Props) {
     
+    // jos tyhjä ruutu, ei tehdä juuri mitän
+
+    if( rowdata.RowType === 'EMPTY')
+    {
+        return (
+            <div className="stopRow">
+                <p className="route"></p>
+                <p className="destination"></p>
+            </div>
+        )
+    }
+
 
     // jos alert ruutu, palautetaan rivi ja lopetetaan ajoissa
 
