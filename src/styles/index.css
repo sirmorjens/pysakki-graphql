@@ -49,7 +49,7 @@
 }
 
 #root {
-  flex: 0 0 58.82vh;
+  flex: 0 0 56.25vh;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -63,6 +63,11 @@
   aspect-ratio: 9/16;
   overflow: hidden;
 }
+/* vertical 4:3 screen */
+#root.aspectRatio43 {
+  flex: 0 0 75vh; 
+}
+
 body {
   margin: 0;
   padding: 0;

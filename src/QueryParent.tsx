@@ -14,9 +14,6 @@ const queryData: {
 
 export default function QueryParent () {
 
-  // initiate pysäkkisettings
-  PysakkiSettings.loadSettingsClient();
-
   const [refreshedQueryOptions, setRefreshedQueryOptions] = useState({fetchKey: 0});
 
   const refresh = () => {

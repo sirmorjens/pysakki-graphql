@@ -4,7 +4,7 @@ import App from './App.tsx'
 import { RelayEnvironmentProvider } from "react-relay";
 import { Environment, Network, Store, RecordSource } from "relay-runtime";
 import type { FetchFunction } from "relay-runtime";
-
+import { PysakkiSettings } from './PysakkiSettings.ts';
 const HTTP_ENDPOINT = "https://api.digitransit.fi/routing/v2/waltti/gtfs/v1";
 
 const fetchGraphQL: FetchFunction = async (request, variables) => {
@@ -28,11 +28,17 @@ const fetchGraphQL: FetchFunction = async (request, variables) => {
     return {error: "Error"}
   }
 };
+PysakkiSettings.loadSettingsClient()
+const aspect = PysakkiSettings.aspect;
+
 
 const environment = new Environment({
   network: Network.create(fetchGraphQL),
   store: new Store(new RecordSource())
 });
+
+// set aspect ratio of root element for vertical 4:3 screen
+if (aspect) document.getElementById("root")?.classList.add("aspectRatio43");
 
 createRoot(document.getElementById("root")!).render(
 
