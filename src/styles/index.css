@@ -17,7 +17,8 @@
   --lightbg: #fdfdfd;
   --canceledbg: #dfdfdf;
   --canceledTxt: rgb(12, 12, 12);
-
+  --nextDayBg: #dadada;
+  --nextDayText: #151515;
   color: #000000;
   background: #ffffff;
   font-synthesis: none;
@@ -317,4 +318,8 @@ div.mapContainer.error.noBorder {
   font-weight: 600;
   font-size: var(--mm20);
   text-align: center;
+}
+div.stopRow.nextDayService {
+  background: var(--nextDayBg);
+  color: var(--nextDayText);
 }

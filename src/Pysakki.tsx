@@ -3,6 +3,7 @@ import type { PysakkiTimesInPatternFragment$key } from "./__generated__/PysakkiT
 import Stoptime from "./Stoptime";
 import { printAlertDataToRows, type AlertData, type RowData, type StopTime, type PatternStopTime } from "./PysakkiUtils";
 import type { QueryParentQuery$data } from "./__generated__/QueryParentQuery.graphql";
+import { serviceDayWatch } from "./serviceDayState";
 
 const StopNotFound = () => {
 
@@ -102,8 +103,8 @@ export default function Pysakki( {queryData}: Props )
 
     data.stop!.stoprows!.forEach(stoptime => {
      ///* debug with fake data */ fakeTimeTables.forEach(stoptime => { 
-        
-        displayTimetableRows.push({RowType: 'STOPTIME', StopTime: stoptime})
+    
+        displayTimetableRows.push({RowType: 'STOPTIME', StopTime: {...stoptime, nextDay: serviceDayWatch.isNextServiceDay( stoptime!.serviceDay )}})
 
         // jos rivillä myös alertteja
         if(stoptime?.trip?.alerts)

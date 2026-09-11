@@ -119,7 +119,7 @@ export default function Stoptime({rowdata, patternsLookUp, rowNo}: Props) {
     const isCanceled = rowdata.StopTime!.realtimeState === 'CANCELED'
 
     return (
-        <div className={"stopRow " + (isCanceled ? "canceled " : "") + (rowdata.StopTime.trip?.alerts?.length ? "alerted " : "") + (rowdata.StopTime.trip?.alerts?.length && rowdata.StopTime.trip?.alerts?.some((alert: AlertData) => alert.alertSeverityLevel == 'SEVERE') ? "SEVERE " : "")}>
+        <div className={"stopRow " + (isCanceled ? "canceled " : "") + (rowdata.StopTime.nextDay ? "nextDayService " : "") + (rowdata.StopTime.trip?.alerts?.length ? "alerted " : "") + (rowdata.StopTime.trip?.alerts?.length && rowdata.StopTime.trip?.alerts?.some((alert: AlertData) => alert.alertSeverityLevel == 'SEVERE') ? "SEVERE " : "")}>
             
             <p className={"route " + (rowdata.StopTime.trip?.routeShortName.length > 2 ? "longRouteName" : "") /* longer routenames get smaller display size */}>
 
