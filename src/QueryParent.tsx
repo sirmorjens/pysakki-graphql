@@ -113,7 +113,7 @@ export default function QueryParent () {
       }
     `,
     // tähän pysäkin gtfsID (eg. "Lahti:103641", "Lahti:104167") lähtöjen määrä, häiriöiden kieli (fi, en, sv), näytetäänkö perutut vuorot (false = näytetään) ja mistä asti vuorot haetaan (testaamiseen, pitäisi aina olla 0 eli nykyinen)
-    {"id": PysakkiSettings.stopId, "departuresQty": 13, "mapDeparturesQty": 2, "omitCanceled": false, "inPatternDeparturesQty": 3, "lang": "fi"},
+    {"id": PysakkiSettings.stopId, "departuresQty": PysakkiSettings.rowQty, "mapDeparturesQty": 2, "omitCanceled": false, "inPatternDeparturesQty": 3, "lang": "fi"},
     refreshedQueryOptions ?? {}
   );
 

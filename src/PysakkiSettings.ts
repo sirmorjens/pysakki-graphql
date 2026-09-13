@@ -10,6 +10,7 @@ export type PysakkiSettingsObj = {
     offsetMinutes: number;
     lastBuildNo: number;
     aspect: number;
+    rowQty: number;
     distanceFromStop: number;
     versionLoadIntervalId: number;
     loadVersionInfo: () => Promise<void>;
@@ -23,6 +24,7 @@ const defaultSettings = {
     distanceFromStop: 8.5,
     offsetMinutes: 1,
     aspect: 0,
+    rowQty: 11,
 }
 const settingsFilePath = "./settings.json" // WIP
 const versionIdPath = "./build.json" // WIP
@@ -48,6 +50,7 @@ export const PysakkiSettings: PysakkiSettingsObj = {
     offsetMinutes: 1,
     versionLoadIntervalId: 0,
     aspect: 0,
+    rowQty: 11,
     distanceFromStop: 8.5,
     loadSettingsFromJSON: async (): Promise<PysakkiSettingsObj> => {
         const response = await fetch( settingsFilePath )
@@ -96,13 +99,15 @@ export const PysakkiSettings: PysakkiSettingsObj = {
         const distanceFromStop = Number( settingsInPathParams.get("distanceFromStop")) ?? "";
         const offsetMinutes = Number( settingsInPathParams.get("offsetMinutes")) ?? "";
         const aspect = Number( settingsInPathParams.get("aspect") ) ?? 0;
-        
+        const rowQty = Number( settingsInPathParams.get("rowQty") ) ?? 0;
+                
         this.stopId = stopId ? stopId : defaultSettings.stopId;
         this.refreshRateSec = refreshRateSec ? refreshRateSec*1000 : defaultSettings.refreshRateSec*1000
         this.distanceFromStop = distanceFromStop ? distanceFromStop : defaultSettings.distanceFromStop
         this.offsetMinutes = offsetMinutes ? offsetMinutes : defaultSettings.offsetMinutes
         this.aspect = aspect == 1 ? 1 : defaultSettings.aspect
-        
+        this.rowQty = rowQty ? rowQty : defaultSettings.rowQty
+
         if(!refreshRateSec && !stopId) {
             console.log ("Settings missing, using default values. Apply settings using /?id=<STOP_ID>&refreshRateSec=<REFRESH_RATE_IN_SECONDS>")
             this.refreshRateSec = defaultSettings.refreshRateSec * 1000

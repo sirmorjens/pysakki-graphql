@@ -4,6 +4,7 @@ import Stoptime from "./Stoptime";
 import { printAlertDataToRows, type AlertData, type RowData, type StopTime, type PatternStopTime } from "./PysakkiUtils";
 import type { QueryParentQuery$data } from "./__generated__/QueryParentQuery.graphql";
 import { serviceDayWatch } from "./serviceDayState";
+import { PysakkiSettings } from "./PysakkiSettings";
 
 const StopNotFound = () => {
 
@@ -118,9 +119,9 @@ export default function Pysakki( {queryData}: Props )
     // jos pysäkillä alle 13 lähtöä (tyypillistä kaukaisilla pysäkeillä) täytetään tyhjillä riveillä
     
     // nyt hard coded numbers, muista joskus tehdä asialle jotain
-    if(displayTimetableRows.length < 13)
+    if(displayTimetableRows.length < PysakkiSettings.rowQty)
     {
-        const rowsToAddQty = 13-displayTimetableRows.length
+        const rowsToAddQty = PysakkiSettings.rowQty-displayTimetableRows.length
         
         for(let i = 0; i<rowsToAddQty; i++)
         {

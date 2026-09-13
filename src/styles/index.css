@@ -7,6 +7,7 @@
   --mm20: 2.8vh;
   --mm22: 3.1vh;
   --mm25: 3.5vh;
+  --mm27: 3.85vh;
   --mm30: 4.2vh;
   --mm40: 5.6vh;
   --mm45: 6.3vh;
@@ -105,12 +106,11 @@ div.stopRow {
   justify-content: flex-start;
   align-items: center;
   margin: 0;
-  height: var(--mm22);
   border-bottom: 1px solid #000000bd;
   color: black;
   padding: 0vh 0.4vh 0vh 0.4vh;
   box-sizing: border-box;
-  height: var(--mm25);
+  height: var(--mm27);
 }
 
 div.alertRow {
