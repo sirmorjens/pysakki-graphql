@@ -1,5 +1,5 @@
 import type { Position, Feature, GeoJsonProperties, LineString } from 'geojson';
-import * as turf from '@turf/turf'
+import { combine, lineString, featureCollection, bboxPolygon, bbox as turfbbox, point, booleanContains, buffer } from '@turf/turf'
 import { PysakkiSettings } from './PysakkiSettings';
 import type { MapRef, LngLatBoundsLike } from '@vis.gl/react-maplibre';
 // @ts-expect-error - no types
@@ -14,12 +14,12 @@ const viewAreaoffsetInKms = PysakkiSettings.distanceFromStop // arbitrary number
 
 export const filterOutsideViewArea = (coords: Position, startingPoint: Position): Boolean => {
 
-    const bbox = turf.bbox( turf.buffer( turf.point( startingPoint ), viewAreaoffsetInKms)! )
-    const viewAreaBounds = turf.bboxPolygon( bbox );
+    const bbox = turfbbox( buffer( point( startingPoint ), viewAreaoffsetInKms)! )
+    const viewAreaBounds = bboxPolygon( bbox );
 
-    const stop = turf.point([coords[0], coords[1]])
+    const stop = point([coords[0], coords[1]])
     
-    return turf.booleanContains(viewAreaBounds, stop)
+    return booleanContains(viewAreaBounds, stop)
 }
 
 export const clampedToViewArea = (coords: Position): {
@@ -172,15 +172,15 @@ export const updateMapBounds = (mapRef: MapRef, routeGeometries: RouteGeometry[]
 
     const marginAroundFeature = 0.015 // arbitrary number to create space around the outmost end stop marker so it won't be cropped
     // bbox object from routes
-    const routeBounds = turf.bbox(turf.lineString([
+    const routeBounds = turfbbox(lineString([
       ...routeGeometries.reduce<Position[]>((rglist, rg) => {rglist.push(...(rg.geojson.geometry as LineString).coordinates);return rglist}, []),
       ...Array.from( endPointCoordinates ).flatMap(([, value]) => {return value.properties!.isCropped ? [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]]] : [[value.coords[1], value.coords[0]], [value.coords[1], value.coords[0]+marginAroundFeature]]}),
     ]))
     // bbox from stop coords with 2km buffer around it
-    const stopBounds = turf.bbox(turf.buffer(( stopPosition /*data!.stop!.geometries!.geoJson!*/), 0.5, {steps: 8, units: "kilometers"})!)
+    const stopBounds = turfbbox(buffer(( stopPosition /*data!.stop!.geometries!.geoJson!*/), 0.5, {steps: 8, units: "kilometers"})!)
 
     /// combine these into one bbox to which map will be zoomed
-    const displayedBounds = turf.bbox(turf.combine(turf.featureCollection([turf.bboxPolygon(stopBounds), turf.bboxPolygon(routeBounds)])))
+    const displayedBounds = turfbbox(combine(featureCollection([bboxPolygon(stopBounds), bboxPolygon(routeBounds)])))
 
     /*mapRefState*/ 
     mapRef.fitBounds(displayedBounds as LngLatBoundsLike, {linear: true, animate: false} )
