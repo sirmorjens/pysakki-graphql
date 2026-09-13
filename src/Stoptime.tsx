@@ -1,5 +1,6 @@
 import { PysakkiSettings } from "./PysakkiSettings";
 import { MAX_DESTINATION_LETTERS, nowInLahti, type RowData, type PatternStopTime, type AlertData } from "./PysakkiUtils";
+import RouteNumber from './RouteNumber'
 
 function WarningSign () {
     return (
@@ -123,7 +124,7 @@ export default function Stoptime({rowdata, patternsLookUp, rowNo}: Props) {
             
             <p className={"route " + (rowdata.StopTime.trip?.routeShortName.length > 2 ? "longRouteName" : "") /* longer routenames get smaller display size */}>
 
-                {rowdata.StopTime.trip?.routeShortName}
+                <RouteNumber route={rowdata.StopTime.trip?.routeShortName} />
 
                 { /* näytetään kolmio jos alertteja */ rowdata.StopTime.trip.alerts.length ? (
                     <WarningSign />

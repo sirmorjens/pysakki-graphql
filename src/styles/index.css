@@ -232,6 +232,17 @@ p.route {
   transform: translate(0vh, 5%) scale(1.1);
 
 }
+p.route span {
+  font-weight: 700;
+  font-size: var(--mm12);
+  margin-left: 0.2vh;
+}
+.stopRow:nth-child(1) p.route span, .stopRow:nth-child(2) p.route span {
+  font-weight: 700;
+  margin-left: 0.3vh;
+  font-size: var(--mm20);
+}
+
 p.time {
   font-family: 'Inter Variable', sans-serif;
   font-weight: 700;
