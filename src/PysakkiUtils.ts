@@ -37,15 +37,15 @@ export type StopTime = any /* generate type with graphql codegen */
 // max letters limit for destination
 export const MAX_DESTINATION_LETTERS = {
     destination: PysakkiSettings.aspect ? 40 : 30,
-    withLargeViaTxt: PysakkiSettings.aspect ? 15 : 10,
-    withViaTxt: PysakkiSettings.aspect ? 20 : 14,
+    withLargeViaTxt: PysakkiSettings.d13 ? 6 : PysakkiSettings.aspect ? 15 : 10, // how long two first row destination has to be for via text to be cut out (eg. 7 => Kiveriö via Mukkula, Myyntimiehenkatu - (no via txt))
+    withViaTxt: PysakkiSettings.d13 ? 12 : PysakkiSettings.aspect ? 20 : 14,
     viaTxt: 20,
 }
 
 // max letters before line split
 const ALERT_MAX_LETTERS_PER_ROW = {
-    'STOPALERT': PysakkiSettings.aspect ? 80 : 55,
-    'STOPALERT_HEADING': PysakkiSettings.aspect ? 58 : 54,
+    'STOPALERT': PysakkiSettings.d13? 64 : PysakkiSettings.aspect ? 80 : 55,
+    'STOPALERT_HEADING': PysakkiSettings.d13 ? 35 : PysakkiSettings.aspect ? 58 : 54,
     'ROUTEALERT': 48,
 };
 

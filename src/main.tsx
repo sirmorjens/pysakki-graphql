@@ -30,7 +30,7 @@ const fetchGraphQL: FetchFunction = async (request, variables) => {
 };
 PysakkiSettings.loadSettingsClient()
 const aspect = PysakkiSettings.aspect;
-
+const d13 = PysakkiSettings.d13;
 
 const environment = new Environment({
   network: Network.create(fetchGraphQL),
@@ -39,6 +39,9 @@ const environment = new Environment({
 
 // set aspect ratio of root element for vertical 4:3 screen
 if (aspect) document.getElementById("root")?.classList.add("aspectRatio43");
+
+// set style for 13" display if d13-flag set
+if (d13) document.getElementById("root")?.classList.add("inch13Display");
 
 createRoot(document.getElementById("root")!).render(
 

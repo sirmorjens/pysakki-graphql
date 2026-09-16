@@ -11,6 +11,8 @@ export type PysakkiSettingsObj = {
     lastBuildNo: number;
     aspect: number;
     rowQty: number;
+    d13: number;
+    d13rowQty: number; // amount of rows in smaller, 13 inch screen
     distanceFromStop: number;
     versionLoadIntervalId: number;
     loadVersionInfo: () => Promise<void>;
@@ -24,6 +26,8 @@ const defaultSettings = {
     distanceFromStop: 8.5,
     offsetMinutes: 1,
     aspect: 0,
+    d13: 0,
+    d13rowQty: 9,
     rowQty: 11,
 }
 const settingsFilePath = "./settings.json" // WIP
@@ -50,6 +54,8 @@ export const PysakkiSettings: PysakkiSettingsObj = {
     offsetMinutes: 1,
     versionLoadIntervalId: 0,
     aspect: 0,
+    d13: 0,
+    d13rowQty: 7,
     rowQty: 11,
     distanceFromStop: 8.5,
     loadSettingsFromJSON: async (): Promise<PysakkiSettingsObj> => {
@@ -100,13 +106,22 @@ export const PysakkiSettings: PysakkiSettingsObj = {
         const offsetMinutes = Number( settingsInPathParams.get("offsetMinutes")) ?? "";
         const aspect = Number( settingsInPathParams.get("aspect") ) ?? 0;
         const rowQty = Number( settingsInPathParams.get("rowQty") ) ?? 0;
-                
+        const d13 = Number( settingsInPathParams.get("d13") ) ?? 0;  
+
+
         this.stopId = stopId ? stopId : defaultSettings.stopId;
         this.refreshRateSec = refreshRateSec ? refreshRateSec*1000 : defaultSettings.refreshRateSec*1000
         this.distanceFromStop = distanceFromStop ? distanceFromStop : defaultSettings.distanceFromStop
         this.offsetMinutes = offsetMinutes ? offsetMinutes : defaultSettings.offsetMinutes
         this.aspect = aspect == 1 ? 1 : defaultSettings.aspect
         this.rowQty = rowQty ? rowQty : defaultSettings.rowQty
+        this.d13 = d13 == 1 ? 1 : defaultSettings.d13
+
+        // jos d13 == 1, eli 13 tuuman näyttö, asetetaan muitakin asetuksia
+        if(d13) {
+            this.aspect = 1;
+            this.rowQty = this.d13rowQty;
+        }
 
         if(!refreshRateSec && !stopId) {
             console.log ("Settings missing, using default values. Apply settings using /?id=<STOP_ID>&refreshRateSec=<REFRESH_RATE_IN_SECONDS>")

@@ -35,8 +35,14 @@ export default function LR_Header ({queryData}: Props) {
     })
 
     
-    return (
+    return !PysakkiSettings.d13 ? (
         <div className={LRstyle.header}>
+            <div className={LRstyle.stopname}>{nimi}</div>
+            <div className={LRstyle.time}>{currentTime}</div>
+        </div>
+    ) : // if 13 inch screen
+    (
+        <div className={LRstyle.header13inch}>
             <div className={LRstyle.stopname}>{nimi}</div>
             <div className={LRstyle.time}>{currentTime}</div>
         </div>

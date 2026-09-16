@@ -3,13 +3,20 @@
   --mm9: 1.26vh;
   --mm10: 1.4vh;
   --mm12: 1.68vh;
+  --inch13mm12: 2.1vh;
   --mm15: 2.1vh;
+  --inch13mm15: 2.9vh;
+  --inch13mm25: 5.2vh;
   --mm20: 2.8vh;
   --mm22: 3.1vh;
+  --inch13mm22: 4vh;
   --mm25: 3.5vh;
   --mm27: 3.85vh;
+  --inch13mm27: 5.30vh;
   --mm30: 4.2vh;
+  --inch13mm30: 7.7vh;
   --mm40: 5.6vh;
+  --inch13mm40: 8vh;
   --mm45: 6.3vh;
   --mm50: 7vh;
   --mm60: 8.4vh;
@@ -145,6 +152,8 @@ div.stopRow:nth-child(1) p, div.stopRow:nth-child(2) p {
   font-size: var(--mm25);
 }
 
+
+
 div.stopRow:nth-child(1) p.longRouteName, div.stopRow:nth-child(2) p.longRouteName {
   font-size: var(--mm22);
 }
@@ -167,6 +176,7 @@ div.stopRow:nth-child(1) .warning, div.stopRow:nth-child(2) .warning {
   display: block;
   position: relative;
   height: 2.5vh;
+  margin-bottom: 0.5vh;
   margin-left: 0.2vh; /* idk why but it seems visually offset on black background */
 }
 
@@ -184,6 +194,91 @@ div.stopRow.canceled::after {
   height: 1px;
   border-bottom: 2px solid rgba(0, 0, 0, 0.75);
 }
+
+
+/* 13 inch display */
+
+.inch13Display div.stopRow {
+  height: var(--inch13mm27);
+}
+
+.inch13Display div.alertRow {
+  height: var(--mm25); 
+}
+
+.inch13Display .stopRow:nth-child(1), .inch13Display .stopRow:nth-child(2)  {
+  background: white;
+  height: var(--inch13mm40);
+}
+
+
+.inch13Display p {
+  font-size: var(--inch13mm15);
+}
+.inch13Display .stopRow:nth-child(1) p, .inch13Display div.stopRow:nth-child(2) p {
+  font-size: var(--inch13mm25);
+}
+
+.inch13Display .alertRow.SEVERE {
+  color: white;
+  background: black;
+  border-color: white;
+}
+.inch13Display .alertRow.SEVERE svg path  {
+  fill: white;
+}
+.inch13Display .stopRow.SEVERE {
+  color: white;
+  background: black;
+  border-color: white;
+}
+.inch13Display .stopRow.canceled.SEVERE {
+  color: white;
+  background: black;
+  border-color: white;
+}
+.inch13Display .stopRow.canceled.SEVERE::after {
+  border-color: white;
+}
+.inch13Display .stopRow.SEVERE span {
+  color: white;
+  background: black;
+}
+.inch13Display .stopRow.SEVERE .viaDests {
+  color: white;
+  background: black;
+}
+
+.inch13Display .destination.alert {
+  font-size: var(--inch13mm12);
+}
+.inch13Display .alert.routealert {
+  font-size: var(--inch13mm12);
+}
+
+.inch13Display p.route {
+  transform: translate(0vh, 5%) scale(1);
+
+}
+.inch13Display p.route span {
+  font-weight: 700;
+  font-size: var(--mm12);
+  margin-left: 0.2vh;
+}
+
+.inch13Display .destination span /* via Text */ {
+  font-size: var(--inch13mm12);
+}
+.inch13Display .stopRow:nth-child(1) p.destination span, .inch13Display .stopRow:nth-child(2) p.destination span {
+  font-size: var(--inch13mm12);
+}
+
+.inch13Display .stopRow:nth-child(1) p.route span, .inch13Display .stopRow:nth-child(2) p.route span {
+  font-size: var(--inch13mm25);
+}
+
+/* /13inchDisplay */
+
 p {
   padding: 0;
   font-family: 'Barlow', sans-serif;
@@ -191,6 +286,7 @@ p {
   text-align: left;
   margin: 0;
 }
+
 div.destination_time {
   flex: 1;
   display: flex;
@@ -204,7 +300,7 @@ p.destination {
   vertical-align: middle;
   
 }
-p.destination span {
+p.destination span /* via Text */ {
   margin: 0;
   padding: 0;
   font-size: var(--mm10);
@@ -266,6 +362,7 @@ p {
 }
 .alert.routealert {
   font-weight: 500;
+
   font-family: 'Inter Variable';
   margin-left: 0vh;
   font-size: var(--mm12);

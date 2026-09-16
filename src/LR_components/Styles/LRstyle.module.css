@@ -1,4 +1,4 @@
-.header {
+.header, .header13inch {
     width: 95%;
     display: flex;
     flex-direction: row;
@@ -7,14 +7,21 @@
     height: var(--mm30);
     border-bottom: 2px solid black;
 }
-.header div {
+.header13inch {
+    height: var(--inch13mm27);
+}
+.header div, .header13inch div {
     flex: 1;
     font-family: 'Barlow Semi Condensed';
     color: black;
     font-weight: 600;
     font-size: var(--mm20);
 }
-.header div.time {
+.header13inch div {
+    
+    font-size: var(--inch13mm22);
+}
+.header div.time, .header13inch div.time {
     font-family: 'Inter Variable';
     font-weight: 600;
     text-align: right;
@@ -35,7 +42,22 @@
     font-size: var(--mm12);;
 }
 
-.footer div.cta {
+.footer13inch {
+    flex: 0 0 var(--mm45);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 95%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Barlow';
+    color: black;
+    font-weight: 600;
+    
+}
+
+.footer div.cta, .footer13inch div.cta {
     flex: 1;
     height: 100%;
     display: flex;
@@ -44,7 +66,11 @@
     align-items: center;
     border-radius: 1vh;
 }
-.footer div.cta div {
+.footer13inch div.cta {
+    justify-content: center;
+    align-items: center;
+}
+.footer div.cta div, .footer13inch div.cta div {
     height: 100%;
     margin: 0;
     display: flex;
@@ -52,7 +78,7 @@
     justify-content: center;
     align-items: center;
 }
-.footer div.cta div p {
+.footer div.cta div p, .footer13inch div.cta div p {
     font-family: 'Barlow Semi Condensed';
     font-weight: 500;
     font-size: var(--mm9);
@@ -61,19 +87,37 @@
     padding: 0;
     vertical-align: middle;
 }
-.footer div.cta div img {
-    height: var(--mm20);
+.footer13inch div.cta div p {
+    line-height: var(--inch13mm15);
+    margin: var(--inch13mm15);
+}
+
+.footer div.cta div img, .footer13inch div.cta div img {
+    height: var(--mm30);
     margin: 0;
     margin-top: 0.25vh;
     padding: 0.4vh;
     border-radius: 0.7vh;
     border: 2px solid #00000060;
-    box-sizing: bo;
+    box-sizing: border-box;
+}
+.footer13inch div.cta div img {
+    height: var(--inch13mm30);
+}
+.footer13inch div.cta div img {
+    margin-top: 0.25vh;
 }
 .footer div.cta div p {
     font-size: var(--mm9);
     font-weight: 400;
 }
+.footer13inch div.cta div p {
+    font-size: var(--inch13mm12);
+    font-weight: 400;
+    margin-top: 2.5vh;
+}
+
+
 .footer div.logo {
     height: 100%;
     flex: 1;
