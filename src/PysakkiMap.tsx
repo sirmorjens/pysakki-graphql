@@ -12,7 +12,6 @@ import {
 import 'maplibre-gl/dist/maplibre-gl.css'; // See notes below
 import mapstyle from "./Map/pysakki_mapstyle.json"
 
-import { PersistentState } from './PersistentState';
 
 import {
   clampedToViewArea,
