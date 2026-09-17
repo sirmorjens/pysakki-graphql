@@ -331,6 +331,10 @@ div.mapContainer {
   justify-content: stretch;
   align-items: stretch;
 }
+
+div.mapContainer.withLegend {
+  position: relative;
+}
 .alertRow p.alertHeading {
   margin-left: 0;
   font-weight: 800;
@@ -457,3 +461,34 @@ div.stopRow.nextDayService {
 }
 
 /* /13inchDisplay */
+
+.legend {
+  position: absolute;
+  top: 1.2vh;
+  left: 1.2vh;
+  width: 7.2vh;
+  height: 5.5vh;
+  background: #ffffffaa;
+  border-radius: 1vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.legend .row {
+  flex: 1;
+  overflow: hidden;
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+}
+.legend .row div {
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin: 0 0.6vh 0 0.6vh;
+  padding: 0;
+}
