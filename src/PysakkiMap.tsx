@@ -241,7 +241,7 @@ export default function PysakkiMap({queryData}: Props) {
         longitude={endPoint.coords[1]}
         anchor='bottom'
         offset={[0,0]}>
-          <div key={index} className={[PysakkiMapStyle.routeEndPoint, false  /* kesken */  ? "" : PysakkiMapStyle.destination].join(" ")}>
+          <div key={index} className={[PysakkiMapStyle.routeEndPoint, PysakkiSettings.d13 ? PysakkiMapStyle.routeEndPoint13inch : "" , false  /* kesken */  ? "" : PysakkiMapStyle.destination].join(" ")}>
             <div className={PysakkiMapStyle.label + " " + PysakkiMapStyle.alt + " " + (endPoint.properties?.isCropped && PysakkiMapStyle.isCropped)}>
               {endPoint.labels.map((label, index) =>   
                 <div key={index}>{label}</div>
