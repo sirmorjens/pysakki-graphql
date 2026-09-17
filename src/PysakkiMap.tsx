@@ -12,8 +12,6 @@ import {
 import 'maplibre-gl/dist/maplibre-gl.css'; // See notes below
 import mapstyle from "./Map/pysakki_mapstyle.json"
 
-import { PersistentState } from './PersistentState';
-
 import {
   clampedToViewArea,
   roundedCoordsAsKey,
@@ -46,6 +44,8 @@ import type {
   GeoJsonProperties,
   Geometry,
 } from 'geojson';
+
+import MapLegend from './MapLegend'
 
 import { type ReactElement, useEffect, useState } from 'react';
 
@@ -297,7 +297,7 @@ export default function PysakkiMap({queryData}: Props) {
   const mapBoundsOffset = 0.055
 
   return (
-    <div className="mapContainer">
+    <div className={"mapContainer" + (PysakkiSettings.d13 ? " withLegend" : "")}>
       <MapLibreMap
         ref={setMapRef}
         reuseMaps={true}
@@ -339,8 +339,9 @@ export default function PysakkiMap({queryData}: Props) {
           {/* stop marker */}
           <Marker opacity={0.8} latitude={queryData.stop!.geometries?.geoJson.coordinates[1]} longitude={queryData.stop!.geometries?.geoJson.coordinates[0]} color={"black"} />
 
-
+          
       </MapLibreMap>
+      {PysakkiSettings.d13 ? <MapLegend /> : <></>}
     </div>
   );
 }

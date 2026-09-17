@@ -25,7 +25,18 @@
     justify-content: center;
     align-items: center;
 }
-.fillari img {
+.fillari13inch {
+    height: 2.7vh;
+    width: 2.7vh;
+    background: #ffffffae;
+    border: 1px solid grey;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.fillari img, .fillari13inch img {
     width: 90%;
     opacity: 1;
 }
@@ -128,5 +139,15 @@ div.routeEndPoint {
 .label.alt {
     color: black;
     background: #ffffffaf;
+    padding: 0;
+}
+.inch13Rentals {
+    width:0.6vh;
+    height: 0.6vh;
+    background-color: #90909060;
+    border: 0.1vh solid #00000060;
+    box-sizing: border-box;
+    border-radius: 50%;
+    margin: 0;
     padding: 0;
 }

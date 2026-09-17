@@ -6,6 +6,7 @@ import { useFragment, graphql } from "react-relay";
 import PysakkiMapStyle from './PysakkiMap.module.css'
 import fillari from "./assets/fillari.svg"
 import type { ReactElement } from "react";
+import { PysakkiSettings } from "./PysakkiSettings";
 
 type Props = {
     vehicleRentalsByBbox: RentalsMarkersRentalsFragment$key;
@@ -30,9 +31,14 @@ export default function RentalsMarkers ({vehicleRentalsByBbox}: Props): ReactEle
       {rentalsData.map ((rentalStation, idx) => 
       
         <Marker key={idx} latitude={rentalStation.lat!} longitude={rentalStation.lon!}>
-          <div className={PysakkiMapStyle.fillari}>
-            <img src={fillari} alt="Fillari" />
-          </div>
+          {!PysakkiSettings.d13 ? /* thirteen inch screen show dots + legend */
+            (
+              <div className={PysakkiMapStyle.fillari}>
+                <img src={fillari} alt="Fillari" /> 
+              </div>
+            ) : (
+                <div className={PysakkiMapStyle.inch13Rentals}></div>
+            )}
         </Marker>
         
       )}
