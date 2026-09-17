@@ -12,6 +12,8 @@ import {
 import 'maplibre-gl/dist/maplibre-gl.css'; // See notes below
 import mapstyle from "./Map/pysakki_mapstyle.json"
 
+import { PersistentState } from './PersistentState';
+
 import {
   clampedToViewArea,
   roundedCoordsAsKey,
@@ -156,6 +158,9 @@ export default function PysakkiMap({queryData}: Props) {
   // state definitions 
   const [VehiclePositionsState, setVehiclePositionsState] = useState<VehiclePositionItem[]>([]);
   const [mapRefState, setMapRef] = useState<MapRef | null>();
+
+  // init persistentState
+  PersistentState.test()
 
   if(!queryData) return <MapUnavailable />
 
