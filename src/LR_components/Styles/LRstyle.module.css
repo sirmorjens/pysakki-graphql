@@ -9,6 +9,7 @@
 }
 .header13inch {
     height: var(--inch13mm27);
+    margin-top: 2.2vh;
 }
 .header div, .header13inch div {
     flex: 1;

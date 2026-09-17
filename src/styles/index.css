@@ -2,12 +2,14 @@
   --mm3: 0.46vh;
   --mm9: 1.26vh;
   --mm10: 1.4vh;
+  --inch13mm10: 2.4vh;
   --mm12: 1.68vh;
   --inch13mm12: 2.1vh;
   --mm15: 2.1vh;
   --inch13mm15: 2.9vh;
   --inch13mm25: 5.2vh;
   --mm20: 2.8vh;
+  --inch13mm20: 4.2vh;
   --mm22: 3.1vh;
   --inch13mm22: 4vh;
   --mm25: 3.5vh;
@@ -196,88 +198,7 @@ div.stopRow.canceled::after {
 }
 
 
-/* 13 inch display */
 
-.inch13Display div.stopRow {
-  height: var(--inch13mm27);
-}
-
-.inch13Display div.alertRow {
-  height: var(--mm25); 
-}
-
-.inch13Display .stopRow:nth-child(1), .inch13Display .stopRow:nth-child(2)  {
-  background: white;
-  height: var(--inch13mm40);
-}
-
-
-.inch13Display p {
-  font-size: var(--inch13mm15);
-}
-.inch13Display .stopRow:nth-child(1) p, .inch13Display div.stopRow:nth-child(2) p {
-  font-size: var(--inch13mm25);
-}
-
-.inch13Display .alertRow.SEVERE {
-  color: white;
-  background: black;
-  border-color: white;
-}
-.inch13Display .alertRow.SEVERE svg path  {
-  fill: white;
-}
-.inch13Display .stopRow.SEVERE {
-  color: white;
-  background: black;
-  border-color: white;
-}
-.inch13Display .stopRow.canceled.SEVERE {
-  color: white;
-  background: black;
-  border-color: white;
-}
-.inch13Display .stopRow.canceled.SEVERE::after {
-  border-color: white;
-}
-.inch13Display .stopRow.SEVERE span {
-  color: white;
-  background: black;
-}
-.inch13Display .stopRow.SEVERE .viaDests {
-  color: white;
-  background: black;
-}
-
-.inch13Display .destination.alert {
-  font-size: var(--inch13mm12);
-}
-.inch13Display .alert.routealert {
-  font-size: var(--inch13mm12);
-}
-
-.inch13Display p.route {
-  transform: translate(0vh, 5%) scale(1);
-
-}
-.inch13Display p.route span {
-  font-weight: 700;
-  font-size: var(--mm12);
-  margin-left: 0.2vh;
-}
-
-.inch13Display .destination span /* via Text */ {
-  font-size: var(--inch13mm12);
-}
-.inch13Display .stopRow:nth-child(1) p.destination span, .inch13Display .stopRow:nth-child(2) p.destination span {
-  font-size: var(--inch13mm12);
-}
-
-.inch13Display .stopRow:nth-child(1) p.route span, .inch13Display .stopRow:nth-child(2) p.route span {
-  font-size: var(--inch13mm25);
-}
-
-/* /13inchDisplay */
 
 p {
   padding: 0;
@@ -435,3 +356,104 @@ div.stopRow.nextDayService {
   background: var(--nextDayBg);
   color: var(--nextDayText);
 }
+
+/* 13 inch display */
+
+.inch13Display div.stopRow {
+  height: var(--inch13mm27);
+}
+
+.inch13Display div.alertRow {
+  height: var(--mm25); 
+}
+
+.inch13Display .stopRow:nth-child(1), .inch13Display .stopRow:nth-child(2)  {
+  background: white;
+  height: var(--inch13mm40);
+}
+
+
+.inch13Display p {
+  font-size: var(--inch13mm15);
+}
+.inch13Display .stopRow:nth-child(1) p, .inch13Display div.stopRow:nth-child(2) p {
+  font-size: var(--inch13mm25);
+}
+
+.inch13Display div.stopRow:nth-child(1) p.longRouteName, .inch13Display div.stopRow:nth-child(2) p.longRouteName {
+  font-size: var(--inch13mm20);
+}
+
+.inch13Display .alertRow.SEVERE {
+  color: white;
+  background: black;
+  border-color: white;
+}
+.inch13Display .alertRow.SEVERE svg path  {
+  fill: white;
+}
+.inch13Display .stopRow.SEVERE {
+  color: white;
+  background: black;
+  border-color: white;
+}
+.inch13Display .stopRow.canceled.SEVERE {
+  color: white;
+  background: black;
+  border-color: white;
+}
+.inch13Display .stopRow.canceled.SEVERE::after {
+  border-color: white;
+}
+.inch13Display .stopRow.SEVERE span {
+  color: white;
+  background: black;
+}
+.inch13Display .stopRow.SEVERE .viaDests {
+  color: white;
+  background: black;
+}
+
+.inch13Display .destination.alert {
+  font-size: var(--inch13mm12);
+}
+.inch13Display .alert.routealert {
+  font-size: var(--inch13mm12);
+}
+
+.inch13Display p.route {
+  transform: translate(0vh, 5%) scale(1);
+
+}
+.inch13Display p.route span {
+  font-weight: 700;
+  font-size: var(--mm12);
+  margin-left: 0.2vh;
+}
+
+.inch13Display .destination span /* via Text */ {
+  font-size: var(--inch13mm12);
+}
+.inch13Display .stopRow:nth-child(1) p.destination span, .inch13Display .stopRow:nth-child(2) p.destination span {
+  font-size: var(--inch13mm12);
+}
+
+.inch13Display .stopRow:nth-child(1) p.route span, .inch13Display .stopRow:nth-child(2) p.route span {
+  font-size: var(--inch13mm25);
+}
+
+.inch13Display p.route span {
+  font-size: var(--inch13mm12);
+}
+
+.inch13Display .stopRow:nth-child(1) p.route span, .inch13Display .stopRow:nth-child(2) p.route span {
+  font-size: var(--inch13mm15);
+}
+
+.inch13Display .stopRow:nth-child(1) p.route.longRouteName, .inch13Display .stopRow:nth-child(2) p.route.longRouteName {
+  font-size: var(--inch13mm20);
+  margin-top: 0.6vh;
+  margin-left: -0.2vh;  
+}
+
+/* /13inchDisplay */
