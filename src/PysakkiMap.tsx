@@ -159,9 +159,6 @@ export default function PysakkiMap({queryData}: Props) {
   const [VehiclePositionsState, setVehiclePositionsState] = useState<VehiclePositionItem[]>([]);
   const [mapRefState, setMapRef] = useState<MapRef | null>();
 
-  // init persistentState
-  PersistentState.test()
-
   if(!queryData) return <MapUnavailable />
 
   // if stop doesn't exist
