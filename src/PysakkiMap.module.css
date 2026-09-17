@@ -126,7 +126,7 @@ div.routeEndPoint {
     content: "";
 }
 .label.alt {
-    color: black;
-    background: #ffffffaf;
+    color: white;
+    background: black;
     padding: 0;
 }
