@@ -142,7 +142,7 @@ div.routeEndPoint {
 }
 
 .label div:before {
-    content:""
+    content:"| "
 }
 .label div:first-of-type:before {
     content: "";
