@@ -12,6 +12,7 @@ export type PysakkiSettingsObj = {
     aspect: number;
     rowQty: number;
     d13: number;
+    dbm: number | 0|1|2|3, /* debug mode, for quick db in browser */
     d13rowQty: number; // amount of rows in smaller, 13 inch screen
     distanceFromStop: number;
     versionLoadIntervalId: number;
@@ -27,6 +28,7 @@ const defaultSettings = {
     offsetMinutes: 1,
     aspect: 0,
     d13: 0,
+    dbm: 0, 
     d13rowQty: 9,
     rowQty: 11,
 }
@@ -56,6 +58,7 @@ export const PysakkiSettings: PysakkiSettingsObj = {
     aspect: 0,
     d13: 0,
     d13rowQty: 7,
+    dbm: 0,
     rowQty: 11,
     distanceFromStop: 8.5,
     loadSettingsFromJSON: async (): Promise<PysakkiSettingsObj> => {
@@ -107,6 +110,7 @@ export const PysakkiSettings: PysakkiSettingsObj = {
         const aspect = Number( settingsInPathParams.get("aspect") ) ?? 0;
         const rowQty = Number( settingsInPathParams.get("rowQty") ) ?? 0;
         const d13 = Number( settingsInPathParams.get("d13") ) ?? 0;  
+        const dbm = Number( settingsInPathParams.get("dbm") ) ?? 0;  
 
 
         this.stopId = stopId ? stopId : defaultSettings.stopId;
@@ -116,6 +120,7 @@ export const PysakkiSettings: PysakkiSettingsObj = {
         this.aspect = aspect == 1 ? 1 : defaultSettings.aspect
         this.rowQty = rowQty ? rowQty : defaultSettings.rowQty
         this.d13 = d13 == 1 ? 1 : defaultSettings.d13
+        this.dbm = dbm && (dbm == 1 || dbm == 2 || dbm == 3) ? 0 : defaultSettings.dbm
 
         // jos d13 == 1, eli 13 tuuman näyttö, asetetaan muitakin asetuksia
         if(d13) {

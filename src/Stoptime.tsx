@@ -112,7 +112,7 @@ export default function Stoptime({rowdata, patternsLookUp, rowNo}: Props) {
         `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}` 
 
     const [destinationTxt, viaTxt]: [destinationTxt: string, viaTxt: string | null] = [
-        rowdata.StopTime.headsign!.split(" via ").slice(0,1).join(),
+        PysakkiSettings.dbm == 1 ? "Myyntimiehenkatu" : rowdata.StopTime.headsign!.split(" via ").slice(0,1).join(),
         rowdata.StopTime.headsign!.split(" via ").length > 1 ? rowdata.StopTime.headsign!.split(" via ").slice(-1).join().split(" - ").join(", ") : null
     ]
 
