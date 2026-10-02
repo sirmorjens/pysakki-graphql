@@ -117,7 +117,17 @@ export default function App() {
       voidaan esim asettaa pieni viive ja refreshata sivu
       niin pitäisi toimia kentällä
     */
-    const onError = (_: Event) => { setTimeout(() => location.reload(), 30 * 1000)};
+    const onError = (e: Event) => { 
+      fetch("./errorReport.php", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(e)
+      });
+
+      setTimeout(() => location.reload(), 30 * 1000)
+    };
       
     window.addEventListener('error', onError);
     
