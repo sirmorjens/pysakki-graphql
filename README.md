@@ -13,32 +13,32 @@ VITE_DIGITRANSIT_SUBSCRIPTION_KEY=oma_avain
 
 ## Osoiteriviasetukset
 
-###id
+### id
 Pysäkin GTFS-id. 
 Esim `?id=Lahti:123456`
 
-###refreshRateSec
+### refreshRateSec
 Näkymän ja tietojen päivitysväli, oletus 30s. 
 
-###distanceFromStop
+### distanceFromStop
 Maksimietäisyys pysäkiltä (km) jonka jälkeen reitti katkaistaan. Oletus 8,5km.
 
-###offsetMinutes
+### offsetMinutes
 ePaperinäyttöjen viiveen kompensointiin. Esimerkiksi `?offsetMinutes=3` näyttää linja-auton saapuvaksi
 3 minuuttia "etuajassa", jos näytön kuva päivittyy 3 minuuttia myöhässä. Oletus 1
 
-###aspect
+### aspect
 Näytön kuvasuhde. 
 0 = 16:9 pystynäyttö (oletus)
 1 = 4:3 pystynäyttö
 
-###rowQty
+### rowQty
 Näytettävien aikataulurivien määrä, oletus 11
 
-###d13
+### d13
 Pienemmälle 13"-näytölle tarkoitettu näkymä, eri asettelu ja vähemmän lähtöjä. 
 d13=0 Normaalinäkymä (oletus)
 d13=1 13" näytön näkymä
 
-###dbm
+### dbm
 Debug-menu, ei käytössä
