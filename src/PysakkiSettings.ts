@@ -1,3 +1,39 @@
+/*
+    README
+
+    Komentoriviasetukset
+
+    id
+    Pysäkin GTFS-id. Esim Lahti:123456
+    
+    refreshRateSec
+    Näkymän ja tietojen päivitysväli, oletus 30s. 
+
+    distanceFromStop
+    Maksimietäisyys pysäkiltä (km) jonka jälkeen reitti katkaistaan. Oletus 8,5km.
+
+    offsetMinutes
+    ePaperinäyttöjen viiveen kompensointiin. offsetMinutes=3 näyttää linja-auton saapuvaksi
+    3 minuuttia "etuajassa", jos näytön kuva päivittyy 3 minuuttia myöhässä. Oletus 1
+
+    aspect
+    Näytön kuvasuhde. 
+    0 = 16:9 pystynäyttö (oletus)
+    1 = 4:3 pystynäyttö
+
+    rowQty
+    Näytettävien aikataulurivien määrä, oletus 11
+
+    d13
+    Pienemmälle 13"-näytölle tarkoitettu näkymä, eri asettelu ja vähemmän lähtöjä. 
+    d13=0 Normaalinäkymä (oletus)
+    d13=1 13" näytön näkymä
+    
+    dbm
+    Debug-menu, ei käytössä
+
+*/
+
 // import build-time build number to be set as initial build number
 // this import will not run again in production so it will be 
 // a hard coded value to compare future version/build numbers against
