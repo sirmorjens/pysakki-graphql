@@ -18,7 +18,7 @@ export default function LR_Footer () {
             <div className={LRstyle.logo}><img src={temp_logo} alt="LSL" /></div>
         </div>
 
-    ) :  // 13inch version (display with LSL branding - don't show logo here)
+    ) :  // 13inch version (display case has LSL branding - don't show logo here)
     (
         <div className={LRstyle.footer13inch}>
             <div className={LRstyle.cta}>
